@@ -1,0 +1,4634 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>秦彻 · 专属回忆</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐉</text></svg>">
+<style>
+/* ============ CSS Variables ============ */
+:root {
+  --bg: #050505;
+  --bg-card: #0d0d0d;
+  --red: #c41e3a;
+  --red-dark: #6b0000;
+  --red-glow: #ff2d2d;
+  --red-dim: #3a0000;
+  --gold: #c9a96e;
+  --text: #d4c5b9;
+  --text-light: #f0e6dc;
+  --text-muted: #8a7e72;
+  --border: #1a1a1a;
+}
+
+/* ============ Reset & Base ============ */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--red-dark) var(--bg);
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--red-dark); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--red); }
+
+body {
+  font-family: 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+/* ============ Particle Canvas ============ */
+#particles {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ============ Navigation ============ */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(180deg, rgba(5,5,5,0.95) 0%, rgba(5,5,5,0) 100%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+nav .logo {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--red);
+  letter-spacing: 4px;
+  text-shadow: 0 0 20px rgba(196,30,58,0.5);
+  cursor: pointer;
+}
+
+nav .links { display: flex; gap: 28px; list-style: none; }
+
+nav .links a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+  letter-spacing: 2px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+nav .links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px; left: 0;
+  width: 0; height: 1px;
+  background: var(--red);
+  transition: width 0.3s ease;
+}
+
+nav .links a:hover { color: var(--text-light); }
+nav .links a:hover::after { width: 100%; }
+
+/* ============ Hero Section ============ */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  padding: 80px 20px;
+  overflow: hidden;
+}
+
+/* Dragon silhouette */
+.dragon-silhouette {
+  position: absolute;
+  top: 5%;
+  right: -5%;
+  width: 55%;
+  height: 50%;
+  opacity: 0.06;
+  z-index: 0;
+  pointer-events: none;
+  animation: dragonFloat 8s ease-in-out infinite;
+}
+
+@keyframes dragonFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-10px) rotate(0.5deg); }
+  75% { transform: translateY(8px) rotate(-0.5deg); }
+}
+
+/* Crow silhouettes */
+.crow-left {
+  position: absolute;
+  top: 20%;
+  left: 3%;
+  width: 80px;
+  height: 60px;
+  opacity: 0.08;
+  z-index: 0;
+  pointer-events: none;
+  animation: crowSway 6s ease-in-out infinite;
+}
+
+.crow-right {
+  position: absolute;
+  top: 60%;
+  right: 5%;
+  width: 60px;
+  height: 45px;
+  opacity: 0.07;
+  z-index: 0;
+  pointer-events: none;
+  animation: crowSway 5s ease-in-out infinite 1s;
+}
+
+@keyframes crowSway {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-15px) rotate(3deg); }
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+}
+
+.hero-badge {
+  display: inline-block;
+  padding: 6px 20px;
+  border: 1px solid var(--red-dark);
+  border-radius: 50px;
+  font-size: 0.75rem;
+  letter-spacing: 6px;
+  color: var(--red);
+  margin-bottom: 24px;
+  animation: fadeInDown 1s ease;
+}
+
+.hero h1 {
+  font-size: clamp(4rem, 10vw, 8rem);
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: 16px;
+  text-shadow:
+    0 0 40px rgba(196,30,58,0.6),
+    0 0 80px rgba(196,30,58,0.3),
+    0 0 120px rgba(196,30,58,0.15),
+    0 4px 8px rgba(0,0,0,0.8);
+  animation: titleGlow 3s ease-in-out infinite;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+@keyframes titleGlow {
+  0%, 100% { text-shadow: 0 0 40px rgba(196,30,58,0.6), 0 0 80px rgba(196,30,58,0.3); }
+  50% { text-shadow: 0 0 60px rgba(255,45,45,0.8), 0 0 120px rgba(196,30,58,0.5), 0 0 180px rgba(196,30,58,0.2); }
+}
+
+.hero .subtitle {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  letter-spacing: 8px;
+  animation: fadeInUp 1s ease 0.3s both;
+}
+
+.hero-divider {
+  width: 120px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--red), transparent);
+  margin: 24px auto;
+  animation: fadeIn 1s ease 0.6s both;
+}
+
+.hero .tagline {
+  font-size: 0.95rem;
+  color: var(--gold);
+  letter-spacing: 4px;
+  animation: fadeInUp 1s ease 0.8s both;
+  font-style: italic;
+}
+
+.scroll-indicator {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  animation: bounce 2s ease-in-out infinite;
+  cursor: pointer;
+}
+
+.scroll-indicator svg { width: 24px; height: 24px; stroke: var(--red); }
+
+@keyframes bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(10px); }
+}
+
+/* Decorative line at hero bottom */
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 10%; right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(196,30,58,0.3), transparent);
+  z-index: 2;
+}
+
+/* ============ Gallery Section ============ */
+.gallery-section {
+  position: relative;
+  z-index: 2;
+  padding: 80px 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.section-header .icon-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.section-header .icon-row svg {
+  width: 28px; height: 28px;
+  fill: var(--red);
+  opacity: 0.6;
+}
+
+.section-header h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-light);
+  letter-spacing: 6px;
+}
+
+.section-header .sub {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  letter-spacing: 4px;
+  margin-top: 8px;
+}
+
+/* Gallery Grid */
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.gallery-item {
+  position: relative;
+  aspect-ratio: 3/4;
+  overflow: hidden;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1.2);
+}
+
+.gallery-item:hover {
+  transform: translateY(-4px);
+  border-color: var(--red);
+  box-shadow: 0 8px 32px rgba(196,30,58,0.25), 0 0 0 1px var(--red);
+}
+
+.gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+  filter: brightness(0.85);
+}
+
+.gallery-item:hover img {
+  transform: scale(1.08);
+  filter: brightness(1.05);
+}
+
+.gallery-item .overlay {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 20px;
+  background: linear-gradient(transparent, rgba(5,5,5,0.9));
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.4s ease;
+}
+
+.gallery-item:hover .overlay {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.gallery-item .overlay span {
+  color: var(--text-light);
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+}
+
+/* ============ Lightbox ============ */
+.lightbox {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(2,2,2,0.96);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.lightbox.active { display: flex; }
+
+.lightbox img {
+  max-width: 90vw;
+  max-height: 80vh;
+  object-fit: contain;
+  border: 1px solid var(--red-dark);
+  box-shadow: 0 0 60px rgba(196,30,58,0.2);
+  border-radius: 2px;
+  animation: zoomIn 0.3s ease;
+}
+
+@keyframes zoomIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 24px; right: 32px;
+  font-size: 2rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  z-index: 1001;
+  width: 48px; height: 48px;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  background: none;
+}
+
+.lightbox-close:hover {
+  color: var(--red);
+  border-color: var(--red-dark);
+}
+
+.lightbox-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 2rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  z-index: 1001;
+  width: 56px; height: 56px;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  background: none;
+}
+
+.lightbox-nav:hover { color: var(--red); border-color: var(--red-dark); }
+.lightbox-prev { left: 24px; }
+.lightbox-next { right: 24px; }
+
+.lightbox-counter {
+  position: absolute;
+  bottom: 32px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  letter-spacing: 4px;
+}
+
+/* ============ Quotes Section ============ */
+.quotes-section {
+  position: relative;
+  z-index: 2;
+  padding: 100px 20px;
+  background: linear-gradient(180deg, transparent, rgba(196,30,58,0.02), transparent);
+}
+
+.quotes-container {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+  position: relative;
+}
+
+.quotes-crow {
+  position: absolute;
+  top: -80px;
+  right: -40px;
+  opacity: 0.06;
+  pointer-events: none;
+  animation: crowSway 7s ease-in-out infinite;
+}
+
+.quote-mark {
+  font-size: 5rem;
+  color: var(--red);
+  opacity: 0.3;
+  line-height: 1;
+  font-family: Georgia, serif;
+  margin-bottom: -20px;
+}
+
+.quote-text {
+  font-size: 1.3rem;
+  color: var(--text-light);
+  letter-spacing: 2px;
+  line-height: 2;
+  min-height: 80px;
+  transition: all 0.5s ease;
+  padding: 0 20px;
+}
+
+.quote-divider {
+  width: 60px;
+  height: 1px;
+  background: var(--red-dark);
+  margin: 20px auto;
+  opacity: 0.5;
+}
+
+.quote-dots {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.quote-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--red-dim);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.quote-dot.active {
+  background: var(--red);
+  box-shadow: 0 0 10px var(--red-glow);
+  width: 24px;
+  border-radius: 4px;
+}
+
+/* ============ Footer ============ */
+footer {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 60px 20px 40px;
+  border-top: 1px solid var(--border);
+}
+
+footer .footer-dragon {
+  opacity: 0.04;
+  margin-bottom: 20px;
+  animation: dragonFloat 10s ease-in-out infinite;
+}
+
+footer p {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  letter-spacing: 4px;
+}
+
+footer .heart {
+  color: var(--red);
+  display: inline-block;
+  animation: heartbeat 1.5s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  15% { transform: scale(1.3); }
+  30% { transform: scale(1); }
+}
+
+/* ============ Keyframe Animations ============ */
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ============ Responsive ============ */
+/* ============ Snake Game ============ */
+.snake-score {
+  text-align: center;
+  font-size: 1rem;
+  color: var(--text-light);
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+}
+
+.snake-score span {
+  color: var(--red);
+  font-weight: 700;
+}
+
+#snakeCanvas {
+  display: block;
+  margin: 0 auto;
+  border: 1px solid var(--red-dark);
+  border-radius: 4px;
+  background: rgba(0,0,0,0.6);
+  max-width: 100%;
+}
+
+.snake-controls {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.snake-hint {
+  text-align: center;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  letter-spacing: 2px;
+  margin-top: 10px;
+}
+
+/* ============ Snake D-Pad (Mobile) ============ */
+.snake-dpad {
+  display: none;
+  justify-content: center;
+  margin-top: 14px;
+}
+
+.snake-dpad.visible { display: flex; }
+
+.dpad-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 56px);
+  grid-template-rows: repeat(3, 56px);
+  gap: 4px;
+}
+
+.dpad-btn {
+  background: rgba(10,10,10,0.8);
+  border: 1px solid rgba(196,30,58,0.35);
+  border-radius: 8px;
+  color: var(--text-light);
+  cursor: pointer;
+  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.dpad-btn:active {
+  background: rgba(196,30,58,0.5);
+  border-color: var(--red);
+  box-shadow: 0 0 16px rgba(196,30,58,0.4);
+  transform: scale(0.93);
+}
+
+.dpad-empty {
+  background: transparent;
+  border: none;
+  pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  #snakeCanvas { width: 320px; height: 320px; }
+}
+
+@media (max-width: 768px) {
+  nav { padding: 12px 16px; }
+  nav .links { gap: 16px; }
+  nav .links a { font-size: 0.75rem; letter-spacing: 1px; }
+  .hero h1 { letter-spacing: 8px; }
+  .gallery { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; }
+  .gallery-item { aspect-ratio: 2/3; }
+  .quote-text { font-size: 1rem; }
+  .lightbox-nav { width: 40px; height: 40px; font-size: 1.5rem; }
+  .lightbox-prev { left: 8px; }
+  .lightbox-next { right: 8px; }
+}
+
+/* ============ Music Player ============ */
+.music-player {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 200;
+  background: rgba(8, 8, 8, 0.97);
+  border-top: 1px solid rgba(196, 30, 58, 0.25);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 0 16px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.player-main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  height: 100%;
+}
+
+.player-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 5px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.player-btn:hover { color: var(--red); }
+.player-btn.play-btn { font-size: 1.1rem; color: var(--text-light); }
+.player-btn.play-btn:hover { color: var(--red-glow); }
+
+.play-icon-img { width: 18px; height: 18px; object-fit: contain; vertical-align: middle; }
+.player-btn.playing-icon { border-radius: 50%; transition: box-shadow 0.25s ease; }
+.player-btn.active { color: var(--red); }
+
+.player-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.player-title {
+  font-size: 0.8rem;
+  color: var(--text-light);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: 1px;
+  flex-shrink: 0;
+  max-width: 180px;
+}
+
+.player-progress-wrap {
+  flex: 1;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  min-width: 50px;
+}
+
+.player-progress {
+  width: 100%;
+  height: 3px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 2px;
+  position: relative;
+  overflow: visible;
+}
+
+.player-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--red-dark), var(--red));
+  border-radius: 2px;
+  width: 0%;
+  position: relative;
+  transition: width 0.15s linear;
+}
+
+.player-progress-fill::after {
+  content: '';
+  position: absolute;
+  right: -4px;
+  top: -2.5px;
+  width: 8px;
+  height: 8px;
+  background: var(--red-glow);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--red-glow);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.player-progress-wrap:hover .player-progress-fill::after { opacity: 1; }
+
+.player-time {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  flex-shrink: 0;
+  min-width: 96px;
+  text-align: right;
+}
+
+/* Volume control */
+.player-volume {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.volume-icon-btn {
+  width: 26px;
+  height: 26px;
+  padding: 2px;
+}
+
+.volume-slider-wrap {
+  width: 56px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.volume-slider {
+  width: 100%;
+  height: 3px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 2px;
+  position: relative;
+  overflow: visible;
+}
+
+.volume-slider-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--red-dark), var(--red));
+  border-radius: 2px;
+  width: 50%;
+  position: relative;
+}
+
+.volume-slider-fill::after {
+  content: '';
+  position: absolute;
+  right: -4px;
+  top: -2.5px;
+  width: 8px;
+  height: 8px;
+  background: var(--red-glow);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--red-glow);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.volume-slider-wrap:hover .volume-slider-fill::after { opacity: 1; }
+
+.player-mode-btn, .player-list-btn {
+  background: none;
+  border: 1px solid transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.72rem;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.player-mode-btn:hover, .player-list-btn:hover { color: var(--red); border-color: var(--red-dark); }
+.player-mode-btn.single { color: var(--red); border-color: var(--red-dark); }
+
+/* Player button icons */
+.btn-icon {
+	width: 16px;
+	height: 16px;
+	object-fit: contain;
+	flex-shrink: 0;
+	opacity: 0.75;
+}
+
+.player-mode-btn:hover .btn-icon,
+.player-mode-btn.single .btn-icon,
+.player-list-btn:hover .btn-icon {
+	opacity: 1;
+}
+
+/* Playlist Panel */
+.player-playlist {
+  position: fixed;
+  bottom: 48px;
+  right: 12px;
+  width: 340px;
+  max-height: 380px;
+  background: rgba(10, 10, 10, 0.98);
+  border: 1px solid rgba(196, 30, 58, 0.25);
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+  z-index: 199;
+  overflow-y: auto;
+  display: none;
+  box-shadow: 0 -4px 24px rgba(0,0,0,0.6);
+  scrollbar-width: thin;
+  scrollbar-color: var(--red-dark) transparent;
+}
+
+.player-playlist.open { display: block; animation: slideUp 0.25s ease; }
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.playlist-header {
+  padding: 14px 16px;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  letter-spacing: 2px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  background: rgba(10,10,10,0.98);
+  z-index: 1;
+}
+
+.playlist-close {
+  background: none; border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+.playlist-close:hover { color: var(--red); }
+
+.playlist-item {
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: grab;
+  border-bottom: 1px solid rgba(255,255,255,0.02);
+  transition: all 0.2s ease;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.playlist-item:hover { background: rgba(255,255,255,0.03); color: var(--text-light); }
+.playlist-item.current { color: var(--red); }
+.playlist-item.drag-over { border-top: 2px solid var(--red); }
+.playlist-item .drag-handle {
+  cursor: grab;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  opacity: 0.4;
+  flex-shrink: 0;
+}
+
+/* Toast */
+.player-toast {
+  position: fixed;
+  bottom: 62px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(196, 30, 58, 0.9);
+  color: #fff;
+  padding: 7px 22px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  letter-spacing: 2px;
+  z-index: 300;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+.player-toast.show { opacity: 1; }
+
+@media (max-width: 768px) {
+  .player-title { max-width: 60px; font-size: 0.68rem; }
+  .player-time { min-width: 80px; font-size: 0.6rem; }
+  .player-playlist { width: calc(100% - 16px); right: 8px; border-radius: 8px 8px 0 0; max-height: 300px; }
+  .music-player { padding: 0 6px; gap: 2px; }
+  .player-btn { width: 26px; height: 26px; font-size: 0.75rem; padding: 2px; }
+  .player-btn.play-btn { font-size: 0.85rem; }
+  .play-icon-img { width: 16px; height: 16px; }
+  .player-mode-btn, .player-list-btn { font-size: 0; padding: 3px 4px; border: 1px solid transparent; }
+  .player-mode-btn:hover, .player-list-btn:hover { border-color: var(--red-dark); }
+  .btn-icon { width: 14px; height: 14px; }
+  .volume-slider-wrap { display: none; }
+  .volume-icon-btn { width: 22px; height: 22px; }
+  .player-info { gap: 4px; }
+  .player-progress-wrap { min-width: 30px; }
+}
+
+/* ============ Nav Else Button & Dropdown ============ */
+.nav-right {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.nav-else-btn {
+  background: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease;
+}
+
+.nav-else-btn:hover {
+  border-color: var(--red-dark);
+  background: rgba(196,30,58,0.06);
+}
+
+.nav-else-icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  opacity: 0.65;
+  transition: opacity 0.25s ease;
+}
+
+.nav-else-btn:hover .nav-else-icon { opacity: 1; }
+
+.nav-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: rgba(10,10,10,0.98);
+  border: 1px solid rgba(196,30,58,0.25);
+  border-radius: 6px;
+  min-width: 140px;
+  overflow: hidden;
+  z-index: 300;
+  display: none;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.7);
+  animation: dropIn 0.2s ease;
+}
+
+@keyframes dropIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.nav-dropdown.open { display: block; }
+
+.dropdown-item {
+  padding: 12px 20px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  user-select: none;
+}
+
+.dropdown-item:last-child { border-bottom: none; }
+
+.dropdown-item:hover {
+  color: var(--red);
+  background: rgba(196,30,58,0.08);
+}
+
+/* ============ Utility Panel Overlay ============ */
+.util-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(2,2,2,0.93);
+  z-index: 500;
+  align-items: center;
+  justify-content: center;
+}
+
+.util-overlay.active { display: flex; }
+
+.util-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--red-dark);
+  border-radius: 8px;
+  padding: 28px 30px;
+  max-width: 480px;
+  width: 92%;
+  max-height: 82vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 0 80px rgba(196,30,58,0.12);
+  animation: zoomIn 0.25s ease;
+  scrollbar-width: thin;
+  scrollbar-color: var(--red-dark) transparent;
+}
+
+.util-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.util-panel-header h3 {
+  font-size: 1.15rem;
+  color: var(--text-light);
+  letter-spacing: 3px;
+  font-weight: 600;
+}
+
+.util-panel-close {
+  background: none;
+  border: 1px solid transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 1.2rem;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.util-panel-close:hover {
+  color: var(--red);
+  border-color: var(--red-dark);
+}
+
+/* ============ Pomodoro Timer ============ */
+.pomodoro-display {
+  text-align: center;
+  padding: 28px 0 18px;
+}
+
+.pomodoro-time {
+  font-size: 4.5rem;
+  font-weight: 700;
+  color: var(--red);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 4px;
+  text-shadow: 0 0 30px rgba(196,30,58,0.35);
+  font-family: 'Segoe UI', 'Consolas', monospace;
+}
+
+.pomodoro-label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  letter-spacing: 3px;
+  margin-top: 6px;
+}
+
+.pomodoro-controls {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.pomodoro-btn {
+  background: none;
+  border: 1px solid var(--red-dark);
+  color: var(--text);
+  cursor: pointer;
+  padding: 8px 22px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  transition: all 0.2s ease;
+}
+
+.pomodoro-btn:hover {
+  border-color: var(--red);
+  color: var(--red);
+  box-shadow: 0 0 14px rgba(196,30,58,0.15);
+}
+
+.pomodoro-btn.primary-btn {
+  background: var(--red);
+  border-color: var(--red);
+  color: #fff;
+}
+
+.pomodoro-btn.primary-btn:hover {
+  background: var(--red-glow);
+  box-shadow: 0 0 20px rgba(255,45,45,0.35);
+}
+
+.pomodoro-presets {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+.pomodoro-preset {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  letter-spacing: 1px;
+  transition: all 0.2s ease;
+}
+
+.pomodoro-preset:hover { border-color: var(--red-dark); color: var(--text-light); }
+.pomodoro-preset.active { border-color: var(--red); color: var(--red); }
+
+/* ============ Period Tracker ============ */
+.period-month-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.period-month-nav button {
+  background: none;
+  border: 1px solid transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 4px 10px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.period-month-nav button:hover { color: var(--red); border-color: var(--red-dark); }
+.period-month-nav button:hover { color: var(--red); border-color: var(--red-dark); }
+
+.period-date-pickers {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  position: relative;
+}
+
+.period-year-label, .period-month-label-click {
+  color: var(--text-light);
+  font-size: 0.95rem;
+  letter-spacing: 2px;
+  cursor: pointer;
+  padding: 4px 10px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.period-year-label:hover, .period-month-label-click:hover {
+  border-color: var(--red-dark);
+  color: var(--red);
+}
+
+.period-picker-wrap {
+  position: absolute;
+  background: rgba(10,10,10,0.98);
+  border: 1px solid rgba(196,30,58,0.25);
+  border-radius: 6px;
+  z-index: 10;
+  display: none;
+  max-height: 180px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--red-dark) transparent;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.8);
+  min-width: 80px;
+  animation: dropIn 0.18s ease;
+}
+
+.period-picker-wrap.open { display: block; }
+
+.period-picker-item {
+  padding: 10px 28px;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  transition: all 0.15s ease;
+  text-align: center;
+  user-select: none;
+}
+
+.period-picker-item:hover {
+  color: var(--red);
+  background: rgba(196,30,58,0.1);
+}
+
+.period-picker-item.active {
+  color: var(--red);
+  background: rgba(196,30,58,0.15);
+}
+.period-month-nav .month-label {
+  color: var(--text-light);
+  font-size: 0.95rem;
+  letter-spacing: 2px;
+}
+
+.period-calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  text-align: center;
+}
+
+.period-day-header {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  padding: 6px 0;
+}
+
+.period-day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  color: var(--text);
+  cursor: pointer;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.period-day:hover { border-color: var(--red-dark); color: var(--text-light); }
+.period-day.empty { cursor: default; }
+.period-day.today { border-color: var(--red-dark); }
+.period-day.marked {
+  background: rgba(196,30,58,0.25);
+  color: var(--red-glow);
+  border-color: var(--red);
+  font-weight: 600;
+}
+
+.period-stats {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+
+.period-stat {
+  text-align: center;
+}
+
+.period-stat .stat-num {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--red);
+}
+
+.period-stat .stat-label {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  letter-spacing: 2px;
+}
+
+/* ============ Todo List ============ */
+#todoPanel .util-panel {
+  display: flex;
+  flex-direction: column;
+  max-height: 82vh;
+  overflow: hidden;
+}
+
+#todoPanel .util-panel-header { flex-shrink: 0; }
+
+.todo-input-wrap {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+  margin-bottom: 2px;
+}
+
+.todo-input {
+  flex: 1;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-light);
+  padding: 10px 14px;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  outline: none;
+  font-family: 'Microsoft YaHei', sans-serif;
+  transition: border-color 0.3s ease;
+}
+
+.todo-input:focus { border-color: var(--red-dark); }
+
+.todo-input::placeholder { color: rgba(138,126,114,0.4); letter-spacing: 2px; }
+
+.todo-add-btn {
+  background: var(--red);
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  padding: 10px 18px;
+  border-radius: 4px;
+  font-size: 0.82rem;
+  letter-spacing: 2px;
+  white-space: nowrap;
+  transition: all 0.25s ease;
+}
+
+.todo-add-btn:hover {
+  background: var(--red-glow);
+  box-shadow: 0 0 16px rgba(255,45,45,0.3);
+}
+
+.todo-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--red-dark), transparent);
+  margin: 14px 0;
+  flex-shrink: 0;
+}
+
+.todo-list {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--red-dark) transparent;
+}
+
+.todo-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 4px;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  transition: all 0.2s ease;
+}
+
+.todo-item:hover { background: rgba(255,255,255,0.02); }
+
+.todo-checkbox {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  cursor: pointer;
+  accent-color: #c41e3a;
+  border-radius: 3px;
+}
+
+.todo-text {
+  flex: 1;
+  font-size: 0.85rem;
+  color: var(--text);
+  letter-spacing: 1px;
+  line-height: 1.5;
+  word-break: break-word;
+  transition: all 0.3s ease;
+}
+
+.todo-item.done .todo-text {
+  text-decoration: line-through;
+  color: var(--text-muted);
+  opacity: 0.5;
+}
+
+.todo-date-tag {
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  opacity: 0.5;
+  letter-spacing: 1px;
+  flex-shrink: 0;
+  margin-right: 6px;
+}
+
+.todo-delete {
+  background: none;
+  border: 1px solid transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.7rem;
+  padding: 3px 8px;
+  border-radius: 4px;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: all 0.2s ease;
+}
+
+.todo-item:hover .todo-delete { opacity: 1; }
+
+.todo-delete:hover {
+  color: var(--red);
+  border-color: var(--red-dark);
+}
+
+.todo-count {
+  text-align: center;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  letter-spacing: 2px;
+  padding: 10px 0 4px;
+  flex-shrink: 0;
+}
+
+.todo-count span { color: var(--red); font-weight: 600; }
+
+.todo-empty {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  letter-spacing: 2px;
+  padding: 30px 0;
+  opacity: 0.5;
+}
+
+@media (max-width: 768px) {
+  .util-panel { padding: 20px; max-width: 96%; }
+  .pomodoro-time { font-size: 3.2rem; }
+  .nav-else-icon { width: 18px; height: 18px; }
+  .nav-dropdown { min-width: 120px; right: -8px; }
+  .dropdown-item { padding: 10px 16px; font-size: 0.78rem; }
+  .period-calendar { gap: 2px; }
+  .period-day { font-size: 0.7rem; }
+}
+
+/* ============ Section Header Actions (Upload/Add buttons) ============ */
+.section-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  justify-content: center;
+}
+
+.section-action-btn {
+  background: none;
+  border: 1px solid var(--red-dark);
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 6px 16px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  transition: all 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.section-action-btn:hover {
+  border-color: var(--red);
+  color: var(--red);
+  box-shadow: 0 0 14px rgba(196,30,58,0.2);
+}
+
+/* ============ User Photo Delete Button ============ */
+.gallery-item.user-photo .overlay {
+  opacity: 1;
+  background: linear-gradient(transparent, rgba(5,5,5,0.9));
+}
+
+.photo-delete-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 26px;
+  height: 26px;
+  background: rgba(196,30,58,0.85);
+  border: 2px solid rgba(255,255,255,0.3);
+  color: #fff;
+  cursor: pointer;
+  border-radius: 50%;
+  font-size: 0.75rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+
+.gallery-item:hover .photo-delete-btn {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.photo-delete-btn:hover {
+  background: #ff2d2d;
+  border-color: #fff;
+  transform: scale(1.15) !important;
+  box-shadow: 0 0 14px rgba(255,45,45,0.7);
+}
+
+/* User photo badge */
+.user-photo-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  font-size: 0.65rem;
+  color: var(--gold);
+  background: rgba(0,0,0,0.6);
+  padding: 2px 8px;
+  border-radius: 10px;
+  letter-spacing: 1px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.gallery-item.user-photo:hover .user-photo-badge { opacity: 1; }
+
+/* Gallery drag sort */
+.gallery-item.dragging {
+  opacity: 0.4;
+  transform: scale(0.95);
+}
+
+.gallery-item.drag-over {
+  border-color: var(--red-glow) !important;
+  box-shadow: 0 0 20px rgba(255,45,45,0.4), 0 0 0 2px var(--red-glow) !important;
+  transform: scale(1.03);
+}
+
+/* Manage quote list drag sort */
+.manage-quote-row.dragging {
+  opacity: 0.3;
+}
+
+.manage-quote-row.drag-over {
+  border-top: 2px solid var(--red);
+  background: rgba(196,30,58,0.08);
+}
+
+.manage-quote-row .drag-handle-quote {
+  cursor: grab;
+  color: var(--text-muted);
+  margin-right: 8px;
+  font-size: 0.85rem;
+  opacity: 0.4;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.manage-quote-row .drag-handle-quote:hover { opacity: 0.8; color: var(--red); }
+
+/* ============ Quote Inline Form ============ */
+.quote-inline-form {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 16px;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: all 0.35s ease;
+}
+
+.quote-inline-form.open {
+  opacity: 1;
+  max-height: 60px;
+}
+
+.quote-inline-input {
+  background: rgba(0,0,0,0.4);
+  border: 1px solid var(--border);
+  color: var(--text-light);
+  padding: 8px 14px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  width: 360px;
+  max-width: 60vw;
+  outline: none;
+  transition: border-color 0.3s ease;
+  font-family: 'Microsoft YaHei', sans-serif;
+}
+
+.quote-inline-input:focus { border-color: var(--red-dark); }
+
+.quote-inline-input::placeholder { color: rgba(138,126,114,0.4); }
+
+.quote-inline-btn {
+  background: var(--red);
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+
+.quote-inline-btn:hover {
+  background: var(--red-glow);
+  box-shadow: 0 0 16px rgba(255,45,45,0.3);
+}
+
+.quote-custom-dot {
+  background: var(--gold) !important;
+}
+
+/* ============ Management Panel Tabs ============ */
+.manage-tabs {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.manage-tab {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 10px 18px;
+  font-size: 0.82rem;
+  letter-spacing: 2px;
+  border-bottom: 2px solid transparent;
+  transition: all 0.25s ease;
+  font-family: 'Microsoft YaHei', sans-serif;
+}
+
+.manage-tab:hover { color: var(--text-light); }
+.manage-tab.active {
+  color: var(--red);
+  border-bottom-color: var(--red);
+}
+
+.manage-tab-content { display: none; }
+.manage-tab-content.active { display: block; }
+
+/* Upload zone */
+.manage-upload-zone {
+  border: 2px dashed rgba(196,30,58,0.3);
+  border-radius: 8px;
+  padding: 30px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 16px;
+}
+
+.manage-upload-zone:hover {
+  border-color: var(--red);
+  background: rgba(196,30,58,0.04);
+}
+
+.manage-upload-zone.drag-over {
+  border-color: var(--red-glow);
+  background: rgba(196,30,58,0.08);
+  box-shadow: 0 0 20px rgba(196,30,58,0.15);
+}
+
+.manage-upload-icon {
+  font-size: 2rem;
+  margin-bottom: 8px;
+  opacity: 0.5;
+}
+
+.manage-upload-text {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  letter-spacing: 2px;
+}
+
+.manage-upload-hint {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  opacity: 0.5;
+  margin-top: 6px;
+  letter-spacing: 1px;
+}
+
+.manage-upload-btn {
+  background: none;
+  border: 1px solid var(--red-dark);
+  color: var(--red);
+  cursor: pointer;
+  padding: 8px 20px;
+  border-radius: 4px;
+  font-size: 0.82rem;
+  letter-spacing: 2px;
+  transition: all 0.25s ease;
+  margin-top: 10px;
+  display: inline-block;
+}
+
+.manage-upload-btn:hover {
+  background: var(--red);
+  color: #fff;
+  border-color: var(--red);
+}
+
+/* Photo management grid */
+.manage-photo-toolbar {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  margin-bottom: 8px;
+  gap: 10px;
+}
+
+.manage-photo-toolbar.visible { display: flex; }
+
+.manage-photo-toolbar .selected-count {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+}
+
+.manage-photo-toolbar .selected-count span {
+  color: var(--red);
+  font-weight: 700;
+}
+
+.manage-batch-delete-btn {
+  background: none;
+  border: 1px solid var(--red);
+  color: var(--red);
+  cursor: pointer;
+  padding: 4px 14px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  transition: all 0.25s ease;
+}
+
+.manage-batch-delete-btn:hover {
+  background: var(--red);
+  color: #fff;
+  box-shadow: 0 0 14px rgba(196,30,58,0.4);
+}
+
+.manage-select-all-btn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  letter-spacing: 1px;
+  transition: all 0.2s ease;
+}
+
+.manage-select-all-btn:hover { border-color: var(--red-dark); color: var(--text-light); }
+
+/* Batch upload improvements */
+.manage-upload-zone .batch-hint {
+  font-size: 0.7rem;
+  color: var(--red);
+  opacity: 0.6;
+  margin-top: 4px;
+  letter-spacing: 1px;
+}
+
+/* Checkbox on photo thumb */
+.manage-photo-check {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 20px;
+  height: 20px;
+  z-index: 5;
+  cursor: pointer;
+  accent-color: #c41e3a;
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+}
+
+.manage-photo-item:hover .manage-photo-check { opacity: 1; }
+.manage-photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.manage-photo-item {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+}
+
+.manage-photo-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.manage-photo-item .delete-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(196,30,58,0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.manage-photo-item:hover .delete-overlay { opacity: 1; }
+
+.manage-photo-item .delete-icon {
+  color: #fff;
+  font-size: 1.5rem;
+}
+
+/* Quote management list */
+.manage-quote-list {
+  max-height: 300px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--red-dark) transparent;
+}
+
+.manage-quote-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 6px;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  gap: 10px;
+  transition: background 0.2s ease;
+}
+
+.manage-quote-row:hover { background: rgba(255,255,255,0.02); }
+
+.manage-quote-row .quote-text {
+  flex: 1;
+  font-size: 0.85rem;
+  color: var(--text);
+  letter-spacing: 1px;
+  line-height: 1.6;
+  min-width: 0;
+  word-break: break-word;
+}
+
+.manage-quote-delete {
+  background: none;
+  border: 1px solid transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.7rem;
+  padding: 4px 10px;
+  border-radius: 4px;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.manage-quote-delete:hover {
+  color: var(--red);
+  border-color: var(--red-dark);
+}
+
+.manage-quote-add-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.manage-quote-input {
+  flex: 1;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--border);
+  color: var(--text-light);
+  padding: 10px 14px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  outline: none;
+  font-family: 'Microsoft YaHei', sans-serif;
+  transition: border-color 0.3s ease;
+}
+
+.manage-quote-input:focus { border-color: var(--red-dark); }
+.manage-quote-input::placeholder { color: rgba(138,126,114,0.4); }
+
+.manage-quote-add-btn {
+  background: var(--red);
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  padding: 10px 18px;
+  border-radius: 4px;
+  font-size: 0.82rem;
+  letter-spacing: 2px;
+  white-space: nowrap;
+  transition: all 0.25s ease;
+}
+
+.manage-quote-add-btn:hover {
+  background: var(--red-glow);
+  box-shadow: 0 0 16px rgba(255,45,45,0.3);
+}
+
+/* Reset section */
+.manage-reset-info {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  line-height: 1.8;
+  margin-bottom: 20px;
+  text-align: center;
+  padding: 20px 0;
+}
+
+.manage-reset-btn {
+  display: block;
+  margin: 0 auto;
+  background: none;
+  border: 1px solid var(--red);
+  color: var(--red);
+  cursor: pointer;
+  padding: 10px 28px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  transition: all 0.25s ease;
+}
+
+.manage-reset-btn:hover {
+  background: var(--red);
+  color: #fff;
+  box-shadow: 0 0 20px rgba(196,30,58,0.4);
+}
+
+.manage-empty-state {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  letter-spacing: 2px;
+  padding: 30px 0;
+  opacity: 0.5;
+}
+
+/* Upload progress toast */
+.upload-toast {
+  position: fixed;
+  bottom: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(196,30,58,0.9);
+  color: #fff;
+  padding: 8px 24px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  letter-spacing: 2px;
+  z-index: 600;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+
+.upload-toast.show { opacity: 1; }
+
+@media (max-width: 768px) {
+  .manage-photo-grid { grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); }
+  .manage-tab { padding: 8px 12px; font-size: 0.72rem; }
+  .quote-inline-input { width: 200px; }
+  .section-action-btn { padding: 4px 10px; font-size: 0.7rem; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- Particle Canvas -->
+<canvas id="particles"></canvas>
+
+<!-- Navigation -->
+<nav>
+  <div class="logo">秦 彻</div>
+  <ul class="links">
+    <li><a href="#home">首页</a></li>
+    <li><a href="#gallery">照片墙</a></li>
+    <li><a href="#quotes">语录</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="nav-else-btn" id="btnElse" title="更多功能">
+      <img src="icon/else.png" alt="" class="nav-else-icon">
+    </button>
+    <div class="nav-dropdown" id="navDropdown">
+      <div class="dropdown-item" data-panel="pomodoro">番茄钟</div>
+      <div class="dropdown-item" data-panel="period">经期记录</div>
+      <div class="dropdown-item" data-panel="todo">待办清单</div>
+      <div class="dropdown-item" data-panel="snake">贪吃鸦</div>
+      <div class="dropdown-item" data-panel="manage">内容管理</div>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero" id="home">
+
+  <!-- Dragon Silhouette SVG -->
+  <svg class="dragon-silhouette" viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg">
+    <path d="M520 180 Q500 120 460 100 Q440 90 420 95 Q400 100 390 110
+             Q380 100 360 60 Q350 30 340 20 Q330 10 310 15 Q290 20 280 40
+             Q270 60 275 90 Q278 110 270 120 Q250 115 230 120 Q200 128 180 145
+             Q160 160 150 180 Q140 200 142 220 Q145 240 155 255
+             Q160 260 170 258 Q180 255 185 245 Q190 235 188 225
+             Q200 240 220 248 Q240 255 260 258 Q280 260 300 255
+             Q310 252 305 245 L280 200 L295 195 Q310 190 325 198
+             Q340 205 345 220 Q350 235 348 250 Q355 240 365 235
+             Q380 228 395 230 Q410 232 420 240 Q430 248 425 260
+             Q435 252 445 248 Q460 242 470 245 Q485 250 490 260
+             Q500 270 510 265 Q520 255 515 240 Q510 225 520 210
+             Q530 195 520 180Z"
+          fill="#c41e3a" />
+    <!-- Wing -->
+    <path d="M230 120 Q200 60 180 30 Q170 15 160 18 Q150 22 155 35
+             Q160 50 170 70 Q160 55 145 45 Q130 35 120 40 Q115 45 125 60
+             Q135 75 150 90 Q165 100 175 108 Q185 115 195 125
+             Q210 140 220 145 Q230 148 235 140 Q238 130 230 120Z"
+          fill="#8b0000" />
+  </svg>
+
+  <!-- Crows -->
+  <svg class="crow-left" viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg">
+    <path d="M50 20 Q45 15 40 18 Q35 22 38 28 Q40 32 45 30
+             Q42 25 38 30 Q35 35 40 40 L55 45 L70 42
+             Q75 40 72 35 Q68 30 62 32
+             Q60 25 55 22 Q52 20 50 20Z" fill="#c41e3a"/>
+    <circle cx="50" cy="28" r="2" fill="#ff2d2d" opacity="0.5"/>
+  </svg>
+
+  <svg class="crow-right" viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg">
+    <path d="M30 30 Q28 25 32 22 Q36 20 38 25 Q42 28 45 28
+             Q48 27 50 28 Q55 30 58 32 L68 35 L78 30
+             Q84 27 80 32 Q76 38 70 40 Q65 42 58 40
+             L50 45 L40 42 Q35 40 32 36 Q30 33 30 30Z" fill="#8b0000"/>
+  </svg>
+
+  <div class="hero-content">
+    <div class="hero-badge">✦ 专属回忆 ✦</div>
+    <h1>秦 彻</h1>
+    <div class="hero-divider"></div>
+    <p class="subtitle">QIN CHE</p>
+    <p class="tagline" style="margin-top:8px;">"总会有人欣赏你本来的样子，比如我"</p>
+  </div>
+
+  <div class="scroll-indicator" onclick="document.getElementById('gallery').scrollIntoView()">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5">
+      <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+</section>
+
+<!-- Gallery Section -->
+<section class="gallery-section" id="gallery">
+  <div class="section-header">
+    <div class="icon-row">
+      <svg viewBox="0 0 24 24"><path d="M3 3h18v18H3V3zm2 2v14h14V5H5zm2 2h4v2H7V7zm6 0h4v2h-4V7zm-6 4h10v6H7v-6z"/></svg>
+      <h2>照片墙</h2>
+      <svg viewBox="0 0 24 24"><path d="M3 3h18v18H3V3zm2 2v14h14V5H5zm2 2h4v2H7V7zm6 0h4v2h-4V7zm-6 4h10v6H7v-6z"/></svg>
+    </div>
+    <p class="sub">MEMORY WALL</p>
+    <div class="section-header-actions">
+      <input type="file" id="photoFileInput" accept="image/*" multiple hidden>
+      <button class="section-action-btn" id="btnUploadPhoto" title="上传照片">＋ 上传照片</button>
+    </div>
+  </div>
+  <div class="gallery" id="galleryGrid"></div>
+</section>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <button class="lightbox-nav lightbox-prev" onclick="navigateLightbox(-1)">◂</button>
+  <img src="" alt="" id="lightboxImg">
+  <button class="lightbox-nav lightbox-next" onclick="navigateLightbox(1)">▸</button>
+  <div class="lightbox-counter" id="lightboxCounter"></div>
+</div>
+
+<!-- Quotes Section -->
+<section class="quotes-section" id="quotes">
+  <div class="section-header">
+    <div class="icon-row">
+      <svg viewBox="0 0 24 24" style="fill:var(--red);opacity:0.6;width:24px;height:24px;"><path d="M6 17h3l2-4V7H5v6h3l-2 4zm8 0h3l2-4V7h-6v6h3l-2 4z"/></svg>
+      <h2>语录</h2>
+      <svg viewBox="0 0 24 24" style="fill:var(--red);opacity:0.6;width:24px;height:24px;"><path d="M6 17h3l2-4V7H5v6h3l-2 4zm8 0h3l2-4V7h-6v6h3l-2 4z"/></svg>
+    </div>
+    <p class="sub">QUOTES</p>
+    <div class="section-header-actions">
+      <button class="section-action-btn" id="btnToggleQuoteForm" title="添加语录">＋ 添加语录</button>
+    </div>
+    <div class="quote-inline-form" id="quoteInlineForm">
+      <input type="text" class="quote-inline-input" id="quoteInlineInput" placeholder="输入你想对秦彻说的话..." maxlength="200">
+      <button class="quote-inline-btn" id="btnAddQuote">添加</button>
+    </div>
+  </div>
+
+  <div class="quotes-container">
+    <svg class="quotes-crow" viewBox="0 0 100 80" width="80" height="64" xmlns="http://www.w3.org/2000/svg">
+      <path d="M50 20 Q45 15 40 18 Q35 22 38 28 Q40 32 45 30 Q42 25 38 30 Q35 35 40 40 L55 45 L70 42 Q75 40 72 35 Q68 30 62 32 Q60 25 55 22 Q52 20 50 20Z" fill="#c41e3a"/>
+    </svg>
+    <div class="quote-mark">"</div>
+    <p class="quote-text" id="quoteText"></p>
+    <div class="quote-divider"></div>
+    <div class="quote-dots" id="quoteDots"></div>
+  </div>
+</section>
+
+<!-- Music Player -->
+<audio id="bgm" preload="auto"></audio>
+<div class="music-player" id="musicPlayer">
+  <div class="player-main">
+    <button class="player-btn play-btn" id="btnPlay" title="播放/暂停">▶</button>
+    <button class="player-btn" id="btnPrev" title="上一首">⏮</button>
+    <button class="player-btn" id="btnNext" title="下一首">⏭</button>
+    <div class="player-info">
+      <span class="player-title" id="playerTitle" title="">♬ 点击播放</span>
+      <div class="player-progress-wrap" id="progressWrap">
+        <div class="player-progress">
+          <div class="player-progress-fill" id="progressFill"></div>
+        </div>
+      </div>
+      <span class="player-time" id="playerTime">00:00 / 00:00</span>
+    </div>
+    <div class="player-volume" id="playerVolume">
+      <button class="player-btn volume-icon-btn" id="btnVolumeIcon" title="静音/取消静音">
+        <img src="icon/volume-medium.png" alt="" class="btn-icon" id="volumeIcon">
+      </button>
+      <div class="volume-slider-wrap" id="volumeSliderWrap">
+        <div class="volume-slider">
+          <div class="volume-slider-fill" id="volumeSliderFill"></div>
+        </div>
+      </div>
+    </div>
+    <button class="player-mode-btn" id="btnMode" title="切换播放模式"><img src="icon/circulation.png" alt="" class="btn-icon" id="modeIcon"> 列表循环</button>
+    <button class="player-list-btn" id="btnPlaylist" title="播放列表"><img src="icon/music.png" alt="" class="btn-icon"></button>
+  </div>
+</div>
+<div class="player-playlist" id="playerPlaylist">
+  <div class="playlist-header">
+    <span>播放列表</span>
+    <button class="playlist-close" id="btnPlaylistClose">✕</button>
+  </div>
+  <div id="playlistItems"></div>
+</div>
+<div class="player-toast" id="playerToast"></div>
+
+<!-- Upload Toast -->
+<div class="upload-toast" id="uploadToast"></div>
+
+<!-- Footer -->
+<footer>
+  <svg class="footer-dragon" viewBox="0 0 200 50" width="200" height="50" xmlns="http://www.w3.org/2000/svg">
+    <path d="M20 35 Q40 10 60 25 Q80 40 100 20 Q120 0 140 25 Q160 40 180 20" fill="none" stroke="#c41e3a" stroke-width="1"/>
+    <path d="M40 30 Q50 18 60 28" fill="none" stroke="#8b0000" stroke-width="0.8"/>
+    <path d="M120 28 Q130 16 140 26" fill="none" stroke="#8b0000" stroke-width="0.8"/>
+    <circle cx="55" cy="24" r="1.5" fill="#ff2d2d" opacity="0.4"/>
+    <circle cx="135" cy="22" r="1.5" fill="#ff2d2d" opacity="0.4"/>
+  </svg>
+  <p>秦彻 <span class="heart">♥</span> 专属回忆 · 2026</p>
+</footer>
+
+<!-- Pomodoro Panel -->
+<div class="util-overlay" id="pomodoroPanel">
+  <div class="util-panel">
+    <div class="util-panel-header">
+      <h3>番茄钟</h3>
+      <button class="util-panel-close" onclick="closeUtilPanel('pomodoro')">✕</button>
+    </div>
+    <div class="pomodoro-display">
+      <div class="pomodoro-time" id="pomodoroTime">15:00</div>
+      <div class="pomodoro-label" id="pomodoroLabel">专注</div>
+    </div>
+    <div class="pomodoro-presets" id="pomodoroPresets">
+      <button class="pomodoro-preset active" data-min="15" data-label="专注">15分钟</button>
+      <button class="pomodoro-preset" data-min="30" data-label="专注">30分钟</button>
+      <button class="pomodoro-preset" data-min="60" data-label="深度专注">60分钟</button>
+    </div>
+    <div class="pomodoro-controls">
+      <button class="pomodoro-btn primary-btn" id="btnPomodoroStart">开始</button>
+      <button class="pomodoro-btn" id="btnPomodoroReset">重置</button>
+      <button class="pomodoro-btn" id="btnPomodoroEnd">结束</button>
+    </div>
+  </div>
+</div>
+
+<!-- Period Tracker Panel -->
+<div class="util-overlay" id="periodPanel">
+  <div class="util-panel">
+    <div class="util-panel-header">
+      <h3>经期记录</h3>
+      <button class="util-panel-close" onclick="closeUtilPanel('period')">✕</button>
+    </div>
+    <div class="period-month-nav">
+      <button id="btnPeriodPrev">◂</button>
+      <div class="period-date-pickers">
+        <span class="period-year-label" id="periodYearLabel">2026年</span>
+        <span class="period-month-label-click" id="periodMonthLabelClick">7月</span>
+      </div>
+      <button id="btnPeriodNext">▸</button>
+    </div>
+    <div class="period-picker-wrap" id="periodYearPickerWrap">
+      <div class="period-picker-list" id="periodYearList"></div>
+    </div>
+    <div class="period-picker-wrap" id="periodMonthPickerWrap">
+      <div class="period-picker-list" id="periodMonthList"></div>
+    </div>
+    <div class="period-calendar" id="periodCalendar"></div>
+    <div class="period-stats">
+      <div class="period-stat">
+        <div class="stat-num" id="periodCycleLen">--</div>
+        <div class="stat-label">平均周期(天)</div>
+      </div>
+      <div class="period-stat">
+        <div class="stat-num" id="periodMarkedCount">--</div>
+        <div class="stat-label">本月标记</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Todo Panel -->
+<div class="util-overlay" id="todoPanel">
+  <div class="util-panel" style="max-width:540px;">
+    <div class="util-panel-header">
+      <h3>待办清单</h3>
+      <button class="util-panel-close" onclick="closeUtilPanel('todo')">✕</button>
+    </div>
+    <div class="todo-input-wrap">
+      <input type="text" class="todo-input" id="todoInput" placeholder="添加新的待办事项..." maxlength="200">
+      <button class="todo-add-btn" id="btnTodoAdd">添加</button>
+    </div>
+    <div class="todo-divider"></div>
+    <div class="todo-list" id="todoList">
+      <div class="todo-empty">还没有待办事项，开始添加吧</div>
+    </div>
+    <div class="todo-count" id="todoCount"></div>
+  </div>
+</div>
+
+
+<!-- Snake Game Panel -->
+<div class="util-overlay" id="snakePanel">
+  <div class="util-panel" style="max-width:480px;">
+    <div class="util-panel-header">
+      <h3>贪吃鸦</h3>
+      <button class="util-panel-close" onclick="closeUtilPanel('snake')">✕</button>
+    </div>
+    <div class="snake-score">得分: <span id="snakeScore">0</span>  |  最高: <span id="snakeBest">0</span></div>
+    <canvas id="snakeCanvas" width="400" height="400"></canvas>
+    <div class="snake-controls">
+      <button class="pomodoro-btn primary-btn" id="btnSnakeStart">开始游戏</button>
+      <button class="pomodoro-btn" id="btnSnakePause" style="display:none;">暂停</button>
+      <button class="pomodoro-btn" id="btnSnakeEnd" style="display:none;">结束</button>
+    </div>
+    <div class="snake-hint" id="snakeHintPC">↑ ↓ ← → 方向键控制  ·  空格键暂停</div>
+    <div class="snake-hint" id="snakeHintMobile" style="display:none;">下方按键控制方向  ·  双击画面暂停</div>
+    <div class="snake-dpad" id="snakeDpad">
+      <div class="dpad-grid">
+        <div class="dpad-empty"></div>
+        <button class="dpad-btn" id="dpadUp">▲</button>
+        <div class="dpad-empty"></div>
+        <button class="dpad-btn" id="dpadLeft">◀</button>
+        <div class="dpad-empty"></div>
+        <button class="dpad-btn" id="dpadRight">▶</button>
+        <div class="dpad-empty"></div>
+        <button class="dpad-btn" id="dpadDown">▼</button>
+        <div class="dpad-empty"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Content Management Panel -->
+<div class="util-overlay" id="managePanel">
+  <div class="util-panel" style="max-width:540px;">
+    <div class="util-panel-header">
+      <h3>内容管理</h3>
+      <button class="util-panel-close" onclick="closeUtilPanel('manage')">✕</button>
+    </div>
+    <div class="manage-tabs">
+      <button class="manage-tab active" data-tab="photos">照片管理</button>
+      <button class="manage-tab" data-tab="quotes">语录管理</button>
+      <button class="manage-tab" data-tab="reset">重置数据</button>
+    </div>
+
+    <!-- Photos Tab -->
+    <div class="manage-tab-content active" id="tabPhotos">
+      <input type="file" id="manageFileInput" accept="image/*" multiple hidden>
+      <div class="manage-upload-zone" id="manageUploadZone">
+        <div class="manage-upload-icon">📷</div>
+        <div class="manage-upload-text">点击或拖拽上传照片（支持多选批量上传）</div>
+        <div class="manage-upload-hint">支持 JPG / PNG / GIF，单张不超过 20MB</div>
+        <button class="manage-upload-btn" id="btnManageUpload">选择照片</button>
+      </div>
+      <div class="manage-photo-toolbar" id="managePhotoToolbar">
+        <span class="selected-count">已选 <span id="manageSelectedCount">0</span> 张</span>
+        <button class="manage-select-all-btn" id="btnSelectAll">全选</button>
+        <button class="manage-batch-delete-btn" id="btnBatchDelete">删除选中</button>
+      </div>
+      <div class="manage-photo-grid" id="managePhotoGrid"></div>
+      <div class="manage-empty-state" id="managePhotoEmpty">还没有上传照片</div>
+    </div>
+
+    <!-- Quotes Tab -->
+    <div class="manage-tab-content" id="tabQuotes">
+      <div class="manage-quote-add-form">
+        <input type="text" class="manage-quote-input" id="manageQuoteInput" placeholder="输入新语录..." maxlength="200">
+        <button class="manage-quote-add-btn" id="btnManageAddQuote">添加</button>
+      </div>
+      <div class="manage-quote-list" id="manageQuoteList"></div>
+      <div class="manage-empty-state" id="manageQuoteEmpty">还没有自定义语录</div>
+    </div>
+
+    <!-- Reset Tab -->
+    <div class="manage-tab-content" id="tabReset">
+      <div class="manage-reset-info">
+        重置将清除所有个人数据，包括：<br>
+        · 上传的照片<br>
+        · 添加的语录<br>
+        · 恢复为默认状态<br><br>
+        ⚠️ 此操作不可撤销
+      </div>
+      <button class="manage-reset-btn" id="btnResetAll">确认重置</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============ Photos Data ============
+const photos = [
+  "01d4419b001abcec35ce9724b1ab42ae.jpg",
+  "25dd55518f5fd8eed5615bcede1328a5.jpg",
+  "2630ea966307984ced41bb162ba93731.jpg",
+  "2927597c8ae8a81154f4f0780491cb53.jpg",
+  "299676d5b3d95c5cdd9045c3ab6f52f8.jpg",
+  "6faa15f3dc5bca086e1f528bf7133713.jpg",
+  "88afd393462f5f7a3b70a9f63d8aae35.jpg",
+  "973878611e13888954293f6a061e3560.jpg",
+  "IMG_20251129_231101_AI看图.jpg",
+  "IMG_20251225_083842_AI看图.jpg",
+  "MEITU_20251129_170759272_polarr_AI看图.jpg",
+  "aa3108832b3d2f764cbd890534717460.jpg",
+  "b7ad7b00a8ae105a3931a0a7cf2dbf7f.jpg",
+  "c0491f3ee20d7a7d7626bd848bdedbce.jpg",
+  "d3c7e73f2789c8cb51233ba10fcd920e.jpg",
+  "d9b1396d8bfbb8be1789cff89acacd19.jpg",
+  "fe4658346b6a14e8ee2cab70c3d9431d.jpg",
+  "quality_restoration_20250829210304252_polarr_AI看图.jpg",
+  "retouch_2025101819125186_AI看图.jpg",
+  "retouch_2026022720555013_polarr_AI看图.jpg",
+];
+
+// ============ Quotes Data ============
+const quotes = [
+  "做得很好，去炫耀吧",
+  "专注自己，或者专注我",
+  "很多事忍一时也不会风平浪静，只会越想越气",
+  "我没有必须受人欢迎的义务",
+  "这些关系，除了让你的头更痛一点外，作用不大",
+  "这么费神才能维护的关系，有必要保留吗？",
+  "那就简单一点，只在乎应该在乎的人",
+  "你可以先在我这解决情绪，我再帮你解决问题",
+  "要是觉得麻烦，索性让它自己发展。在意别人的眼光，会什么都做不好",
+  "与其想东想西，内耗自己，不如用这个时间来思考一些世界难题。说不定想着想着，就睡着了",
+  "没有人应该单方面地跟上另一个人的节奏",
+  "接受保护不代表本身弱小",
+  "不可以就说不可以，不用逼自己附和别人的想法",
+  "老大不能说不行",
+  "只是难，并不是做不到",
+  "一味讨好，只会让自己失去主动权",
+  "也许不是每个人都需要被理解",
+  "人终究只能靠自己的双脚站在这片土地上",
+  "不用勉强，累了就歇歇",
+  "别什么都压在自己身上，你又不是抗压器",
+  "不舒服不用强忍，我看得出你的情绪",
+  "想哭就哭，在我面前做你自己就可以",
+  "不要妄自菲薄，你比想象中有用的多",
+  "生命有限，更应该把时间花费在有趣的事物上面",
+  "新的一岁，有人作后盾可以肆意任性",
+  "这有什么输不起的",
+  "现在是你的主场，如果不强势一点，是镇不住其他人的",
+  "强的人就应该永远强吗？",
+  "没有什么比靠自己调整好的状态更有力量，相信自己的能力",
+  "总会有人欣赏你本来的样子，比如我",
+  "累就休息，难过就哭出来，什么都不想做就不做，我的时间也一起交给你",
+];
+
+// ============ IndexedDB Wrapper ============
+const DB_NAME = 'qinche-db';
+const DB_VERSION = 1;
+const STORE_NAME = 'user_photos';
+
+function openDB() {
+  return new Promise(function(resolve, reject) {
+    if (!window.indexedDB) { reject(new Error('IndexedDB not supported')); return; }
+    var request = indexedDB.open(DB_NAME, DB_VERSION);
+    request.onerror = function() { reject(request.error); };
+    request.onsuccess = function() { resolve(request.result); };
+    request.onupgradeneeded = function(e) {
+      var db = e.target.result;
+      if (!db.objectStoreNames.contains(STORE_NAME)) {
+        var store = db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
+        store.createIndex('createdAt', 'createdAt', { unique: false });
+      }
+    };
+  });
+}
+
+function savePhoto(dataUrl, filename) {
+  return openDB().then(function(db) {
+    return new Promise(function(resolve, reject) {
+      var tx = db.transaction(STORE_NAME, 'readwrite');
+      var store = tx.objectStore(STORE_NAME);
+      var record = { dataUrl: dataUrl, filename: filename, createdAt: Date.now() };
+      var request = store.add(record);
+      request.onsuccess = function() { resolve(request.result); };
+      request.onerror = function() { reject(request.error); };
+      tx.oncomplete = function() { db.close(); };
+    });
+  });
+}
+
+function loadAllPhotos() {
+  return openDB().then(function(db) {
+    return new Promise(function(resolve, reject) {
+      var tx = db.transaction(STORE_NAME, 'readonly');
+      var store = tx.objectStore(STORE_NAME);
+      var request = store.getAll();
+      request.onsuccess = function() { resolve(request.result || []); };
+      request.onerror = function() { reject(request.error); };
+      tx.oncomplete = function() { db.close(); };
+    });
+  });
+}
+
+function deletePhoto(id) {
+  return openDB().then(function(db) {
+    return new Promise(function(resolve, reject) {
+      var tx = db.transaction(STORE_NAME, 'readwrite');
+      var store = tx.objectStore(STORE_NAME);
+      var request = store.delete(id);
+      request.onsuccess = function() { resolve(); };
+      request.onerror = function() { reject(request.error); };
+      tx.oncomplete = function() { db.close(); };
+    });
+  });
+}
+
+function clearAllPhotos() {
+  return openDB().then(function(db) {
+    return new Promise(function(resolve, reject) {
+      var tx = db.transaction(STORE_NAME, 'readwrite');
+      var store = tx.objectStore(STORE_NAME);
+      var request = store.clear();
+      request.onsuccess = function() { resolve(); };
+      request.onerror = function() { reject(request.error); };
+      tx.oncomplete = function() { db.close(); };
+    });
+  });
+}
+
+// ============ Image Resize Utility ============
+function resizeImage(file) {
+  return new Promise(function(resolve, reject) {
+    if (file.size > 20 * 1024 * 1024) {
+      reject(new Error('图片过大，请选择小于20MB的图片'));
+      return;
+    }
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var img = new Image();
+      img.onload = function() {
+        var MAX_W = 1200, MAX_H = 1200;
+        var w = img.width, h = img.height;
+        if (w <= MAX_W && h <= MAX_H) {
+          resolve(e.target.result);
+          return;
+        }
+        var ratio = Math.min(MAX_W / w, MAX_H / h);
+        var canvas = document.createElement('canvas');
+        canvas.width = Math.round(w * ratio);
+        canvas.height = Math.round(h * ratio);
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL('image/jpeg', 0.85));
+      };
+      img.onerror = function() { reject(new Error('图片加载失败')); };
+      img.src = e.target.result;
+    };
+    reader.onerror = function() { reject(new Error('文件读取失败')); };
+    reader.readAsDataURL(file);
+  });
+}
+
+// ============ Custom Quotes localStorage ============
+const CUSTOM_QUOTES_KEY = 'qinche_custom_quotes';
+
+function loadCustomQuotes() {
+  try {
+    var data = localStorage.getItem(CUSTOM_QUOTES_KEY);
+    return data ? JSON.parse(data) : [];
+  } catch(e) { return []; }
+}
+
+function saveCustomQuotes(quotesArr) {
+  try {
+    localStorage.setItem(CUSTOM_QUOTES_KEY, JSON.stringify(quotesArr));
+  } catch(e) {
+    showUploadToast('存储空间不足，请清理一些数据');
+  }
+}
+
+function getAllQuotes() {
+  var deletedQuotes = getDeletedQuotes();
+  var allRaw = [];
+  // Default quotes (not deleted)
+  quotes.forEach(function(q, i) {
+    if (deletedQuotes.indexOf(i) === -1) {
+      allRaw.push({ text: q, type: 'default', index: i });
+    }
+  });
+  // Custom quotes
+  var custom = loadCustomQuotes();
+  custom.forEach(function(q, i) {
+    allRaw.push({ text: q, type: 'custom', index: i });
+  });
+
+  // Apply saved order
+  var savedOrder = loadQuotesOrder();
+  if (!savedOrder || savedOrder.length === 0) {
+    return allRaw.map(function(e) { return e.text; });
+  }
+
+  // Build lookup key → entry
+  var entryMap = {};
+  allRaw.forEach(function(e) {
+    var key = e.type === 'default' ? 'd_' + e.index : 'c_' + e.index;
+    entryMap[key] = e;
+  });
+
+  var ordered = [];
+  var seen = {};
+  savedOrder.forEach(function(o) {
+    var key = o.type === 'default' ? 'd_' + o.index : 'c_' + o.index;
+    if (entryMap[key] && !seen[key]) {
+      ordered.push(entryMap[key]);
+      seen[key] = true;
+    }
+  });
+
+  // Append new items not in saved order
+  allRaw.forEach(function(e) {
+    var key = e.type === 'default' ? 'd_' + e.index : 'c_' + e.index;
+    if (!seen[key]) {
+      ordered.push(e);
+      seen[key] = true;
+    }
+  });
+
+  return ordered.map(function(e) { return e.text; });
+}
+
+// ============ Quotes Order Persistence ============
+var QUOTES_ORDER_KEY = 'qinche_quotes_order';
+
+function loadQuotesOrder() {
+  try {
+    var data = localStorage.getItem(QUOTES_ORDER_KEY);
+    return data ? JSON.parse(data) : null;
+  } catch(e) { return null; }
+}
+
+function saveQuotesOrderFromEntries(entries) {
+  var order = entries.map(function(e) {
+    return { type: e.type, index: e.index };
+  });
+  try {
+    localStorage.setItem(QUOTES_ORDER_KEY, JSON.stringify(order));
+  } catch(e) {}
+}
+
+function buildQuoteEntries() {
+  var deletedQuotes = getDeletedQuotes();
+  var entries = [];
+  quotes.forEach(function(q, i) {
+    if (deletedQuotes.indexOf(i) === -1) {
+      entries.push({ text: q, type: 'default', index: i });
+    }
+  });
+  var custom = loadCustomQuotes();
+  custom.forEach(function(q, i) {
+    entries.push({ text: q, type: 'custom', index: i });
+  });
+  return entries;
+}
+
+function applyQuotesOrder(entries) {
+  var savedOrder = loadQuotesOrder();
+  if (!savedOrder || savedOrder.length === 0) return entries;
+
+  var entryMap = {};
+  entries.forEach(function(e) {
+    var key = e.type === 'default' ? 'd_' + e.index : 'c_' + e.index;
+    entryMap[key] = e;
+  });
+
+  var ordered = [];
+  var seen = {};
+  savedOrder.forEach(function(o) {
+    var key = o.type === 'default' ? 'd_' + o.index : 'c_' + o.index;
+    if (entryMap[key] && !seen[key]) {
+      ordered.push(entryMap[key]);
+      seen[key] = true;
+    }
+  });
+
+  entries.forEach(function(e) {
+    var key = e.type === 'default' ? 'd_' + e.index : 'c_' + e.index;
+    if (!seen[key]) {
+      ordered.push(e);
+      seen[key] = true;
+    }
+  });
+
+  return ordered;
+}
+
+function autoSaveQuotesOrder() {
+  var entries = buildQuoteEntries();
+  var ordered = applyQuotesOrder(entries);
+  saveQuotesOrderFromEntries(ordered);
+}
+
+// ============ Upload Toast ============
+function showUploadToast(msg) {
+  var toast = document.getElementById('uploadToast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toast._timeout);
+  toast._timeout = setTimeout(function() { toast.classList.remove('show'); }, 2500);
+}
+
+// ============ Gallery Items (unified array) ============
+var galleryItems = [];
+var currentGalleryIndex = 0;
+
+// ============ Gallery Order Persistence ============
+var GALLERY_ORDER_KEY = 'qinche_gallery_order';
+
+// ============ Deleted Default Items Blacklist ============
+var DELETED_PHOTOS_KEY = 'qinche_deleted_photos';
+var DELETED_QUOTES_KEY = 'qinche_deleted_quotes';
+
+function getDeletedPhotos() {
+  try { return JSON.parse(localStorage.getItem(DELETED_PHOTOS_KEY) || '[]'); } catch(e) { return []; }
+}
+function markPhotoDeleted(filename) {
+  var list = getDeletedPhotos();
+  if (list.indexOf(filename) === -1) { list.push(filename); }
+  localStorage.setItem(DELETED_PHOTOS_KEY, JSON.stringify(list));
+}
+function getDeletedQuotes() {
+  try { return JSON.parse(localStorage.getItem(DELETED_QUOTES_KEY) || '[]'); } catch(e) { return []; }
+}
+function markQuoteDeleted(index) {
+  var list = getDeletedQuotes();
+  if (list.indexOf(index) === -1) { list.push(index); }
+  localStorage.setItem(DELETED_QUOTES_KEY, JSON.stringify(list));
+}
+
+function loadGalleryOrder() {
+  try {
+    var data = localStorage.getItem(GALLERY_ORDER_KEY);
+    return data ? JSON.parse(data) : null;
+  } catch(e) { return null; }
+}
+
+function saveGalleryOrder(items) {
+  var order = items.map(function(item) {
+    return { type: item.type, id: item.type === 'default' ? item.filename : item.dbId };
+  });
+  try {
+    localStorage.setItem(GALLERY_ORDER_KEY, JSON.stringify(order));
+  } catch(e) {}
+}
+
+function buildDefaultGalleryItems(userPhotos) {
+  // Build items in default order, skipping deleted default photos
+  var deletedPhotos = getDeletedPhotos();
+  var defaultItems = photos.filter(function(f) {
+    return deletedPhotos.indexOf(f) === -1;
+  }).map(function(f) {
+    return { type: 'default', src: 'photos/' + f, filename: f };
+  });
+  return defaultItems.concat((userPhotos || []).map(function(p) {
+    return { type: 'user', src: p.dataUrl, filename: p.filename, dbId: p.id };
+  }));
+}
+
+function applyGalleryOrder(rawItems, savedOrder, userPhotos) {
+  if (!savedOrder || savedOrder.length === 0) return rawItems;
+
+  // Build lookup maps
+  var itemMap = {};
+  rawItems.forEach(function(item) {
+    var key = item.type === 'default' ? 'd_' + item.filename : 'u_' + item.dbId;
+    itemMap[key] = item;
+  });
+
+  // Build user photo lookup for new photos not in saved order
+  var userPhotoMap = {};
+  (userPhotos || []).forEach(function(p) { userPhotoMap[p.id] = p; });
+
+  // Reconstruct order from saved order, skipping deleted items
+  var ordered = [];
+  var seenKeys = {};
+  savedOrder.forEach(function(entry) {
+    var key = entry.type === 'default' ? 'd_' + entry.id : 'u_' + entry.id;
+    if (itemMap[key] && !seenKeys[key]) {
+      ordered.push(itemMap[key]);
+      seenKeys[key] = true;
+    }
+  });
+
+  // Append new items not in saved order
+  rawItems.forEach(function(item) {
+    var key = item.type === 'default' ? 'd_' + item.filename : 'u_' + item.dbId;
+    if (!seenKeys[key]) {
+      ordered.push(item);
+      seenKeys[key] = true;
+    }
+  });
+
+  return ordered;
+}
+
+function buildGalleryItems(userPhotos) {
+  var rawItems = buildDefaultGalleryItems(userPhotos);
+  var savedOrder = loadGalleryOrder();
+  galleryItems = applyGalleryOrder(rawItems, savedOrder, userPhotos);
+  saveGalleryOrder(galleryItems);
+}
+
+// Single gallery item element builder
+function createGalleryItemElement(item, idx) {
+  var d = document.createElement('div');
+  d.className = 'gallery-item' + (item.type === 'user' ? ' user-photo' : '');
+  d.innerHTML = '<img src="' + item.src + '" alt="秦彻" loading="lazy" onerror="this.src=\'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 300 400%22><rect fill=%22%231a1a1a%22 width=%22300%22 height=%22400%22/><text fill=%22%23666%22 x=%22150%22 y=%22200%22 text-anchor=%22middle%22 font-size=%2214%22>暂无图片</text></svg>\'">'
+    + '<div class="overlay"><span>' + (item.type === 'user' ? '我的 #' : '#') + String(idx+1).padStart(2,'0') + '</span></div>';
+  d.innerHTML += '<button class="photo-delete-btn" data-dbid="' + (item.dbId || '') + '" data-filename="' + (item.filename || '') + '" data-type="' + item.type + '" title="删除照片">✕</button>';
+  // Click
+  d.addEventListener('click', function(e) {
+    if (e.target.classList.contains('photo-delete-btn')) {
+      e.stopPropagation();
+      var type = e.target.dataset.type;
+      if (type === 'user') {
+        deleteUserPhoto(parseInt(e.target.dataset.dbid));
+      } else {
+        deleteDefaultPhoto(e.target.dataset.filename);
+      }
+      return;
+    }
+    openLightbox(idx);
+  });
+  // Drag
+  d.draggable = true;
+  d.dataset.galleryIndex = idx;
+  d.addEventListener('dragstart', function(e) {
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', this.dataset.galleryIndex);
+    this.classList.add('dragging');
+  });
+  d.addEventListener('dragend', function() { this.classList.remove('dragging'); });
+  d.addEventListener('dragover', function(e) { e.preventDefault(); if (!this.classList.contains('dragging')) this.classList.add('drag-over'); });
+  d.addEventListener('dragleave', function() { this.classList.remove('drag-over'); });
+  d.addEventListener('drop', function(e) {
+    e.preventDefault();
+    this.classList.remove('drag-over');
+    var fromIdx = parseInt(e.dataTransfer.getData('text/plain'));
+    var toIdx = parseInt(this.dataset.galleryIndex);
+    if (fromIdx !== toIdx && !isNaN(fromIdx) && !isNaN(toIdx)) {
+      var moved = galleryItems.splice(fromIdx, 1)[0];
+      galleryItems.splice(toIdx, 0, moved);
+      saveGalleryOrder(galleryItems);
+      renderGalleryGrid();
+    }
+  });
+  return d;
+}
+
+// Render grid from current galleryItems (after drag reorder)
+function renderGalleryGrid() {
+  var grid = document.getElementById('galleryGrid');
+  grid.innerHTML = '';
+  galleryItems.forEach(function(item, i) {
+    grid.appendChild(createGalleryItemElement(item, i));
+  });
+}
+
+function renderGallery(userPhotos) {
+  buildGalleryItems(userPhotos);
+  renderGalleryGrid();
+}
+
+// ============ Build Gallery ============
+const galleryGrid = document.getElementById('galleryGrid');
+
+// Initial render: default photos first, then load user photos
+buildGalleryItems([]);
+renderGallery([]);
+
+// Load user photos async
+loadAllPhotos().then(function(userPhotos) {
+  renderGallery(userPhotos);
+}).catch(function() {
+  // IndexedDB unavailable - silently use defaults
+});
+
+// ============ Lightbox ============
+const lightbox = document.getElementById('lightbox');
+const lightboxImg = document.getElementById('lightboxImg');
+const lightboxCounter = document.getElementById('lightboxCounter');
+
+function openLightbox(index) {
+  currentGalleryIndex = index;
+  lightboxImg.src = galleryItems[index].src;
+  lightboxCounter.textContent = (index + 1) + ' / ' + galleryItems.length;
+  lightbox.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  lightbox.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function navigateLightbox(dir) {
+  currentGalleryIndex = (currentGalleryIndex + dir + galleryItems.length) % galleryItems.length;
+  lightboxImg.style.opacity = '0';
+  setTimeout(function() {
+    lightboxImg.src = galleryItems[currentGalleryIndex].src;
+    lightboxCounter.textContent = (currentGalleryIndex + 1) + ' / ' + galleryItems.length;
+    lightboxImg.style.opacity = '1';
+  }, 150);
+}
+
+lightboxImg.style.transition = 'opacity 0.15s ease';
+
+// Keyboard controls
+document.addEventListener('keydown', (e) => {
+  if (!lightbox.classList.contains('active')) return;
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowLeft') navigateLightbox(-1);
+  if (e.key === 'ArrowRight') navigateLightbox(1);
+});
+
+lightbox.addEventListener('click', (e) => {
+  if (e.target === lightbox) closeLightbox();
+});
+
+// ============ Quotes Rotation ============
+const quoteText = document.getElementById('quoteText');
+const quoteDots = document.getElementById('quoteDots');
+var quoteIndex = 0;
+var quoteIntervalId = null;
+
+function renderQuoteDots() {
+  var allQuotes = getAllQuotes();
+  quoteDots.innerHTML = '';
+  allQuotes.forEach(function(_, i) {
+    var dot = document.createElement('div');
+    dot.className = 'quote-dot' + (i === 0 ? ' active' : '');
+    if (i >= quotes.length) { dot.classList.add('quote-custom-dot'); }
+    dot.addEventListener('click', function() { showQuote(i); });
+    quoteDots.appendChild(dot);
+  });
+}
+
+function showQuote(index) {
+  var allQuotes = getAllQuotes();
+  if (allQuotes.length === 0) { quoteText.textContent = ''; return; }
+  if (index >= allQuotes.length) { index = 0; }
+  quoteIndex = index;
+  quoteText.style.opacity = '0';
+  quoteText.style.transform = 'translateY(10px)';
+  setTimeout(function() {
+    quoteText.textContent = allQuotes[index];
+    quoteText.style.opacity = '1';
+    quoteText.style.transform = 'translateY(0)';
+  }, 300);
+
+  var dots = document.querySelectorAll('.quote-dot');
+  dots.forEach(function(d, i) { d.classList.toggle('active', i === index); });
+}
+
+function refreshQuotes() {
+  renderQuoteDots();
+  quoteIndex = 0;
+  showQuote(0);
+  if (quoteIntervalId) clearInterval(quoteIntervalId);
+  quoteIntervalId = setInterval(function() {
+    var allQuotes = getAllQuotes();
+    if (allQuotes.length === 0) return;
+    quoteIndex = (quoteIndex + 1) % allQuotes.length;
+    showQuote(quoteIndex);
+  }, 5000);
+}
+
+// Init
+renderQuoteDots();
+quoteText.textContent = getAllQuotes()[0] || '';
+quoteText.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+
+quoteIntervalId = setInterval(function() {
+  var allQuotes = getAllQuotes();
+  if (allQuotes.length === 0) return;
+  quoteIndex = (quoteIndex + 1) % allQuotes.length;
+  showQuote(quoteIndex);
+}, 5000);
+
+// ============ Quote Touch Swipe ============
+(function() {
+  var container = document.querySelector('.quotes-container');
+  var touchStartX = 0, touchStartY = 0;
+
+  container.addEventListener('touchstart', function(e) {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+  }, { passive: true });
+
+  container.addEventListener('touchend', function(e) {
+    var dx = e.changedTouches[0].clientX - touchStartX;
+    var dy = e.changedTouches[0].clientY - touchStartY;
+    // Only swipe if horizontal distance > 50px and greater than vertical
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
+      var allQuotes = getAllQuotes();
+      if (allQuotes.length === 0) return;
+      if (dx < 0) {
+        // 左滑 → 下一条
+        quoteIndex = (quoteIndex + 1) % allQuotes.length;
+      } else {
+        // 右滑 → 上一条
+        quoteIndex = (quoteIndex - 1 + allQuotes.length) % allQuotes.length;
+      }
+      showQuote(quoteIndex);
+      // Reset auto-rotation timer
+      if (quoteIntervalId) clearInterval(quoteIntervalId);
+      quoteIntervalId = setInterval(function() {
+        var qs = getAllQuotes();
+        if (qs.length === 0) return;
+        quoteIndex = (quoteIndex + 1) % qs.length;
+        showQuote(quoteIndex);
+      }, 5000);
+    }
+  });
+})();
+
+// ============ Particle System (Fire Embers) ============
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+let particles = [];
+let animationId;
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+class Ember {
+  constructor() {
+    this.reset();
+    this.y = Math.random() * canvas.height; // Start at random height
+  }
+
+  reset() {
+    this.x = Math.random() * canvas.width;
+    this.y = canvas.height + 10;
+    this.size = Math.random() * 2.5 + 0.5;
+    this.speedY = -(Math.random() * 0.8 + 0.2);
+    this.speedX = (Math.random() - 0.5) * 0.5;
+    this.opacity = Math.random() * 0.5 + 0.2;
+    this.life = 0;
+    this.maxLife = Math.random() * 0.6 + 0.4;
+    this.hue = Math.random() < 0.7 ? 0 : 30; // Mostly red, some orange
+  }
+
+  update() {
+    this.x += this.speedX;
+    this.y += this.speedY;
+    this.life += 0.002;
+    if (this.y < -20 || this.life > this.maxLife) {
+      this.reset();
+      this.y = canvas.height + 10;
+      this.life = 0;
+    }
+  }
+
+  draw() {
+    const alpha = this.opacity * (1 - this.life / this.maxLife);
+    const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size * 2);
+    if (this.hue === 0) {
+      gradient.addColorStop(0, `rgba(255, 60, 30, ${alpha})`);
+      gradient.addColorStop(0.5, `rgba(200, 20, 20, ${alpha * 0.6})`);
+      gradient.addColorStop(1, `rgba(150, 0, 0, 0)`);
+    } else {
+      gradient.addColorStop(0, `rgba(255, 140, 30, ${alpha})`);
+      gradient.addColorStop(0.5, `rgba(220, 100, 20, ${alpha * 0.5})`);
+      gradient.addColorStop(1, `rgba(180, 60, 0, 0)`);
+    }
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fillStyle = gradient;
+    ctx.fill();
+  }
+}
+
+// Initialize particles
+const particleCount = 80;
+for (let i = 0; i < particleCount; i++) {
+  particles.push(new Ember());
+}
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach(p => {
+    p.update();
+    p.draw();
+  });
+  animationId = requestAnimationFrame(animate);
+}
+
+animate();
+
+// ============ Smooth section reveal on scroll ============
+var _galleryObserver = new IntersectionObserver(function(entries) {
+  entries.forEach(function(entry) {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.1 });
+
+window._galleryObserver = _galleryObserver;
+
+document.querySelectorAll('.gallery-item').forEach(function(item) {
+  item.style.opacity = '0';
+  item.style.transform = 'translateY(30px)';
+  item.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+  _galleryObserver.observe(item);
+});
+
+// Stagger the gallery items
+setTimeout(function() {
+  document.querySelectorAll('.gallery-item').forEach(function(item, i) {
+    item.style.transitionDelay = (i * 0.05) + 's';
+  });
+}, 100);
+
+console.log('%c🐉 秦彻 · 专属回忆 %c已就绪',
+  'color: #c41e3a; font-size: 1.2em; font-weight: bold;',
+  'color: #8a7e72;');
+console.log('%c"总会有人欣赏你本来的样子，比如我"', 'color: #c9a96e; font-style: italic;');
+
+// ============ Music Player ============
+const musicFiles = [
+  "恋与深空 - 不设防禁区.mp3",
+  "恋与深空 - 久候狂欢之徒.mp3",
+  "恋与深空 - 以寂灭，以新生.mp3",
+  "恋与深空 - 半透明侵占.mp3",
+  "恋与深空 - 即兴放逐.mp3",
+  "恋与深空 - 双影交叠时.mp3",
+  "恋与深空 - 奔涌至昨夜尽头.mp3",
+  "恋与深空 - 寸寸热潮.mp3",
+  "恋与深空 - 无人知晓时.mp3",
+  "恋与深空 - 无桎绿野.mp3",
+  "恋与深空 - 无赦之城.mp3",
+  "恋与深空 - 昔愿遂心.mp3",
+  "恋与深空 - 春天对花所做的事.mp3",
+  "恋与深空 - 有形之锢.mp3",
+  "恋与深空 - 欲揽旖旎色.mp3",
+  "恋与深空 - 毁灭中新生.mp3",
+  "恋与深空 - 热意揣度.mp3",
+  "恋与深空 - 盛夏与你与海风.mp3",
+  "恋与深空 - 直到心跳沸腾.mp3",
+  "恋与深空 - 秘焰沸腾之地.mp3",
+  "恋与深空 - 迷离夜.mp3",
+  "恋与深空 - 银翼安魂地.mp3",
+  "恋与深空 - 雾行夜.mp3",
+  "恋与深空 - 龙谷咏叹.mp3",
+  "恋与深空,Mikelangelo Loconte - 交错视界.mp3",
+];
+
+let currentTrack = 0;
+let playMode = 'list-loop';
+let playlistOrder = musicFiles.map(function(_, i) { return i; });
+
+const bgm = document.getElementById('bgm');
+const btnPlay = document.getElementById('btnPlay');
+const btnPrev = document.getElementById('btnPrev');
+const btnNext = document.getElementById('btnNext');
+const btnMode = document.getElementById('btnMode');
+const btnPlaylist = document.getElementById('btnPlaylist');
+const btnPlaylistClose = document.getElementById('btnPlaylistClose');
+const playerTitle = document.getElementById('playerTitle');
+const playerTime = document.getElementById('playerTime');
+const progressFill = document.getElementById('progressFill');
+const progressWrap = document.getElementById('progressWrap');
+const playerPlaylist = document.getElementById('playerPlaylist');
+const playlistItems = document.getElementById('playlistItems');
+const playerToast = document.getElementById('playerToast');
+
+function formatTime(sec) {
+  if (isNaN(sec) || !isFinite(sec)) return '00:00';
+  var m = Math.floor(sec / 60);
+  var s = Math.floor(sec % 60);
+  return String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+}
+
+function loadTrack(index) {
+  currentTrack = index;
+  var fileIndex = playlistOrder[index];
+  bgm.src = 'music/' + musicFiles[fileIndex];
+  var name = musicFiles[fileIndex].replace('.mp3','');
+  playerTitle.textContent = name;
+  playerTitle.title = name;
+}
+
+function updatePlayBtn() {
+  if (window.innerWidth <= 768) {
+    // 手机端：播放中用图标
+    if (bgm.paused) {
+      btnPlay.innerHTML = '▶';
+      btnPlay.classList.remove('playing-icon');
+    } else {
+      btnPlay.innerHTML = '<img src="icon/be-playing.png" class="play-icon-img" alt="">';
+      btnPlay.classList.add('playing-icon');
+    }
+  } else {
+    btnPlay.textContent = bgm.paused ? '▶' : '⏸';
+    btnPlay.classList.remove('playing-icon');
+  }
+}
+
+// 手机端：悬浮切换图标 + 发光
+btnPlay.addEventListener('mouseenter', function() {
+  if (window.innerWidth <= 768 && !bgm.paused) {
+    var img = this.querySelector('.play-icon-img');
+    if (img) img.src = 'icon/be-playing2.png';
+    this.style.boxShadow = '0 0 16px rgba(255,45,45,0.6)';
+  }
+});
+btnPlay.addEventListener('mouseleave', function() {
+  if (window.innerWidth <= 768 && !bgm.paused) {
+    var img = this.querySelector('.play-icon-img');
+    if (img) img.src = 'icon/be-playing.png';
+    this.style.boxShadow = '';
+  }
+});
+// 触屏设备手指按下时也切换
+btnPlay.addEventListener('touchstart', function() {
+  if (window.innerWidth <= 768 && !bgm.paused) {
+    var img = this.querySelector('.play-icon-img');
+    if (img) img.src = 'icon/be-playing2.png';
+    this.style.boxShadow = '0 0 16px rgba(255,45,45,0.6)';
+  }
+}, { passive: true });
+btnPlay.addEventListener('touchend', function() {
+  if (window.innerWidth <= 768 && !bgm.paused) {
+    var img = this.querySelector('.play-icon-img');
+    if (img) img.src = 'icon/be-playing.png';
+    this.style.boxShadow = '';
+  }
+});
+
+function updateModeBtn() {
+  if (playMode === 'list-loop') {
+    btnMode.innerHTML = '<img src="icon/circulation.png" alt="" class="btn-icon" id="modeIcon"> 列表循环';
+    btnMode.classList.remove('single');
+  } else if (playMode === 'shuffle') {
+    btnMode.innerHTML = '<img src="icon/shuffleplay.png" alt="" class="btn-icon" id="modeIcon"> 随机播放';
+    btnMode.classList.remove('single');
+  } else {
+    btnMode.innerHTML = '<img src="icon/single cycle.png" alt="" class="btn-icon" id="modeIcon"> 单曲循环';
+    btnMode.classList.add('single');
+  }
+}
+
+function updateProgress() {
+  if (bgm.duration && isFinite(bgm.duration)) {
+    var pct = (bgm.currentTime / bgm.duration) * 100;
+    progressFill.style.width = pct + '%';
+    playerTime.textContent = formatTime(bgm.currentTime) + ' / ' + formatTime(bgm.duration);
+  }
+}
+
+function showToast(msg) {
+  playerToast.textContent = msg;
+  playerToast.classList.add('show');
+  clearTimeout(playerToast._timeout);
+  playerToast._timeout = setTimeout(function() { playerToast.classList.remove('show'); }, 2000);
+}
+
+function playTrack(index) {
+  loadTrack(index);
+  bgm.play().then(function() { updatePlayBtn(); }).catch(function() {});
+  renderPlaylist();
+}
+
+function togglePlay() {
+  if (!bgm.src || bgm.src === window.location.href) {
+    loadTrack(0);
+  }
+  if (bgm.paused) {
+    bgm.play().then(function() { updatePlayBtn(); }).catch(function() { showToast('点击任意位置开始播放'); });
+  } else {
+    bgm.pause();
+    updatePlayBtn();
+  }
+}
+
+function playNext() {
+  currentTrack = (currentTrack + 1) % musicFiles.length;
+  playTrack(currentTrack);
+}
+
+function playPrev() {
+  currentTrack = (currentTrack - 1 + musicFiles.length) % musicFiles.length;
+  playTrack(currentTrack);
+}
+
+function toggleMode() {
+  if (playMode === 'list-loop') {
+    playMode = 'shuffle';
+    showToast('随机播放');
+  } else if (playMode === 'shuffle') {
+    playMode = 'single-loop';
+    showToast('单曲循环');
+  } else {
+    playMode = 'list-loop';
+    showToast('列表循环');
+  }
+  updateModeBtn();
+}
+
+function togglePlaylist() {
+  playerPlaylist.classList.toggle('open');
+}
+
+btnPlaylistClose.addEventListener('click', function() { playerPlaylist.classList.remove('open'); });
+
+document.addEventListener('click', function(e) {
+  if (!playerPlaylist.contains(e.target) && e.target !== btnPlaylist) {
+    playerPlaylist.classList.remove('open');
+  }
+});
+
+function renderPlaylist() {
+  playlistItems.innerHTML = '';
+  playlistOrder.forEach(function(fileIndex, displayIndex) {
+    var item = document.createElement('div');
+    item.className = 'playlist-item' + (displayIndex === currentTrack ? ' current' : '');
+    item.draggable = true;
+    item.dataset.index = displayIndex;
+    var name = musicFiles[fileIndex].replace('.mp3','');
+    item.innerHTML = '<span class="drag-handle">≡</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + name + '</span>';
+
+    item.addEventListener('click', function() {
+      playTrack(parseInt(this.dataset.index));
+      playerPlaylist.classList.remove('open');
+    });
+
+    item.addEventListener('dragstart', function(e) {
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', this.dataset.index);
+      this.style.opacity = '0.4';
+    });
+    item.addEventListener('dragend', function() { this.style.opacity = '1'; });
+    item.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      this.classList.add('drag-over');
+    });
+    item.addEventListener('dragleave', function() { this.classList.remove('drag-over'); });
+    item.addEventListener('drop', function(e) {
+      e.preventDefault();
+      this.classList.remove('drag-over');
+      var fromIdx = parseInt(e.dataTransfer.getData('text/plain'));
+      var toIdx = parseInt(this.dataset.index);
+      if (fromIdx !== toIdx) {
+        var currentFile = playlistOrder[currentTrack];
+        var moved = playlistOrder.splice(fromIdx, 1)[0];
+        playlistOrder.splice(toIdx, 0, moved);
+        currentTrack = playlistOrder.indexOf(currentFile);
+        renderPlaylist();
+      }
+    });
+    playlistItems.appendChild(item);
+  });
+}
+
+progressWrap.addEventListener('click', function(e) {
+  var rect = progressWrap.getBoundingClientRect();
+  var fraction = (e.clientX - rect.left) / rect.width;
+  if (bgm.duration && isFinite(bgm.duration)) {
+    bgm.currentTime = fraction * bgm.duration;
+  }
+});
+
+btnPlay.addEventListener('click', togglePlay);
+btnNext.addEventListener('click', playNext);
+btnPrev.addEventListener('click', playPrev);
+btnMode.addEventListener('click', toggleMode);
+btnPlaylist.addEventListener('click', togglePlaylist);
+bgm.addEventListener('timeupdate', updateProgress);
+bgm.addEventListener('play', updatePlayBtn);
+bgm.addEventListener('pause', updatePlayBtn);
+bgm.addEventListener('ended', function() {
+  if (playMode === 'single-loop') {
+    bgm.currentTime = 0;
+    bgm.play().catch(function() {});
+  } else if (playMode === 'shuffle') {
+    var next;
+    do {
+      next = Math.floor(Math.random() * musicFiles.length);
+    } while (next === currentTrack && musicFiles.length > 1);
+    playTrack(next);
+  } else {
+    playNext();
+  }
+});
+bgm.addEventListener('error', function() {
+  showToast('加载失败，正在跳过...');
+  setTimeout(playNext, 1500);
+});
+
+// Volume control
+var volume = 0.5;
+var isMuted = false;
+var volumeIconEl = document.getElementById('volumeIcon');
+var volumeSliderFill = document.getElementById('volumeSliderFill');
+var volumeSliderWrap = document.getElementById('volumeSliderWrap');
+var btnVolumeIcon = document.getElementById('btnVolumeIcon');
+
+function updateVolumeIcon() {
+	var vol = isMuted ? 0 : volume;
+	if (vol <= 0.3) {
+		volumeIconEl.src = 'icon/volume-low.png';
+	} else if (vol <= 0.6) {
+		volumeIconEl.src = 'icon/volume-medium.png';
+	} else {
+		volumeIconEl.src = 'icon/volume-large.png';
+	}
+	volumeSliderFill.style.width = (vol * 100) + '%';
+}
+
+function setVolume(fraction) {
+	volume = Math.max(0, Math.min(1, fraction));
+	bgm.volume = volume;
+	isMuted = false;
+	updateVolumeIcon();
+}
+
+function toggleMute() {
+	isMuted = !isMuted;
+	bgm.volume = isMuted ? 0 : volume;
+	updateVolumeIcon();
+}
+
+volumeSliderWrap.addEventListener('click', function(e) {
+	var rect = volumeSliderWrap.getBoundingClientRect();
+	var fraction = (e.clientX - rect.left) / rect.width;
+	setVolume(fraction);
+});
+
+btnVolumeIcon.addEventListener('click', function(e) {
+	e.stopPropagation();
+	toggleMute();
+});
+
+// Auto-play
+function tryAutoPlay() {
+  loadTrack(0);
+  bgm.volume = 0.5;
+  bgm.play().then(function() {
+    updatePlayBtn();
+    updateProgress();
+  }).catch(function() {
+    document.addEventListener('click', function startOnClick() {
+      if (bgm.paused && bgm.src && bgm.src !== window.location.href) {
+        bgm.play().then(function() { updatePlayBtn(); });
+      }
+    }, { once: true });
+  });
+}
+
+tryAutoPlay();
+updateVolumeIcon();
+renderPlaylist();
+updateModeBtn();
+
+// ============ Else Dropdown ============
+var btnElse = document.getElementById('btnElse');
+var navDropdown = document.getElementById('navDropdown');
+
+btnElse.addEventListener('click', function(e) {
+  e.stopPropagation();
+  navDropdown.classList.toggle('open');
+});
+
+document.addEventListener('click', function(e) {
+  if (!navDropdown.contains(e.target) && e.target !== btnElse) {
+    navDropdown.classList.remove('open');
+  }
+});
+
+// Open panels from dropdown
+document.querySelectorAll('.dropdown-item').forEach(function(item) {
+  item.addEventListener('click', function() {
+    var panel = this.dataset.panel;
+    navDropdown.classList.remove('open');
+    openUtilPanel(panel);
+  });
+});
+
+// Utility panel open/close
+function openUtilPanel(name) {
+  var panelId = name + 'Panel';
+  document.getElementById(panelId).classList.add('active');
+  document.body.style.overflow = 'hidden';
+  if (name === 'pomodoro') resetPomodoro();
+  if (name === 'period') renderPeriodCalendar();
+}
+
+function closeUtilPanel(name) {
+  var panelId = name + 'Panel';
+  document.getElementById(panelId).classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+// Close panel on overlay click
+document.querySelectorAll('.util-overlay').forEach(function(overlay) {
+  overlay.addEventListener('click', function(e) {
+    if (e.target === overlay) {
+      overlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  });
+});
+
+// ESC to close panels
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.util-overlay.active').forEach(function(o) {
+      o.classList.remove('active');
+    });
+    document.body.style.overflow = '';
+  }
+});
+
+// ============ Pomodoro Timer ============
+var pomodoroMinutes = 15;
+var pomodoroSeconds = 0;
+var pomodoroInterval = null;
+var pomodoroRunning = false;
+
+var pomodoroTimeEl = document.getElementById('pomodoroTime');
+var pomodoroLabelEl = document.getElementById('pomodoroLabel');
+var btnPomodoroStart = document.getElementById('btnPomodoroStart');
+var btnPomodoroReset = document.getElementById('btnPomodoroReset');
+
+function updatePomodoroDisplay() {
+  pomodoroTimeEl.textContent = String(pomodoroMinutes).padStart(2, '0') + ':' + String(pomodoroSeconds).padStart(2, '0');
+}
+
+function resetPomodoro() {
+  clearInterval(pomodoroInterval);
+  pomodoroRunning = false;
+  pomodoroMinutes = parseInt(document.querySelector('.pomodoro-preset.active').dataset.min);
+  pomodoroSeconds = 0;
+  pomodoroLabelEl.textContent = document.querySelector('.pomodoro-preset.active').dataset.label;
+  updatePomodoroDisplay();
+  btnPomodoroStart.textContent = '开始';
+  btnPomodoroStart.classList.add('primary-btn');
+}
+
+btnPomodoroStart.addEventListener('click', function() {
+  if (pomodoroRunning) {
+    clearInterval(pomodoroInterval);
+    pomodoroRunning = false;
+    btnPomodoroStart.textContent = '继续';
+    btnPomodoroStart.classList.add('primary-btn');
+    return;
+  }
+  pomodoroRunning = true;
+  btnPomodoroStart.textContent = '暂停';
+  btnPomodoroStart.classList.remove('primary-btn');
+  var label = document.querySelector('.pomodoro-preset.active').dataset.label;
+  pomodoroInterval = setInterval(function() {
+    if (pomodoroSeconds === 0) {
+      if (pomodoroMinutes === 0) {
+        clearInterval(pomodoroInterval);
+        pomodoroRunning = false;
+        btnPomodoroStart.textContent = '开始';
+        btnPomodoroStart.classList.add('primary-btn');
+        pomodoroLabelEl.textContent = '时间到！';
+        return;
+      }
+      pomodoroMinutes--;
+      pomodoroSeconds = 59;
+    } else {
+      pomodoroSeconds--;
+    }
+    pomodoroLabelEl.textContent = label;
+    updatePomodoroDisplay();
+  }, 1000);
+});
+
+btnPomodoroReset.addEventListener('click', resetPomodoro);
+
+var btnPomodoroEnd = document.getElementById('btnPomodoroEnd');
+btnPomodoroEnd.addEventListener('click', function() {
+  clearInterval(pomodoroInterval);
+  pomodoroRunning = false;
+  pomodoroMinutes = parseInt(document.querySelector('.pomodoro-preset.active').dataset.min);
+  pomodoroSeconds = 0;
+  updatePomodoroDisplay();
+  btnPomodoroStart.textContent = '开始';
+  btnPomodoroStart.classList.add('primary-btn');
+  pomodoroLabelEl.textContent = '做的很好，小猫';
+});
+
+// Preset buttons
+document.querySelectorAll('.pomodoro-preset').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.pomodoro-preset').forEach(function(b) { b.classList.remove('active'); });
+    this.classList.add('active');
+    resetPomodoro();
+  });
+});
+
+// ============ Period Tracker ============
+var periodViewYear, periodViewMonth;
+var periodData = JSON.parse(localStorage.getItem('qinche_period_data') || '{}');
+
+function savePeriodData() {
+  localStorage.setItem('qinche_period_data', JSON.stringify(periodData));
+}
+
+function renderPeriodCalendar() {
+  var now = new Date();
+  if (!periodViewYear) { periodViewYear = now.getFullYear(); periodViewMonth = now.getMonth() + 1; }
+  document.getElementById('periodYearLabel').textContent = periodViewYear + '年';
+  document.getElementById('periodMonthLabelClick').textContent = periodViewMonth + '月';
+
+  var firstDay = new Date(periodViewYear, periodViewMonth - 1, 1).getDay();
+  var daysInMonth = new Date(periodViewYear, periodViewMonth, 0).getDate();
+
+  var html = '';
+  var headers = ['日', '一', '二', '三', '四', '五', '六'];
+  headers.forEach(function(h) {
+    html += '<div class="period-day-header">' + h + '</div>';
+  });
+
+  for (var i = 0; i < firstDay; i++) {
+    html += '<div class="period-day empty"></div>';
+  }
+
+  var todayStr = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0');
+  var markedCount = 0;
+
+  for (var d = 1; d <= daysInMonth; d++) {
+    var dateStr = periodViewYear + '-' + String(periodViewMonth).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+    var cls = 'period-day';
+    if (dateStr === todayStr) cls += ' today';
+    if (periodData[dateStr]) { cls += ' marked'; markedCount++; }
+    html += '<div class="' + cls + '" data-date="' + dateStr + '">' + d + '</div>';
+  }
+
+  document.getElementById('periodCalendar').innerHTML = html;
+  document.getElementById('periodMarkedCount').textContent = markedCount;
+
+  // Click to toggle marks
+  document.querySelectorAll('.period-day:not(.empty)').forEach(function(dayEl) {
+    dayEl.addEventListener('click', function() {
+      var date = this.dataset.date;
+      if (periodData[date]) {
+        delete periodData[date];
+        this.classList.remove('marked');
+      } else {
+        periodData[date] = true;
+        this.classList.add('marked');
+      }
+      savePeriodData();
+      updatePeriodStats();
+    });
+  });
+
+  updatePeriodStats();
+}
+
+function updatePeriodStats() {
+  var dates = Object.keys(periodData).sort();
+  var markedCount = 0;
+  var monthPrefix = periodViewYear + '-' + String(periodViewMonth).padStart(2,'0');
+  dates.forEach(function(d) { if (d.startsWith(monthPrefix)) markedCount++; });
+  document.getElementById('periodMarkedCount').textContent = markedCount || '--';
+
+  // Average cycle length
+  if (dates.length >= 2) {
+    var sum = 0, count = 0;
+    for (var i = 1; i < dates.length; i++) {
+      var diff = (new Date(dates[i]) - new Date(dates[i-1])) / (1000*60*60*24);
+      if (diff > 1 && diff < 60) { sum += diff; count++; }
+    }
+    document.getElementById('periodCycleLen').textContent = count > 0 ? Math.round(sum / count) : '--';
+  } else {
+    document.getElementById('periodCycleLen').textContent = '--';
+  }
+
+}
+
+document.getElementById('btnPeriodPrev').addEventListener('click', function() {
+  periodViewMonth--;
+  if (periodViewMonth < 1) { periodViewMonth = 12; periodViewYear--; }
+  renderPeriodCalendar();
+});
+
+document.getElementById('btnPeriodNext').addEventListener('click', function() {
+  periodViewMonth++;
+  if (periodViewMonth > 12) { periodViewMonth = 1; periodViewYear++; }
+  renderPeriodCalendar();
+});
+
+// Year/Month pickers
+var yearPickerWrap = document.getElementById('periodYearPickerWrap');
+var yearPickerList = document.getElementById('periodYearList');
+var monthPickerWrap = document.getElementById('periodMonthPickerWrap');
+var monthPickerList = document.getElementById('periodMonthList');
+var yearLabel = document.getElementById('periodYearLabel');
+var monthLabel = document.getElementById('periodMonthLabelClick');
+
+function buildYearPicker() {
+  var currentYear = new Date().getFullYear();
+  var html = '';
+  for (var y = currentYear - 5; y <= currentYear + 5; y++) {
+    var cls = 'period-picker-item' + (y === periodViewYear ? ' active' : '');
+    html += '<div class="' + cls + '" data-year="' + y + '">' + y + '</div>';
+  }
+  yearPickerList.innerHTML = html;
+}
+
+function buildMonthPicker() {
+  var html = '';
+  for (var m = 1; m <= 12; m++) {
+    var cls = 'period-picker-item' + (m === periodViewMonth ? ' active' : '');
+    html += '<div class="' + cls + '" data-month="' + m + '">' + m + '月</div>';
+  }
+  monthPickerList.innerHTML = html;
+}
+
+function closeAllPickers() {
+  yearPickerWrap.classList.remove('open');
+  monthPickerWrap.classList.remove('open');
+}
+
+yearLabel.addEventListener('click', function(e) {
+  e.stopPropagation();
+  monthPickerWrap.classList.remove('open');
+  yearPickerWrap.classList.toggle('open');
+  if (yearPickerWrap.classList.contains('open')) {
+    buildYearPicker();
+    // Scroll to active item
+    var active = yearPickerList.querySelector('.active');
+    if (active) active.scrollIntoView({block: 'center'});
+  }
+});
+
+monthLabel.addEventListener('click', function(e) {
+  e.stopPropagation();
+  yearPickerWrap.classList.remove('open');
+  monthPickerWrap.classList.toggle('open');
+  if (monthPickerWrap.classList.contains('open')) {
+    buildMonthPicker();
+    var active = monthPickerList.querySelector('.active');
+    if (active) active.scrollIntoView({block: 'center'});
+  }
+});
+
+yearPickerList.addEventListener('click', function(e) {
+  var item = e.target.closest('.period-picker-item');
+  if (!item) return;
+  periodViewYear = parseInt(item.dataset.year);
+  closeAllPickers();
+  renderPeriodCalendar();
+});
+
+monthPickerList.addEventListener('click', function(e) {
+  var item = e.target.closest('.period-picker-item');
+  if (!item) return;
+  periodViewMonth = parseInt(item.dataset.month);
+  closeAllPickers();
+  renderPeriodCalendar();
+});
+
+document.addEventListener('click', function() {
+  closeAllPickers();
+});
+
+// ============ Todo List ============
+var TODO_KEY = 'qinche_todos';
+var todoInput = document.getElementById('todoInput');
+var btnTodoAdd = document.getElementById('btnTodoAdd');
+var todoList = document.getElementById('todoList');
+var todoCount = document.getElementById('todoCount');
+
+function loadTodos() {
+  try {
+    var data = localStorage.getItem(TODO_KEY);
+    return data ? JSON.parse(data) : [];
+  } catch(e) { return []; }
+}
+
+function saveTodos(todos) {
+  localStorage.setItem(TODO_KEY, JSON.stringify(todos));
+}
+
+function formatTodoDate(ts) {
+  var d = new Date(ts);
+  return (d.getMonth()+1) + '/' + d.getDate();
+}
+
+function renderTodos() {
+  var todos = loadTodos();
+  todoList.innerHTML = '';
+  var activeCount = 0;
+
+  if (todos.length === 0) {
+    todoList.innerHTML = '<div class="todo-empty">还没有待办事项，开始添加吧</div>';
+    todoCount.textContent = '';
+    return;
+  }
+
+  todos.forEach(function(todo, i) {
+    if (!todo.done) activeCount++;
+    var item = document.createElement('div');
+    item.className = 'todo-item' + (todo.done ? ' done' : '');
+    item.innerHTML =
+      '<input type="checkbox" class="todo-checkbox" data-idx="' + i + '"' + (todo.done ? ' checked' : '') + '>' +
+      '<span class="todo-text">' + todo.text.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</span>' +
+      '<span class="todo-date-tag">' + formatTodoDate(todo.createdAt) + '</span>' +
+      '<button class="todo-delete" data-idx="' + i + '">删除</button>';
+
+    // Toggle done
+    item.querySelector('.todo-checkbox').addEventListener('change', function() {
+      var idx = parseInt(this.dataset.idx);
+      var tds = loadTodos();
+      tds[idx].done = this.checked;
+      saveTodos(tds);
+      renderTodos();
+    });
+
+    // Delete
+    item.querySelector('.todo-delete').addEventListener('click', function() {
+      var idx = parseInt(this.dataset.idx);
+      var tds = loadTodos();
+      tds.splice(idx, 1);
+      saveTodos(tds);
+      renderTodos();
+    });
+
+    todoList.appendChild(item);
+  });
+
+  var total = todos.length;
+  var doneCount = total - activeCount;
+  todoCount.innerHTML = '<span>' + activeCount + '</span> 项待完成  /  <span>' + doneCount + '</span> 项已完成';
+}
+
+function addTodo() {
+  var text = todoInput.value.trim();
+  if (!text) return;
+  var todos = loadTodos();
+  todos.unshift({ text: text, done: false, createdAt: Date.now() });
+  saveTodos(todos);
+  todoInput.value = '';
+  renderTodos();
+}
+
+btnTodoAdd.addEventListener('click', addTodo);
+todoInput.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') addTodo();
+});
+
+// Init
+function todoInit() {
+  renderTodos();
+  todoInput.focus();
+}
+
+(function() {
+  var origOpen2 = openUtilPanel;
+  openUtilPanel = function(name) {
+    origOpen2(name);
+    if (name === 'todo') todoInit();
+  };
+})();
+
+// ============ Snake Game ============
+var snakeCanvas = document.getElementById('snakeCanvas');
+var snakeCtx = snakeCanvas.getContext('2d');
+var snakeScoreEl = document.getElementById('snakeScore');
+var snakeBestEl = document.getElementById('snakeBest');
+var btnSnakeStart = document.getElementById('btnSnakeStart');
+var btnSnakeEnd = document.getElementById('btnSnakeEnd');
+var btnSnakePause = document.getElementById('btnSnakePause');
+var snakeInterval = null;
+var snakeRunning = false;
+var snakeStarted = false;
+var snakePaused = false;
+var snakeGrid = 20;
+var snakeCols = snakeCanvas.width / snakeGrid;
+var snakeRows = snakeCanvas.height / snakeGrid;
+var snake = [];
+var snakeDir = {x: 1, y: 0};
+var snakeNextDir = {x: 1, y: 0};
+var snakeFood = {};
+var snakeScore = 0;
+var snakeBest = parseInt(localStorage.getItem('qinche_snake_best') || '0');
+var snakeAppleImg = new Image();
+snakeAppleImg.src = 'icon/apple.png';
+
+snakeBestEl.textContent = snakeBest;
+
+function snakeInit() {
+  snake = [
+    {x: 10, y: 10},
+    {x: 9, y: 10},
+    {x: 8, y: 10}
+  ];
+  snakeDir = {x: 1, y: 0};
+  snakeNextDir = {x: 1, y: 0};
+  snakeScore = 0;
+  snakeScoreEl.textContent = '0';
+  snakeSpawnFood();
+  snakeRunning = true;
+  snakeStarted = true;
+  snakePaused = false;
+  btnSnakeStart.textContent = '重新开始';
+  btnSnakeEnd.style.display = 'none';
+  btnSnakePause.style.display = '';
+  btnSnakePause.textContent = '暂停';
+  clearInterval(snakeInterval);
+  snakeInterval = setInterval(snakeTick, 120);
+  snakeDraw();
+}
+
+function snakeSpawnFood() {
+  var maxAttempts = 500;
+  for (var i = 0; i < maxAttempts; i++) {
+    var fx = Math.floor(Math.random() * snakeCols);
+    var fy = Math.floor(Math.random() * snakeRows);
+    var onSnake = false;
+    for (var j = 0; j < snake.length; j++) {
+      if (snake[j].x === fx && snake[j].y === fy) { onSnake = true; break; }
+    }
+    if (!onSnake) {
+      snakeFood = {x: fx, y: fy};
+      return;
+    }
+  }
+  // Fallback
+  snakeFood = {x: Math.floor(Math.random() * snakeCols), y: Math.floor(Math.random() * snakeRows)};
+}
+
+function snakeTick() {
+  if (snakePaused) return;
+  snakeDir = {x: snakeNextDir.x, y: snakeNextDir.y};
+  var head = {x: snake[0].x + snakeDir.x, y: snake[0].y + snakeDir.y};
+
+  // Wall collision
+  if (head.x < 0 || head.x >= snakeCols || head.y < 0 || head.y >= snakeRows) {
+    snakeGameOver();
+    return;
+  }
+
+  // Self collision
+  for (var i = 0; i < snake.length; i++) {
+    if (snake[i].x === head.x && snake[i].y === head.y) {
+      snakeGameOver();
+      return;
+    }
+  }
+
+  snake.unshift(head);
+
+  // Eat food
+  if (head.x === snakeFood.x && head.y === snakeFood.y) {
+    snakeScore += 10;
+    snakeScoreEl.textContent = snakeScore;
+    snakeSpawnFood();
+  } else {
+    snake.pop();
+  }
+
+  snakeDraw();
+}
+
+function snakeDraw() {
+  snakeCtx.clearRect(0, 0, snakeCanvas.width, snakeCanvas.height);
+
+  // Grid lines (subtle)
+  snakeCtx.strokeStyle = 'rgba(255,255,255,0.02)';
+  snakeCtx.lineWidth = 0.5;
+  for (var x = 0; x <= snakeCols; x++) {
+    snakeCtx.beginPath();
+    snakeCtx.moveTo(x * snakeGrid, 0);
+    snakeCtx.lineTo(x * snakeGrid, snakeCanvas.height);
+    snakeCtx.stroke();
+  }
+  for (var y = 0; y <= snakeRows; y++) {
+    snakeCtx.beginPath();
+    snakeCtx.moveTo(0, y * snakeGrid);
+    snakeCtx.lineTo(snakeCanvas.width, y * snakeGrid);
+    snakeCtx.stroke();
+  }
+
+  // Snake
+  for (var i = 0; i < snake.length; i++) {
+    var alpha = 1 - (i / (snake.length + 10)) * 0.5;
+    var r = i === 0 ? 196 : 100;
+    var g = i === 0 ? 30 : 10;
+    var b = i === 0 ? 58 : 8;
+    snakeCtx.fillStyle = 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+    snakeCtx.fillRect(snake[i].x * snakeGrid + 1, snake[i].y * snakeGrid + 1, snakeGrid - 2, snakeGrid - 2);
+    // Head glow
+    if (i === 0) {
+      snakeCtx.fillStyle = 'rgba(255,45,45,0.6)';
+      snakeCtx.fillRect(snake[i].x * snakeGrid + 3, snake[i].y * snakeGrid + 3, snakeGrid - 6, snakeGrid - 6);
+    }
+  }
+
+  // Food (apple)
+  snakeCtx.drawImage(snakeAppleImg,
+    snakeFood.x * snakeGrid - 1, snakeFood.y * snakeGrid - 1,
+    snakeGrid + 2, snakeGrid + 2);
+
+  // Game over overlay (only after game was started)
+  if (!snakeRunning && snakeStarted) {
+    snakeCtx.fillStyle = 'rgba(0,0,0,0.7)';
+    snakeCtx.fillRect(0, 0, snakeCanvas.width, snakeCanvas.height);
+    snakeCtx.fillStyle = '#c41e3a';
+    snakeCtx.font = 'bold 28px "Microsoft YaHei"';
+    snakeCtx.textAlign = 'center';
+    snakeCtx.fillText('游戏结束', snakeCanvas.width/2, snakeCanvas.height/2 - 10);
+    snakeCtx.fillStyle = '#d4c5b9';
+    snakeCtx.font = '16px "Microsoft YaHei"';
+    snakeCtx.fillText('得分: ' + snakeScore, snakeCanvas.width/2, snakeCanvas.height/2 + 30);
+    snakeCtx.textAlign = 'start';
+  } else if (snakePaused) {
+    snakeCtx.fillStyle = 'rgba(0,0,0,0.6)';
+    snakeCtx.fillRect(0, 0, snakeCanvas.width, snakeCanvas.height);
+    snakeCtx.fillStyle = '#d4c5b9';
+    snakeCtx.font = 'bold 24px "Microsoft YaHei"';
+    snakeCtx.textAlign = 'center';
+    snakeCtx.fillText('已暂停', snakeCanvas.width/2, snakeCanvas.height/2);
+    snakeCtx.textAlign = 'start';
+  }
+}
+
+function snakeGameOver() {
+  snakeRunning = false;
+  clearInterval(snakeInterval);
+  if (snakeScore > snakeBest) {
+    snakeBest = snakeScore;
+    localStorage.setItem('qinche_snake_best', snakeBest);
+    snakeBestEl.textContent = snakeBest;
+  }
+  btnSnakeStart.textContent = '重新开始';
+  btnSnakeEnd.style.display = '';
+  btnSnakePause.style.display = 'none';
+  snakeDraw();
+}
+
+function snakeResetToIdle() {
+  clearInterval(snakeInterval);
+  snakeRunning = false;
+  snakeStarted = false;
+  snakePaused = false;
+  snake = [];
+  snakeScore = 0;
+  snakeScoreEl.textContent = '0';
+  snakeDir = {x: 1, y: 0};
+  snakeNextDir = {x: 1, y: 0};
+  btnSnakeStart.textContent = '开始游戏';
+  btnSnakeEnd.style.display = 'none';
+  btnSnakePause.style.display = 'none';
+  snakeDraw();
+}
+
+btnSnakeStart.addEventListener('click', function() {
+  if (snakeInterval) clearInterval(snakeInterval);
+  snakeInit();
+});
+
+btnSnakePause.addEventListener('click', function() {
+  if (!snakeRunning) return;
+  snakePaused = !snakePaused;
+  btnSnakePause.textContent = snakePaused ? '继续' : '暂停';
+  if (!snakePaused) snakeTick();
+  snakeDraw();
+});
+
+btnSnakeEnd.addEventListener('click', function() {
+  snakeResetToIdle();
+});
+
+document.addEventListener('keydown', function(e) {
+  var panel = document.getElementById('snakePanel');
+  if (!panel.classList.contains('active')) return;
+  if (!snakeRunning) return;
+
+  if (e.key === ' ' || e.code === 'Space') {
+    e.preventDefault();
+    snakePaused = !snakePaused;
+    btnSnakePause.textContent = snakePaused ? '继续' : '暂停';
+    snakeDraw();
+    return;
+  }
+
+  if (snakePaused) return;
+
+  switch(e.key) {
+    case 'ArrowUp':
+      e.preventDefault();
+      if (snakeDir.y === 0) { snakeNextDir = {x: 0, y: -1}; }
+      break;
+    case 'ArrowDown':
+      e.preventDefault();
+      if (snakeDir.y === 0) { snakeNextDir = {x: 0, y: 1}; }
+      break;
+    case 'ArrowLeft':
+      e.preventDefault();
+      if (snakeDir.x === 0) { snakeNextDir = {x: -1, y: 0}; }
+      break;
+    case 'ArrowRight':
+      e.preventDefault();
+      if (snakeDir.x === 0) { snakeNextDir = {x: 1, y: 0}; }
+      break;
+  }
+});
+
+// Draw initial state
+snakeDraw();
+
+// ============ Snake Mobile D-Pad ============
+var isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+var snakeDpad = document.getElementById('snakeDpad');
+var snakeHintPC = document.getElementById('snakeHintPC');
+var snakeHintMobile = document.getElementById('snakeHintMobile');
+
+if (isTouchDevice) {
+  snakeDpad.classList.add('visible');
+  snakeHintPC.style.display = 'none';
+  snakeHintMobile.style.display = '';
+}
+
+var dpadBtns = {
+  up: document.getElementById('dpadUp'),
+  down: document.getElementById('dpadDown'),
+  left: document.getElementById('dpadLeft'),
+  right: document.getElementById('dpadRight')
+};
+
+var dpadInterval = null;
+
+function dpadSetDir(dir) {
+  if (!snakeRunning || snakePaused) return;
+  switch(dir) {
+    case 'up':
+      if (snakeDir.y === 0) snakeNextDir = {x: 0, y: -1};
+      break;
+    case 'down':
+      if (snakeDir.y === 0) snakeNextDir = {x: 0, y: 1};
+      break;
+    case 'left':
+      if (snakeDir.x === 0) snakeNextDir = {x: -1, y: 0};
+      break;
+    case 'right':
+      if (snakeDir.x === 0) snakeNextDir = {x: 1, y: 0};
+      break;
+  }
+}
+
+Object.keys(dpadBtns).forEach(function(dir) {
+  var btn = dpadBtns[dir];
+  btn.addEventListener('pointerdown', function(e) {
+    e.preventDefault();
+    dpadSetDir(dir);
+    // Rapid fire: hold to keep moving
+    if (!snakeRunning || snakePaused) return;
+    clearInterval(dpadInterval);
+    dpadInterval = setInterval(function() { dpadSetDir(dir); }, 80);
+  });
+  btn.addEventListener('pointerup', function(e) {
+    e.preventDefault();
+    clearInterval(dpadInterval);
+  });
+  btn.addEventListener('pointerleave', function(e) {
+    clearInterval(dpadInterval);
+  });
+  btn.addEventListener('pointercancel', function(e) {
+    clearInterval(dpadInterval);
+  });
+});
+
+// Double-tap canvas to pause on mobile
+var snakeCanvasEl = document.getElementById('snakeCanvas');
+var lastTap = 0;
+snakeCanvasEl.addEventListener('touchstart', function(e) {
+  if (!isTouchDevice) return;
+  var now = Date.now();
+  if (now - lastTap < 300) {
+    e.preventDefault();
+    if (!snakeRunning) return;
+    snakePaused = !snakePaused;
+    document.getElementById('btnSnakePause').textContent = snakePaused ? '继续' : '暂停';
+    if (!snakePaused) snakeTick();
+    snakeDraw();
+  }
+  lastTap = now;
+});
+
+// ============ Photo Upload Handler ============
+var photoFileInput = document.getElementById('photoFileInput');
+var btnUploadPhoto = document.getElementById('btnUploadPhoto');
+
+btnUploadPhoto.addEventListener('click', function() {
+  photoFileInput.click();
+});
+
+photoFileInput.addEventListener('change', function() {
+  if (!this.files || this.files.length === 0) return;
+  handlePhotoFiles(this.files);
+  this.value = '';
+});
+
+function handlePhotoFiles(files) {
+  var fileCount = files.length;
+  var promises = [];
+  for (var i = 0; i < fileCount; i++) {
+    promises.push(resizeImage(files[i]).then(function(dataUrl) {
+      return savePhoto(dataUrl, '');
+    }));
+  }
+  Promise.all(promises).then(function() {
+    showUploadToast('已上传 ' + fileCount + ' 张照片');
+    return loadAllPhotos();
+  }).then(function(userPhotos) {
+    renderGallery(userPhotos);
+  }).catch(function(err) {
+    showUploadToast(err.message || '上传失败，请重试');
+  });
+}
+
+// ============ Delete User Photo ============
+function deleteUserPhoto(dbId) {
+  if (!confirm('确定删除这张照片吗？')) return;
+  deletePhoto(dbId).then(function() {
+    showUploadToast('照片已删除');
+    return loadAllPhotos();
+  }).then(function(userPhotos) {
+    renderGallery(userPhotos);
+  }).catch(function() {
+    showUploadToast('删除失败');
+  });
+}
+
+function deleteDefaultPhoto(filename) {
+  if (!confirm('确定删除这张默认照片吗？可在「内容管理→重置数据」中恢复')) return;
+  markPhotoDeleted(filename);
+  showUploadToast('照片已删除（可重置恢复）');
+  loadAllPhotos().then(function(userPhotos) {
+    renderGallery(userPhotos);
+    renderManagePhotos(userPhotos);
+  }).catch(function() {});
+}
+
+// ============ Quote Add/Delete Handlers ============
+var btnToggleQuoteForm = document.getElementById('btnToggleQuoteForm');
+var quoteInlineForm = document.getElementById('quoteInlineForm');
+var btnAddQuote = document.getElementById('btnAddQuote');
+var quoteInlineInput = document.getElementById('quoteInlineInput');
+
+btnToggleQuoteForm.addEventListener('click', function() {
+  quoteInlineForm.classList.toggle('open');
+  if (quoteInlineForm.classList.contains('open')) {
+    quoteInlineInput.focus();
+  }
+});
+
+btnAddQuote.addEventListener('click', function() {
+  var text = quoteInlineInput.value.trim();
+  if (!text) { showUploadToast('请输入语录内容'); return; }
+  var customQuotes = loadCustomQuotes();
+  customQuotes.push(text);
+  saveCustomQuotes(customQuotes);
+  autoSaveQuotesOrder();
+  quoteInlineInput.value = '';
+  quoteInlineForm.classList.remove('open');
+  refreshQuotes();
+  showUploadToast('语录已添加');
+});
+
+quoteInlineInput.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') { btnAddQuote.click(); }
+});
+
+// ============ Management Panel ============
+function initManagePanel() {
+  // Refresh photo grid
+  loadAllPhotos().then(function(userPhotos) {
+    renderManagePhotos(userPhotos);
+  }).catch(function() {});
+
+  // Refresh quote list
+  renderManageQuotes();
+
+  // Activate first tab
+  var firstTab = document.querySelector('#managePanel .manage-tab');
+  if (firstTab) firstTab.click();
+}
+
+var manageSelectedPhotos = {};
+
+function updateManageToolbar() {
+  var toolbar = document.getElementById('managePhotoToolbar');
+  var countEl = document.getElementById('manageSelectedCount');
+  var selectedIds = Object.keys(manageSelectedPhotos).filter(function(k) { return manageSelectedPhotos[k]; });
+  countEl.textContent = selectedIds.length;
+  if (selectedIds.length > 0) {
+    toolbar.classList.add('visible');
+  } else {
+    toolbar.classList.remove('visible');
+  }
+}
+
+function renderManagePhotos(userPhotos) {
+  var grid = document.getElementById('managePhotoGrid');
+  var empty = document.getElementById('managePhotoEmpty');
+  manageSelectedPhotos = {};
+  updateManageToolbar();
+  grid.innerHTML = '';
+  if (!userPhotos || userPhotos.length === 0) {
+    empty.style.display = 'block';
+    grid.style.display = 'none';
+    return;
+  }
+  empty.style.display = 'none';
+  grid.style.display = 'grid';
+  userPhotos.forEach(function(p) {
+    var item = document.createElement('div');
+    item.className = 'manage-photo-item';
+    item.innerHTML = '<input type="checkbox" class="manage-photo-check" data-photo-id="' + p.id + '"><img src="' + p.dataUrl + '" alt=""><div class="delete-overlay"><span class="delete-icon">✕</span></div>';
+
+    // Checkbox event
+    item.querySelector('.manage-photo-check').addEventListener('click', function(e) {
+      e.stopPropagation();
+      var pid = this.dataset.photoId;
+      manageSelectedPhotos[pid] = this.checked;
+      updateManageToolbar();
+    });
+
+    // Single delete
+    item.querySelector('.delete-overlay').addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (!confirm('确定删除这张照片吗？')) return;
+      deletePhoto(p.id).then(function() {
+        return loadAllPhotos();
+      }).then(function(updated) {
+        renderGallery(updated);
+        renderManagePhotos(updated);
+        showUploadToast('照片已删除');
+      }).catch(function() { showUploadToast('删除失败'); });
+    });
+    grid.appendChild(item);
+  });
+}
+
+function renderManageQuotes() {
+  var list = document.getElementById('manageQuoteList');
+  var empty = document.getElementById('manageQuoteEmpty');
+
+  var entries = buildQuoteEntries();
+  var ordered = applyQuotesOrder(entries);
+  autoSaveQuotesOrder();
+
+  list.innerHTML = '';
+  if (ordered.length === 0) {
+    empty.style.display = 'block';
+    list.style.display = 'none';
+    return;
+  }
+  empty.style.display = 'none';
+  list.style.display = 'block';
+
+  ordered.forEach(function(entry, displayIdx) {
+    var q = entry.text;
+    var isCustom = entry.type === 'custom';
+    var row = document.createElement('div');
+    row.className = 'manage-quote-row';
+    row.draggable = true;
+    row.dataset.quoteIndex = displayIdx;
+    var badge = isCustom ? '<span style="color:var(--gold);font-size:0.65rem;letter-spacing:1px;margin-right:4px;">自定义</span>' : '<span style="color:var(--text-muted);font-size:0.65rem;letter-spacing:1px;margin-right:4px;">默认</span>';
+    row.innerHTML = '<span class="drag-handle-quote">≡</span>' + badge + '<span class="quote-text">' + q.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</span><button class="manage-quote-delete" data-type="' + entry.type + '" data-idx="' + entry.index + '">删除</button>';
+
+    // Delete handler
+    row.querySelector('.manage-quote-delete').addEventListener('click', function(e) {
+      e.stopPropagation();
+      var idx = parseInt(this.dataset.idx);
+      var type = this.dataset.type;
+      if (type === 'default') {
+        if (!confirm('确定删除这条默认语录吗？可在「重置数据」中恢复')) return;
+        markQuoteDeleted(idx);
+        autoSaveQuotesOrder();
+        refreshQuotes();
+        renderManageQuotes();
+        showUploadToast('语录已删除（可重置恢复）');
+      } else {
+        var cq = loadCustomQuotes();
+        cq.splice(idx, 1);
+        saveCustomQuotes(cq);
+        autoSaveQuotesOrder();
+        renderManageQuotes();
+        refreshQuotes();
+        showUploadToast('语录已删除');
+      }
+    });
+
+    // Drag events
+    row.addEventListener('dragstart', function(e) {
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', this.dataset.quoteIndex);
+      this.classList.add('dragging');
+    });
+    row.addEventListener('dragend', function() { this.classList.remove('dragging'); });
+    row.addEventListener('dragover', function(e) { e.preventDefault(); if (!this.classList.contains('dragging')) this.classList.add('drag-over'); });
+    row.addEventListener('dragleave', function() { this.classList.remove('drag-over'); });
+    row.addEventListener('drop', function(e) {
+      e.preventDefault();
+      this.classList.remove('drag-over');
+      var fromIdx = parseInt(e.dataTransfer.getData('text/plain'));
+      var toIdx = parseInt(this.dataset.quoteIndex);
+      if (fromIdx !== toIdx && !isNaN(fromIdx) && !isNaN(toIdx)) {
+        // Reorder entries
+        var moved = ordered.splice(fromIdx, 1)[0];
+        ordered.splice(toIdx, 0, moved);
+        saveQuotesOrderFromEntries(ordered);
+        renderManageQuotes();
+        refreshQuotes();
+      }
+    });
+
+    list.appendChild(row);
+  });
+}
+
+// Manage panel tab switching
+document.querySelectorAll('#managePanel .manage-tab').forEach(function(tab) {
+  tab.addEventListener('click', function() {
+    var targetTab = this.dataset.tab;
+    // Update active tab button
+    document.querySelectorAll('#managePanel .manage-tab').forEach(function(t) { t.classList.remove('active'); });
+    this.classList.add('active');
+    // Show target content
+    document.querySelectorAll('#managePanel .manage-tab-content').forEach(function(c) { c.classList.remove('active'); });
+    document.getElementById('tab' + targetTab.charAt(0).toUpperCase() + targetTab.slice(1)).classList.add('active');
+  });
+});
+
+// Manage panel photo upload (button + drag/drop)
+var manageFileInput = document.getElementById('manageFileInput');
+var btnManageUpload = document.getElementById('btnManageUpload');
+var manageUploadZone = document.getElementById('manageUploadZone');
+
+btnManageUpload.addEventListener('click', function() {
+  manageFileInput.click();
+});
+
+manageFileInput.addEventListener('change', function() {
+  if (!this.files || this.files.length === 0) return;
+  handlePhotoFiles(this.files);
+  this.value = '';
+  // Refresh manage panel after upload
+  setTimeout(function() {
+    loadAllPhotos().then(function(userPhotos) { renderManagePhotos(userPhotos); }).catch(function(){});
+  }, 500);
+});
+
+manageUploadZone.addEventListener('dragover', function(e) {
+  e.preventDefault();
+  this.classList.add('drag-over');
+});
+
+manageUploadZone.addEventListener('dragleave', function() {
+  this.classList.remove('drag-over');
+});
+
+manageUploadZone.addEventListener('drop', function(e) {
+  e.preventDefault();
+  this.classList.remove('drag-over');
+  if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+    handlePhotoFiles(e.dataTransfer.files);
+    setTimeout(function() {
+      loadAllPhotos().then(function(userPhotos) { renderManagePhotos(userPhotos); }).catch(function(){});
+    }, 500);
+  }
+});
+
+// Batch select all / deselect all
+var btnSelectAll = document.getElementById('btnSelectAll');
+var selectAllState = false;
+
+btnSelectAll.addEventListener('click', function() {
+  selectAllState = !selectAllState;
+  this.textContent = selectAllState ? '取消全选' : '全选';
+  var checks = document.querySelectorAll('#managePhotoGrid .manage-photo-check');
+  checks.forEach(function(cb) {
+    cb.checked = selectAllState;
+    manageSelectedPhotos[cb.dataset.photoId] = selectAllState;
+  });
+  updateManageToolbar();
+});
+
+// Batch delete
+var btnBatchDelete = document.getElementById('btnBatchDelete');
+btnBatchDelete.addEventListener('click', function() {
+  var selectedIds = Object.keys(manageSelectedPhotos).filter(function(k) { return manageSelectedPhotos[k]; });
+  if (selectedIds.length === 0) { showUploadToast('请先选择要删除的照片'); return; }
+  if (!confirm('确定删除选中的 ' + selectedIds.length + ' 张照片吗？此操作不可撤销！')) return;
+
+  var deletePromises = selectedIds.map(function(id) {
+    return deletePhoto(parseInt(id));
+  });
+
+  Promise.all(deletePromises).then(function() {
+    showUploadToast('已删除 ' + selectedIds.length + ' 张照片');
+    manageSelectedPhotos = {};
+    selectAllState = false;
+    btnSelectAll.textContent = '全选';
+    updateManageToolbar();
+    return loadAllPhotos();
+  }).then(function(updated) {
+    renderGallery(updated);
+    renderManagePhotos(updated);
+  }).catch(function() {
+    showUploadToast('部分删除失败，请重试');
+  });
+});
+
+// Manage panel quote add
+var btnManageAddQuote = document.getElementById('btnManageAddQuote');
+var manageQuoteInput = document.getElementById('manageQuoteInput');
+
+btnManageAddQuote.addEventListener('click', function() {
+  var text = manageQuoteInput.value.trim();
+  if (!text) { showUploadToast('请输入语录内容'); return; }
+  var cq = loadCustomQuotes();
+  cq.push(text);
+  saveCustomQuotes(cq);
+  autoSaveQuotesOrder();
+  manageQuoteInput.value = '';
+  renderManageQuotes();
+  refreshQuotes();
+  showUploadToast('语录已添加');
+});
+
+manageQuoteInput.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') { btnManageAddQuote.click(); }
+});
+
+// Reset all data
+var btnResetAll = document.getElementById('btnResetAll');
+btnResetAll.addEventListener('click', function() {
+  if (!confirm('确定要清除所有个人数据吗？此操作不可撤销！')) return;
+  if (!confirm('再次确认：将删除所有上传的照片和自定义语录')) return;
+
+  clearAllPhotos().then(function() {
+    localStorage.removeItem(CUSTOM_QUOTES_KEY);
+    localStorage.removeItem(DELETED_PHOTOS_KEY);
+    localStorage.removeItem(DELETED_QUOTES_KEY);
+    localStorage.removeItem(GALLERY_ORDER_KEY);
+    localStorage.removeItem(QUOTES_ORDER_KEY);
+    showUploadToast('所有数据已重置');
+    return loadAllPhotos();
+  }).then(function(userPhotos) {
+    renderGallery(userPhotos);
+    renderManagePhotos(userPhotos || []);
+    renderManageQuotes();
+    refreshQuotes();
+  }).catch(function() {
+    // Fallback: at least reset localStorage
+    localStorage.removeItem(CUSTOM_QUOTES_KEY);
+    localStorage.removeItem(DELETED_PHOTOS_KEY);
+    localStorage.removeItem(DELETED_QUOTES_KEY);
+    localStorage.removeItem(GALLERY_ORDER_KEY);
+    localStorage.removeItem(QUOTES_ORDER_KEY);
+    loadAllPhotos().then(function(userPhotos) { renderGallery(userPhotos); }).catch(function(){});
+    renderManageQuotes();
+    refreshQuotes();
+    showUploadToast('数据已重置（部分清理失败）');
+  });
+});
+
+// Extend openUtilPanel for manage panel
+(function() {
+  var origOpenUtilPanel2 = openUtilPanel;
+  openUtilPanel = function(name) {
+    origOpenUtilPanel2(name);
+    if (name === 'manage') { initManagePanel(); }
+  };
+})();
+
+</script>
+
+</body>

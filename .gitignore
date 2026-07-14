@@ -1,0 +1,15 @@
+# 系统文件
+desktop.ini
+Thumbs.db
+.DS_Store
+
+# 临时文件
+*.tmp
+~$*
+
+# IDE
+.vscode/
+.idea/
+
+# 备份
+photos_backup/
