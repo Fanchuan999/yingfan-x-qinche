@@ -1040,6 +1040,10 @@ footer .heart {
   display: none;
   box-shadow: 0 -4px 24px rgba(0,0,0,0.6);
   scrollbar-width: thin;
+}
+
+[data-theme="light"] #playerPlaylist {
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
   scrollbar-color: var(--red-dark) transparent;
 }
 
@@ -1226,6 +1230,11 @@ footer .heart {
 
 .nav-dropdown.open { display: block; }
 
+[data-theme="light"] .nav-dropdown {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  border-color: rgba(0,0,0,0.06);
+}
+
 .dropdown-item {
   padding: 12px 20px;
   font-size: 0.85rem;
@@ -1257,6 +1266,10 @@ footer .heart {
 }
 
 .util-overlay.active { display: flex; }
+
+[data-theme="light"] .util-panel {
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+}
 
 .util-panel {
   background: var(--bg-card);
