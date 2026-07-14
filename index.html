@@ -40,31 +40,31 @@
 }
 
 [data-theme="light"] {
-  --bg: #ecf1f8;
-  --bg-card: #f7f9fc;
-  --red: #d0a8b4;
-  --red-dark: #dbbcc6;
-  --red-glow: #e2c8d0;
-  --red-dim: #f2e4e8;
-  --gold: #c4a090;
-  --text: #4a3e44;
-  --text-light: #2a1e24;
-  --text-muted: #968a90;
-  --border: #dfd9e0;
+  --bg: #dce8f6;
+  --bg-card: #f3f7fc;
+  --red: #e0a8b8;
+  --red-dark: #e8c0cc;
+  --red-glow: #ebccd4;
+  --red-dim: #f6e4ea;
+  --gold: #d0a898;
+  --text: #4a3c42;
+  --text-light: #2a1c22;
+  --text-muted: #96888e;
+  --border: #dcd6de;
   /* Functional overlay / background variables */
-  --nav-bg: linear-gradient(180deg, rgba(236,241,248,0.95) 0%, rgba(236,241,248,0) 100%);
-  --nav-solid-bg: rgba(236,241,248,0.95);
-  --player-bg: rgba(247,249,252,0.97);
+  --nav-bg: linear-gradient(180deg, rgba(220,232,246,0.95) 0%, rgba(220,232,246,0) 100%);
+  --nav-solid-bg: rgba(220,232,246,0.95);
+  --player-bg: rgba(243,247,252,0.97);
   --player-progress-bg: rgba(0,0,0,0.04);
-  --lightbox-bg: rgba(247,249,252,0.96);
-  --dropdown-bg: rgba(247,249,252,0.98);
-  --util-overlay-bg: rgba(247,249,252,0.93);
-  --gallery-overlay-bg: linear-gradient(transparent, rgba(236,241,248,0.9));
-  --input-bg: rgba(208,168,180,0.08);
-  --quote-input-bg: rgba(208,168,180,0.08);
-  --dpad-btn-bg: rgba(236,241,248,0.8);
-  --toast-bg: rgba(247,249,252,0.95);
-  --snake-overlay-bg: rgba(247,249,252,0.7);
+  --lightbox-bg: rgba(243,247,252,0.96);
+  --dropdown-bg: rgba(243,247,252,0.98);
+  --util-overlay-bg: rgba(243,247,252,0.93);
+  --gallery-overlay-bg: linear-gradient(transparent, rgba(220,232,246,0.9));
+  --input-bg: rgba(224,168,184,0.08);
+  --quote-input-bg: rgba(224,168,184,0.08);
+  --dpad-btn-bg: rgba(220,232,246,0.8);
+  --toast-bg: rgba(243,247,252,0.95);
+  --snake-overlay-bg: rgba(243,247,252,0.7);
   --hero-text-shadow: none;
   --gallery-img-filter: brightness(1.02);
 }
@@ -234,28 +234,28 @@ nav .links a:hover::after { width: 100%; }
 .cloud-1 {
   width: 300px; height: 120px;
   top: 12%; left: -8%;
-  background: radial-gradient(ellipse, rgba(190,210,235,0.5), rgba(180,200,225,0.15), transparent);
+  background: radial-gradient(ellipse, rgba(180,210,240,0.55), rgba(170,200,235,0.18), transparent);
   animation: cloudDrift 18s ease-in-out infinite;
 }
 
 .cloud-2 {
   width: 250px; height: 100px;
   top: 28%; right: -5%;
-  background: radial-gradient(ellipse, rgba(225,200,210,0.45), rgba(215,190,200,0.12), transparent);
+  background: radial-gradient(ellipse, rgba(235,190,200,0.5), rgba(225,180,195,0.15), transparent);
   animation: cloudDrift 22s ease-in-out 4s infinite;
 }
 
 .cloud-3 {
   width: 350px; height: 140px;
   top: 55%; left: 10%;
-  background: radial-gradient(ellipse, rgba(195,210,235,0.4), rgba(185,205,228,0.1), transparent);
+  background: radial-gradient(ellipse, rgba(185,215,242,0.45), rgba(175,208,238,0.12), transparent);
   animation: cloudDrift 20s ease-in-out 8s infinite;
 }
 
 .cloud-4 {
   width: 200px; height: 90px;
   top: 70%; right: 15%;
-  background: radial-gradient(ellipse, rgba(220,195,210,0.45), rgba(210,188,200,0.12), transparent);
+  background: radial-gradient(ellipse, rgba(230,188,198,0.5), rgba(220,180,192,0.15), transparent);
   animation: cloudDrift 24s ease-in-out 12s infinite;
 }
 
@@ -3369,13 +3369,13 @@ class Ember {
     const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size * 2);
     var isLight = getCurrentTheme() === 'light';
     if (this.hue === 0) {
-      gradient.addColorStop(0, 'rgba(' + (isLight ? '190, 200, 230' : '255, 60, 30') + ', ' + alpha + ')');
-      gradient.addColorStop(0.5, 'rgba(' + (isLight ? '170, 180, 210' : '200, 20, 20') + ', ' + (alpha * (isLight ? 0.4 : 0.6)) + ')');
-      gradient.addColorStop(1, 'rgba(' + (isLight ? '150, 160, 190' : '150, 0, 0') + ', 0)');
+      gradient.addColorStop(0, 'rgba(' + (isLight ? '180,208,240' : '255, 60, 30') + ', ' + alpha + ')');
+      gradient.addColorStop(0.5, 'rgba(' + (isLight ? '160,188,220' : '200, 20, 20') + ', ' + (alpha * (isLight ? 0.4 : 0.6)) + ')');
+      gradient.addColorStop(1, 'rgba(' + (isLight ? '140,168,200' : '150, 0, 0') + ', 0)');
     } else {
-      gradient.addColorStop(0, 'rgba(' + (isLight ? '220, 195, 210' : '255, 140, 30') + ', ' + alpha + ')');
-      gradient.addColorStop(0.5, 'rgba(' + (isLight ? '200, 175, 190' : '220, 100, 20') + ', ' + (alpha * (isLight ? 0.3 : 0.5)) + ')');
-      gradient.addColorStop(1, 'rgba(' + (isLight ? '180, 155, 170' : '180, 60, 0') + ', 0)');
+      gradient.addColorStop(0, 'rgba(' + (isLight ? '235,190,205' : '255, 140, 30') + ', ' + alpha + ')');
+      gradient.addColorStop(0.5, 'rgba(' + (isLight ? '215,170,188' : '220, 100, 20') + ', ' + (alpha * (isLight ? 0.3 : 0.5)) + ')');
+      gradient.addColorStop(1, 'rgba(' + (isLight ? '195,150,170' : '180, 60, 0') + ', 0)');
     }
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
@@ -3420,7 +3420,7 @@ class HeartParticle {
     var x = this.x, y = this.y;
     ctx.save();
     ctx.globalAlpha = alpha;
-    ctx.fillStyle = '#e0c0ca';
+    ctx.fillStyle = '#e8b0be';
     ctx.beginPath();
     var topY = y - s * 0.35;
     ctx.moveTo(x, y);
@@ -3464,14 +3464,14 @@ class SparkleParticle {
     var alpha = this.opacity * (1 - this.life / this.maxLife) * (0.5 + 0.5 * Math.sin(this.twinkle));
     ctx.save();
     ctx.globalAlpha = alpha;
-    ctx.fillStyle = '#c8d8ee';
+    ctx.fillStyle = '#b8d0f0';
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
     ctx.fill();
     // glow
     var glow = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius * 3);
-    glow.addColorStop(0, 'rgba(200,216,238,' + alpha + ')');
-    glow.addColorStop(1, 'rgba(200,216,238,0)');
+    glow.addColorStop(0, 'rgba(184,208,240,' + alpha + ')');
+    glow.addColorStop(1, 'rgba(184,208,240,0)');
     ctx.fillStyle = glow;
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.radius * 3, 0, Math.PI * 2);
@@ -4411,14 +4411,14 @@ function snakeDraw() {
   // Snake
   for (var i = 0; i < snake.length; i++) {
     var alpha = 1 - (i / (snake.length + 10)) * 0.5;
-    var r = i === 0 ? (isLight ? 208 : 196) : (isLight ? 168 : 100);
-    var g = i === 0 ? (isLight ? 168 : 30) : (isLight ? 150 : 10);
-    var b = i === 0 ? (isLight ? 180 : 58) : (isLight ? 165 : 8);
+    var r = i === 0 ? (isLight ? 224 : 196) : (isLight ? 185 : 100);
+    var g = i === 0 ? (isLight ? 168 : 30) : (isLight ? 155 : 10);
+    var b = i === 0 ? (isLight ? 184 : 58) : (isLight ? 170 : 8);
     snakeCtx.fillStyle = 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
     snakeCtx.fillRect(snake[i].x * snakeGrid + 1, snake[i].y * snakeGrid + 1, snakeGrid - 2, snakeGrid - 2);
     // Head glow
     if (i === 0) {
-      snakeCtx.fillStyle = isLight ? 'rgba(226,200,208,0.6)' : 'rgba(255,45,45,0.6)';
+      snakeCtx.fillStyle = isLight ? 'rgba(235,204,212,0.6)' : 'rgba(255,45,45,0.6)';
       snakeCtx.fillRect(snake[i].x * snakeGrid + 3, snake[i].y * snakeGrid + 3, snakeGrid - 6, snakeGrid - 6);
     }
   }
@@ -4432,18 +4432,18 @@ function snakeDraw() {
   if (!snakeRunning && snakeStarted) {
     snakeCtx.fillStyle = isLight ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.7)';
     snakeCtx.fillRect(0, 0, snakeCanvas.width, snakeCanvas.height);
-    snakeCtx.fillStyle = isLight ? '#d0a8b4' : '#c41e3a';
+    snakeCtx.fillStyle = isLight ? '#e0a8b8' : '#c41e3a';
     snakeCtx.font = 'bold 28px "Microsoft YaHei"';
     snakeCtx.textAlign = 'center';
     snakeCtx.fillText('游戏结束', snakeCanvas.width/2, snakeCanvas.height/2 - 10);
-    snakeCtx.fillStyle = isLight ? '#4a3e44' : '#d4c5b9';
+    snakeCtx.fillStyle = isLight ? '#4a3c42' : '#d4c5b9';
     snakeCtx.font = '16px "Microsoft YaHei"';
     snakeCtx.fillText('得分: ' + snakeScore, snakeCanvas.width/2, snakeCanvas.height/2 + 30);
     snakeCtx.textAlign = 'start';
   } else if (snakePaused) {
     snakeCtx.fillStyle = isLight ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)';
     snakeCtx.fillRect(0, 0, snakeCanvas.width, snakeCanvas.height);
-    snakeCtx.fillStyle = isLight ? '#4a3e44' : '#d4c5b9';
+    snakeCtx.fillStyle = isLight ? '#4a3c42' : '#d4c5b9';
     snakeCtx.font = 'bold 24px "Microsoft YaHei"';
     snakeCtx.textAlign = 'center';
     snakeCtx.fillText('已暂停', snakeCanvas.width/2, snakeCanvas.height/2);
