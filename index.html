@@ -3,11 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>秦彻 · 专属回忆</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐉</text></svg>">
+<meta name="color-scheme" content="dark light">
+<title>秦彻·应帆</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'></svg>">
 <style>
-/* ============ CSS Variables ============ */
-:root {
+/* ============ CSS Variables (Dark & Light Themes) ============ */
+:root,
+[data-theme="dark"] {
   --bg: #050505;
   --bg-card: #0d0d0d;
   --red: #c41e3a;
@@ -19,6 +21,52 @@
   --text-light: #f0e6dc;
   --text-muted: #8a7e72;
   --border: #1a1a1a;
+  /* Functional overlay / background variables */
+  --nav-bg: linear-gradient(180deg, rgba(5,5,5,0.95) 0%, rgba(5,5,5,0) 100%);
+  --nav-solid-bg: rgba(5,5,5,0.95);
+  --player-bg: rgba(8,8,8,0.97);
+  --player-progress-bg: rgba(255,255,255,0.08);
+  --lightbox-bg: rgba(2,2,2,0.96);
+  --dropdown-bg: rgba(10,10,10,0.98);
+  --util-overlay-bg: rgba(2,2,2,0.93);
+  --gallery-overlay-bg: linear-gradient(transparent, rgba(5,5,5,0.9));
+  --input-bg: rgba(0,0,0,0.3);
+  --quote-input-bg: rgba(0,0,0,0.4);
+  --dpad-btn-bg: rgba(10,10,10,0.8);
+  --toast-bg: rgba(20,20,20,0.95);
+  --snake-overlay-bg: rgba(0,0,0,0.7);
+  --hero-text-shadow: 0 0 40px rgba(196,30,58,0.6), 0 0 80px rgba(196,30,58,0.3), 0 0 120px rgba(196,30,58,0.15), 0 4px 8px rgba(0,0,0,0.8);
+  --gallery-img-filter: brightness(0.85);
+}
+
+[data-theme="light"] {
+  --bg: #f5f0e8;
+  --bg-card: #ffffff;
+  --red: #b71c1c;
+  --red-dark: #c41e3a;
+  --red-glow: #e53935;
+  --red-dim: #fce4e4;
+  --gold: #a67c2e;
+  --text: #3d3029;
+  --text-light: #1a1008;
+  --text-muted: #8a7d70;
+  --border: #e0d8cc;
+  /* Functional overlay / background variables */
+  --nav-bg: linear-gradient(180deg, rgba(245,240,232,0.95) 0%, rgba(245,240,232,0) 100%);
+  --nav-solid-bg: rgba(245,240,232,0.95);
+  --player-bg: rgba(255,255,255,0.97);
+  --player-progress-bg: rgba(0,0,0,0.06);
+  --lightbox-bg: rgba(255,252,248,0.96);
+  --dropdown-bg: rgba(255,255,255,0.98);
+  --util-overlay-bg: rgba(255,252,248,0.93);
+  --gallery-overlay-bg: linear-gradient(transparent, rgba(245,240,232,0.9));
+  --input-bg: rgba(0,0,0,0.05);
+  --quote-input-bg: rgba(0,0,0,0.05);
+  --dpad-btn-bg: rgba(245,240,232,0.8);
+  --toast-bg: rgba(255,255,255,0.95);
+  --snake-overlay-bg: rgba(255,255,255,0.7);
+  --hero-text-shadow: 0 0 30px rgba(183,28,28,0.3), 0 0 60px rgba(183,28,28,0.15), 0 2px 4px rgba(0,0,0,0.1);
+  --gallery-img-filter: brightness(1.0);
 }
 
 /* ============ Reset & Base ============ */
@@ -61,7 +109,7 @@ nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: linear-gradient(180deg, rgba(5,5,5,0.95) 0%, rgba(5,5,5,0) 100%);
+  background: var(--nav-bg);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
@@ -181,13 +229,9 @@ nav .links a:hover::after { width: 100%; }
 .hero h1 {
   font-size: clamp(4rem, 10vw, 8rem);
   font-weight: 900;
-  color: #fff;
+  color: var(--text-light);
   letter-spacing: 16px;
-  text-shadow:
-    0 0 40px rgba(196,30,58,0.6),
-    0 0 80px rgba(196,30,58,0.3),
-    0 0 120px rgba(196,30,58,0.15),
-    0 4px 8px rgba(0,0,0,0.8);
+  text-shadow: var(--hero-text-shadow);
   animation: titleGlow 3s ease-in-out infinite;
   line-height: 1;
   margin-bottom: 8px;
@@ -196,6 +240,15 @@ nav .links a:hover::after { width: 100%; }
 @keyframes titleGlow {
   0%, 100% { text-shadow: 0 0 40px rgba(196,30,58,0.6), 0 0 80px rgba(196,30,58,0.3); }
   50% { text-shadow: 0 0 60px rgba(255,45,45,0.8), 0 0 120px rgba(196,30,58,0.5), 0 0 180px rgba(196,30,58,0.2); }
+}
+
+[data-theme="light"] .hero h1 {
+  animation: titleGlowLight 3s ease-in-out infinite;
+}
+
+@keyframes titleGlowLight {
+  0%, 100% { text-shadow: 0 0 30px rgba(183,28,28,0.3), 0 0 60px rgba(183,28,28,0.15); }
+  50% { text-shadow: 0 0 45px rgba(229,57,53,0.5), 0 0 90px rgba(183,28,28,0.3), 0 0 140px rgba(183,28,28,0.12); }
 }
 
 .hero .subtitle {
@@ -319,7 +372,7 @@ nav .links a:hover::after { width: 100%; }
   height: 100%;
   object-fit: cover;
   transition: transform 0.6s ease;
-  filter: brightness(0.85);
+  filter: var(--gallery-img-filter);
 }
 
 .gallery-item:hover img {
@@ -331,7 +384,7 @@ nav .links a:hover::after { width: 100%; }
   position: absolute;
   bottom: 0; left: 0; right: 0;
   padding: 20px;
-  background: linear-gradient(transparent, rgba(5,5,5,0.9));
+  background: var(--gallery-overlay-bg);
   opacity: 0;
   transform: translateY(10px);
   transition: all 0.4s ease;
@@ -354,7 +407,7 @@ nav .links a:hover::after { width: 100%; }
   position: fixed;
   top: 0; left: 0;
   width: 100%; height: 100%;
-  background: rgba(2,2,2,0.96);
+  background: var(--lightbox-bg);
   z-index: 1000;
   align-items: center;
   justify-content: center;
@@ -569,7 +622,7 @@ footer .heart {
   margin: 0 auto;
   border: 1px solid var(--red-dark);
   border-radius: 4px;
-  background: rgba(0,0,0,0.6);
+  background: var(--snake-overlay-bg, rgba(0,0,0,0.6));
   max-width: 100%;
 }
 
@@ -605,7 +658,7 @@ footer .heart {
 }
 
 .dpad-btn {
-  background: rgba(10,10,10,0.8);
+  background: var(--dpad-btn-bg);
   border: 1px solid rgba(196,30,58,0.35);
   border-radius: 8px;
   color: var(--text-light);
@@ -656,7 +709,7 @@ footer .heart {
   position: fixed;
   bottom: 0; left: 0; right: 0;
   z-index: 200;
-  background: rgba(8, 8, 8, 0.97);
+  background: var(--player-bg);
   border-top: 1px solid rgba(196, 30, 58, 0.25);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -903,7 +956,7 @@ footer .heart {
   align-items: center;
   position: sticky;
   top: 0;
-  background: rgba(10,10,10,0.98);
+  background: var(--dropdown-bg);
   z-index: 1;
 }
 
@@ -1013,11 +1066,42 @@ footer .heart {
 
 .nav-else-btn:hover .nav-else-icon { opacity: 1; }
 
+/* ============ Theme Toggle Button ============ */
+.theme-toggle-btn {
+  background: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease;
+  color: var(--text-muted);
+  margin-right: 2px;
+}
+
+.theme-toggle-btn:hover {
+  border-color: var(--red-dark);
+  color: var(--red);
+  background: rgba(196,30,58,0.06);
+}
+
+.theme-toggle-btn svg {
+  transition: transform 0.4s ease;
+  display: none;
+}
+
+[data-theme="dark"] .theme-icon-dark { display: block; }
+[data-theme="dark"] .theme-icon-light { display: none; }
+[data-theme="light"] .theme-icon-dark { display: none; }
+[data-theme="light"] .theme-icon-light { display: block; }
+
 .nav-dropdown {
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
-  background: rgba(10,10,10,0.98);
+  background: var(--dropdown-bg);
   border: 1px solid rgba(196,30,58,0.25);
   border-radius: 6px;
   min-width: 140px;
@@ -1059,7 +1143,7 @@ footer .heart {
   position: fixed;
   top: 0; left: 0;
   width: 100%; height: 100%;
-  background: rgba(2,2,2,0.93);
+  background: var(--util-overlay-bg);
   z-index: 500;
   align-items: center;
   justify-content: center;
@@ -1249,7 +1333,7 @@ footer .heart {
 
 .period-picker-wrap {
   position: absolute;
-  background: rgba(10,10,10,0.98);
+  background: var(--dropdown-bg);
   border: 1px solid rgba(196,30,58,0.25);
   border-radius: 6px;
   z-index: 10;
@@ -1372,7 +1456,7 @@ footer .heart {
 
 .todo-input {
   flex: 1;
-  background: rgba(0,0,0,0.3);
+  background: var(--input-bg);
   border: 1px solid var(--border);
   border-radius: 4px;
   color: var(--text-light);
@@ -1437,7 +1521,7 @@ footer .heart {
   height: 18px;
   flex-shrink: 0;
   cursor: pointer;
-  accent-color: #c41e3a;
+  accent-color: var(--red);
   border-radius: 3px;
 }
 
@@ -1551,7 +1635,7 @@ footer .heart {
 /* ============ User Photo Delete Button ============ */
 .gallery-item.user-photo .overlay {
   opacity: 1;
-  background: linear-gradient(transparent, rgba(5,5,5,0.9));
+  background: var(--gallery-overlay-bg);
 }
 
 .photo-delete-btn {
@@ -1596,7 +1680,7 @@ footer .heart {
   left: 8px;
   font-size: 0.65rem;
   color: var(--gold);
-  background: rgba(0,0,0,0.6);
+  background: var(--snake-overlay-bg, rgba(0,0,0,0.6));
   padding: 2px 8px;
   border-radius: 10px;
   letter-spacing: 1px;
@@ -1660,7 +1744,7 @@ footer .heart {
 }
 
 .quote-inline-input {
-  background: rgba(0,0,0,0.4);
+  background: var(--quote-input-bg);
   border: 1px solid var(--border);
   color: var(--text-light);
   padding: 8px 14px;
@@ -1865,7 +1949,7 @@ footer .heart {
   height: 20px;
   z-index: 5;
   cursor: pointer;
-  accent-color: #c41e3a;
+  accent-color: var(--red);
   opacity: 0.8;
   transition: opacity 0.2s ease;
 }
@@ -1969,7 +2053,7 @@ footer .heart {
 
 .manage-quote-input {
   flex: 1;
-  background: rgba(0,0,0,0.3);
+  background: var(--input-bg);
   border: 1px solid var(--border);
   color: var(--text-light);
   padding: 10px 14px;
@@ -2078,13 +2162,22 @@ footer .heart {
 
 <!-- Navigation -->
 <nav>
-  <div class="logo">秦 彻</div>
+  <div class="logo">秦彻·应帆</div>
   <ul class="links">
     <li><a href="#home">首页</a></li>
     <li><a href="#gallery">照片墙</a></li>
     <li><a href="#quotes">语录</a></li>
   </ul>
   <div class="nav-right">
+    <button class="theme-toggle-btn" id="btnThemeToggle" title="切换主题">
+      <svg class="theme-icon theme-icon-dark" viewBox="0 0 24 24" width="18" height="18">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="none" stroke="currentColor" stroke-width="2"/>
+      </svg>
+      <svg class="theme-icon theme-icon-light" viewBox="0 0 24 24" width="18" height="18">
+        <circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="2"/>
+        <path d="M12 1v2 M12 21v2 M4.22 4.22l1.42 1.42 M18.36 18.36l1.42 1.42 M1 12h2 M21 12h2 M4.22 19.78l1.42-1.42 M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2"/>
+      </svg>
+    </button>
     <button class="nav-else-btn" id="btnElse" title="更多功能">
       <img src="icon/else.png" alt="" class="nav-else-icon">
     </button>
@@ -2115,13 +2208,13 @@ footer .heart {
              Q435 252 445 248 Q460 242 470 245 Q485 250 490 260
              Q500 270 510 265 Q520 255 515 240 Q510 225 520 210
              Q530 195 520 180Z"
-          fill="#c41e3a" />
+          style="fill:var(--red)" />
     <!-- Wing -->
     <path d="M230 120 Q200 60 180 30 Q170 15 160 18 Q150 22 155 35
              Q160 50 170 70 Q160 55 145 45 Q130 35 120 40 Q115 45 125 60
              Q135 75 150 90 Q165 100 175 108 Q185 115 195 125
              Q210 140 220 145 Q230 148 235 140 Q238 130 230 120Z"
-          fill="#8b0000" />
+          style="fill:var(--red-dark)" />
   </svg>
 
   <!-- Crows -->
@@ -2129,7 +2222,7 @@ footer .heart {
     <path d="M50 20 Q45 15 40 18 Q35 22 38 28 Q40 32 45 30
              Q42 25 38 30 Q35 35 40 40 L55 45 L70 42
              Q75 40 72 35 Q68 30 62 32
-             Q60 25 55 22 Q52 20 50 20Z" fill="#c41e3a"/>
+             Q60 25 55 22 Q52 20 50 20Z" style="fill:var(--red)"/>
     <circle cx="50" cy="28" r="2" fill="#ff2d2d" opacity="0.5"/>
   </svg>
 
@@ -2137,12 +2230,12 @@ footer .heart {
     <path d="M30 30 Q28 25 32 22 Q36 20 38 25 Q42 28 45 28
              Q48 27 50 28 Q55 30 58 32 L68 35 L78 30
              Q84 27 80 32 Q76 38 70 40 Q65 42 58 40
-             L50 45 L40 42 Q35 40 32 36 Q30 33 30 30Z" fill="#8b0000"/>
+             L50 45 L40 42 Q35 40 32 36 Q30 33 30 30Z" style="fill:var(--red-dark)"/>
   </svg>
 
   <div class="hero-content">
-    <div class="hero-badge">✦ 专属回忆 ✦</div>
-    <h1>秦 彻</h1>
+    <div class="hero-badge">✦ 秦彻·应帆 ✦</div>
+    <h1>秦彻·应帆</h1>
     <div class="hero-divider"></div>
     <p class="subtitle">QIN CHE</p>
     <p class="tagline" style="margin-top:8px;">"总会有人欣赏你本来的样子，比如我"</p>
@@ -2201,7 +2294,7 @@ footer .heart {
 
   <div class="quotes-container">
     <svg class="quotes-crow" viewBox="0 0 100 80" width="80" height="64" xmlns="http://www.w3.org/2000/svg">
-      <path d="M50 20 Q45 15 40 18 Q35 22 38 28 Q40 32 45 30 Q42 25 38 30 Q35 35 40 40 L55 45 L70 42 Q75 40 72 35 Q68 30 62 32 Q60 25 55 22 Q52 20 50 20Z" fill="#c41e3a"/>
+      <path d="M50 20 Q45 15 40 18 Q35 22 38 28 Q40 32 45 30 Q42 25 38 30 Q35 35 40 40 L55 45 L70 42 Q75 40 72 35 Q68 30 62 32 Q60 25 55 22 Q52 20 50 20Z" style="fill:var(--red)"/>
     </svg>
     <div class="quote-mark">"</div>
     <p class="quote-text" id="quoteText"></p>
@@ -2255,13 +2348,13 @@ footer .heart {
 <!-- Footer -->
 <footer>
   <svg class="footer-dragon" viewBox="0 0 200 50" width="200" height="50" xmlns="http://www.w3.org/2000/svg">
-    <path d="M20 35 Q40 10 60 25 Q80 40 100 20 Q120 0 140 25 Q160 40 180 20" fill="none" stroke="#c41e3a" stroke-width="1"/>
-    <path d="M40 30 Q50 18 60 28" fill="none" stroke="#8b0000" stroke-width="0.8"/>
-    <path d="M120 28 Q130 16 140 26" fill="none" stroke="#8b0000" stroke-width="0.8"/>
+    <path d="M20 35 Q40 10 60 25 Q80 40 100 20 Q120 0 140 25 Q160 40 180 20" style="fill:none;stroke:var(--red)" stroke-width="1"/>
+    <path d="M40 30 Q50 18 60 28" style="fill:none;stroke:var(--red-dark)" stroke-width="0.8"/>
+    <path d="M120 28 Q130 16 140 26" style="fill:none;stroke:var(--red-dark)" stroke-width="0.8"/>
     <circle cx="55" cy="24" r="1.5" fill="#ff2d2d" opacity="0.4"/>
     <circle cx="135" cy="22" r="1.5" fill="#ff2d2d" opacity="0.4"/>
   </svg>
-  <p>秦彻 <span class="heart">♥</span> 专属回忆 · 2026</p>
+  <p>秦彻·应帆 <span class="heart">♥</span> · 2026</p>
 </footer>
 
 <!-- Pomodoro Panel -->
@@ -2432,29 +2525,86 @@ footer .heart {
 </div>
 
 <script>
+// ============ Theme Management ============
+var THEME_KEY = 'qinche_theme';
+
+function getCurrentTheme() {
+  try {
+    var saved = localStorage.getItem(THEME_KEY);
+    if (saved === 'light' || saved === 'dark') return saved;
+  } catch(e) {}
+  return 'dark';
+}
+
+function setTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  try { localStorage.setItem(THEME_KEY, theme); } catch(e) {}
+}
+
+function toggleTheme() {
+  var current = getCurrentTheme();
+  var next = current === 'dark' ? 'light' : 'dark';
+  setTheme(next);
+
+  loadAllPhotos().then(function(userPhotos) {
+    renderGallery(userPhotos);
+  }).catch(function() {
+    renderGallery([]);
+  });
+}
+
+(function initTheme() {
+  setTheme(getCurrentTheme());
+})();
+
 // ============ Photos Data ============
-const photos = [
-  "01d4419b001abcec35ce9724b1ab42ae.jpg",
-  "25dd55518f5fd8eed5615bcede1328a5.jpg",
-  "2630ea966307984ced41bb162ba93731.jpg",
-  "2927597c8ae8a81154f4f0780491cb53.jpg",
-  "299676d5b3d95c5cdd9045c3ab6f52f8.jpg",
-  "6faa15f3dc5bca086e1f528bf7133713.jpg",
-  "88afd393462f5f7a3b70a9f63d8aae35.jpg",
-  "973878611e13888954293f6a061e3560.jpg",
-  "IMG_20251129_231101_AI看图.jpg",
-  "IMG_20251225_083842_AI看图.jpg",
-  "MEITU_20251129_170759272_polarr_AI看图.jpg",
-  "aa3108832b3d2f764cbd890534717460.jpg",
-  "b7ad7b00a8ae105a3931a0a7cf2dbf7f.jpg",
-  "c0491f3ee20d7a7d7626bd848bdedbce.jpg",
-  "d3c7e73f2789c8cb51233ba10fcd920e.jpg",
-  "d9b1396d8bfbb8be1789cff89acacd19.jpg",
-  "fe4658346b6a14e8ee2cab70c3d9431d.jpg",
-  "quality_restoration_20250829210304252_polarr_AI看图.jpg",
-  "retouch_2025101819125186_AI看图.jpg",
-  "retouch_2026022720555013_polarr_AI看图.jpg",
-];
+var defaultPhotos = {
+  dark: [
+    "01d4419b001abcec35ce9724b1ab42ae.jpg",
+    "25dd55518f5fd8eed5615bcede1328a5.jpg",
+    "2630ea966307984ced41bb162ba93731.jpg",
+    "2927597c8ae8a81154f4f0780491cb53.jpg",
+    "299676d5b3d95c5cdd9045c3ab6f52f8.jpg",
+    "6faa15f3dc5bca086e1f528bf7133713.jpg",
+    "88afd393462f5f7a3b70a9f63d8aae35.jpg",
+    "973878611e13888954293f6a061e3560.jpg",
+    "IMG_20251129_231101_AI看图.jpg",
+    "IMG_20251225_083842_AI看图.jpg",
+    "MEITU_20251129_170759272_polarr_AI看图.jpg",
+    "aa3108832b3d2f764cbd890534717460.jpg",
+    "b7ad7b00a8ae105a3931a0a7cf2dbf7f.jpg",
+    "c0491f3ee20d7a7d7626bd848bdedbce.jpg",
+    "d3c7e73f2789c8cb51233ba10fcd920e.jpg",
+    "d9b1396d8bfbb8be1789cff89acacd19.jpg",
+    "fe4658346b6a14e8ee2cab70c3d9431d.jpg",
+    "quality_restoration_20250829210304252_polarr_AI看图.jpg",
+    "retouch_2025101819125186_AI看图.jpg",
+    "retouch_2026022720555013_polarr_AI看图.jpg",
+  ],
+  light: [
+    "064c456e60c1c40d5299dace7b5a915d.jpg",
+    "07b47ce7b8d9c94f7ed2867a68569695.jpg",
+    "10d7df7b15ded534c36caa84dec588ac.jpg",
+    "133c7592c8e65a7e4aacdcaacc5c737f.jpg",
+    "1ab09c7b3ef77c4b5b3db7919023d9e0.jpg",
+    "530067a416557356556cd8533968f3ce.jpg",
+    "5566f72eb9bb66b2432b7f4155f1d95a.jpg",
+    "845c35eae4c0c9be539eed747184bd11.jpg",
+    "84887377512c5c38df49ef28ce28793a.jpg",
+    "93c9fb78d784dc73769cdfac96dbfcef.jpg",
+    "945a733923bae293d49297f7e5499810.jpg",
+    "952978d9ee2d7a72f89b95256dce2898.jpg",
+    "9a1c0d875cc146c9081ad1f8a163799f.jpg",
+    "ae00a807404d027e12290c30612e0916.jpg",
+    "afd1ecf293b679c9def0f58167a40e4a.jpg",
+    "b0c96a078e8b2faf11081c1e3522184b.jpg",
+    "e2dca7838c44b54eb6a051af6fb8ce4e.jpg",
+    "e9ae0db86c6aa912289428bffd6348e1.jpg",
+    "efc1446a3133fd75b7fb5ab5bdf1073f.jpg",
+    "f5f95eb14d91df0f1be22e64eec800c1.jpg",
+    "fc28ebfabd00245bda636ad84d234178.jpg",
+  ]
+};
 
 // ============ Quotes Data ============
 const quotes = [
@@ -2751,7 +2901,7 @@ var galleryItems = [];
 var currentGalleryIndex = 0;
 
 // ============ Gallery Order Persistence ============
-var GALLERY_ORDER_KEY = 'qinche_gallery_order';
+function getGalleryOrderKey() { return 'qinche_gallery_order_' + getCurrentTheme(); }
 
 // ============ Deleted Default Items Blacklist ============
 var DELETED_PHOTOS_KEY = 'qinche_deleted_photos';
@@ -2776,7 +2926,7 @@ function markQuoteDeleted(index) {
 
 function loadGalleryOrder() {
   try {
-    var data = localStorage.getItem(GALLERY_ORDER_KEY);
+    var data = localStorage.getItem(getGalleryOrderKey());
     return data ? JSON.parse(data) : null;
   } catch(e) { return null; }
 }
@@ -2786,17 +2936,20 @@ function saveGalleryOrder(items) {
     return { type: item.type, id: item.type === 'default' ? item.filename : item.dbId };
   });
   try {
-    localStorage.setItem(GALLERY_ORDER_KEY, JSON.stringify(order));
+    localStorage.setItem(getGalleryOrderKey(), JSON.stringify(order));
   } catch(e) {}
 }
 
 function buildDefaultGalleryItems(userPhotos) {
-  // Build items in default order, skipping deleted default photos
   var deletedPhotos = getDeletedPhotos();
-  var defaultItems = photos.filter(function(f) {
+  var theme = getCurrentTheme();
+  var photosDir = theme === 'light' ? 'photos2/' : 'photos/';
+  var currentPhotos = defaultPhotos[theme] || defaultPhotos.dark;
+
+  var defaultItems = currentPhotos.filter(function(f) {
     return deletedPhotos.indexOf(f) === -1;
   }).map(function(f) {
-    return { type: 'default', src: 'photos/' + f, filename: f };
+    return { type: 'default', src: photosDir + f, filename: f };
   });
   return defaultItems.concat((userPhotos || []).map(function(p) {
     return { type: 'user', src: p.dataUrl, filename: p.filename, dbId: p.id };
@@ -3106,14 +3259,15 @@ class Ember {
   draw() {
     const alpha = this.opacity * (1 - this.life / this.maxLife);
     const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size * 2);
+    var isLight = getCurrentTheme() === 'light';
     if (this.hue === 0) {
-      gradient.addColorStop(0, `rgba(255, 60, 30, ${alpha})`);
-      gradient.addColorStop(0.5, `rgba(200, 20, 20, ${alpha * 0.6})`);
-      gradient.addColorStop(1, `rgba(150, 0, 0, 0)`);
+      gradient.addColorStop(0, 'rgba(' + (isLight ? '200, 80, 40' : '255, 60, 30') + ', ' + alpha + ')');
+      gradient.addColorStop(0.5, 'rgba(' + (isLight ? '180, 60, 30' : '200, 20, 20') + ', ' + (alpha * (isLight ? 0.4 : 0.6)) + ')');
+      gradient.addColorStop(1, 'rgba(' + (isLight ? '160, 40, 10' : '150, 0, 0') + ', 0)');
     } else {
-      gradient.addColorStop(0, `rgba(255, 140, 30, ${alpha})`);
-      gradient.addColorStop(0.5, `rgba(220, 100, 20, ${alpha * 0.5})`);
-      gradient.addColorStop(1, `rgba(180, 60, 0, 0)`);
+      gradient.addColorStop(0, 'rgba(' + (isLight ? '240, 140, 40' : '255, 140, 30') + ', ' + alpha + ')');
+      gradient.addColorStop(0.5, 'rgba(' + (isLight ? '210, 110, 30' : '220, 100, 20') + ', ' + (alpha * (isLight ? 0.3 : 0.5)) + ')');
+      gradient.addColorStop(1, 'rgba(' + (isLight ? '180, 80, 20' : '180, 60, 0') + ', 0)');
     }
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
@@ -3165,7 +3319,7 @@ setTimeout(function() {
   });
 }, 100);
 
-console.log('%c🐉 秦彻 · 专属回忆 %c已就绪',
+console.log('%c秦彻·应帆 %c已就绪',
   'color: #c41e3a; font-size: 1.2em; font-weight: bold;',
   'color: #8a7e72;');
 console.log('%c"总会有人欣赏你本来的样子，比如我"', 'color: #c9a96e; font-style: italic;');
@@ -3514,6 +3668,11 @@ var navDropdown = document.getElementById('navDropdown');
 btnElse.addEventListener('click', function(e) {
   e.stopPropagation();
   navDropdown.classList.toggle('open');
+});
+
+// Theme toggle button
+document.getElementById('btnThemeToggle').addEventListener('click', function() {
+  toggleTheme();
 });
 
 document.addEventListener('click', function(e) {
@@ -4018,7 +4177,8 @@ function snakeDraw() {
   snakeCtx.clearRect(0, 0, snakeCanvas.width, snakeCanvas.height);
 
   // Grid lines (subtle)
-  snakeCtx.strokeStyle = 'rgba(255,255,255,0.02)';
+  var isLight = getCurrentTheme() === 'light';
+  snakeCtx.strokeStyle = isLight ? 'rgba(0,0,0,0.03)' : 'rgba(255,255,255,0.02)';
   snakeCtx.lineWidth = 0.5;
   for (var x = 0; x <= snakeCols; x++) {
     snakeCtx.beginPath();
@@ -4036,14 +4196,14 @@ function snakeDraw() {
   // Snake
   for (var i = 0; i < snake.length; i++) {
     var alpha = 1 - (i / (snake.length + 10)) * 0.5;
-    var r = i === 0 ? 196 : 100;
-    var g = i === 0 ? 30 : 10;
-    var b = i === 0 ? 58 : 8;
+    var r = i === 0 ? (isLight ? 183 : 196) : (isLight ? 120 : 100);
+    var g = i === 0 ? (isLight ? 28 : 30) : (isLight ? 15 : 10);
+    var b = i === 0 ? (isLight ? 28 : 58) : (isLight ? 12 : 8);
     snakeCtx.fillStyle = 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
     snakeCtx.fillRect(snake[i].x * snakeGrid + 1, snake[i].y * snakeGrid + 1, snakeGrid - 2, snakeGrid - 2);
     // Head glow
     if (i === 0) {
-      snakeCtx.fillStyle = 'rgba(255,45,45,0.6)';
+      snakeCtx.fillStyle = isLight ? 'rgba(229,57,53,0.6)' : 'rgba(255,45,45,0.6)';
       snakeCtx.fillRect(snake[i].x * snakeGrid + 3, snake[i].y * snakeGrid + 3, snakeGrid - 6, snakeGrid - 6);
     }
   }
@@ -4055,20 +4215,20 @@ function snakeDraw() {
 
   // Game over overlay (only after game was started)
   if (!snakeRunning && snakeStarted) {
-    snakeCtx.fillStyle = 'rgba(0,0,0,0.7)';
+    snakeCtx.fillStyle = isLight ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.7)';
     snakeCtx.fillRect(0, 0, snakeCanvas.width, snakeCanvas.height);
-    snakeCtx.fillStyle = '#c41e3a';
+    snakeCtx.fillStyle = isLight ? '#b71c1c' : '#c41e3a';
     snakeCtx.font = 'bold 28px "Microsoft YaHei"';
     snakeCtx.textAlign = 'center';
     snakeCtx.fillText('游戏结束', snakeCanvas.width/2, snakeCanvas.height/2 - 10);
-    snakeCtx.fillStyle = '#d4c5b9';
+    snakeCtx.fillStyle = isLight ? '#3d3029' : '#d4c5b9';
     snakeCtx.font = '16px "Microsoft YaHei"';
     snakeCtx.fillText('得分: ' + snakeScore, snakeCanvas.width/2, snakeCanvas.height/2 + 30);
     snakeCtx.textAlign = 'start';
   } else if (snakePaused) {
-    snakeCtx.fillStyle = 'rgba(0,0,0,0.6)';
+    snakeCtx.fillStyle = isLight ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)';
     snakeCtx.fillRect(0, 0, snakeCanvas.width, snakeCanvas.height);
-    snakeCtx.fillStyle = '#d4c5b9';
+    snakeCtx.fillStyle = isLight ? '#3d3029' : '#d4c5b9';
     snakeCtx.font = 'bold 24px "Microsoft YaHei"';
     snakeCtx.textAlign = 'center';
     snakeCtx.fillText('已暂停', snakeCanvas.width/2, snakeCanvas.height/2);
@@ -4597,7 +4757,8 @@ btnResetAll.addEventListener('click', function() {
     localStorage.removeItem(CUSTOM_QUOTES_KEY);
     localStorage.removeItem(DELETED_PHOTOS_KEY);
     localStorage.removeItem(DELETED_QUOTES_KEY);
-    localStorage.removeItem(GALLERY_ORDER_KEY);
+    localStorage.removeItem('qinche_gallery_order_dark');
+    localStorage.removeItem('qinche_gallery_order_light');
     localStorage.removeItem(QUOTES_ORDER_KEY);
     showUploadToast('所有数据已重置');
     return loadAllPhotos();
@@ -4611,7 +4772,8 @@ btnResetAll.addEventListener('click', function() {
     localStorage.removeItem(CUSTOM_QUOTES_KEY);
     localStorage.removeItem(DELETED_PHOTOS_KEY);
     localStorage.removeItem(DELETED_QUOTES_KEY);
-    localStorage.removeItem(GALLERY_ORDER_KEY);
+    localStorage.removeItem('qinche_gallery_order_dark');
+    localStorage.removeItem('qinche_gallery_order_light');
     localStorage.removeItem(QUOTES_ORDER_KEY);
     loadAllPhotos().then(function(userPhotos) { renderGallery(userPhotos); }).catch(function(){});
     renderManageQuotes();
