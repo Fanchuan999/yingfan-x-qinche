@@ -47,9 +47,9 @@
   --red-glow: #ebccd4;
   --red-dim: #f6e4ea;
   --gold: #d0a898;
-  --text: #4a3c42;
-  --text-light: #2a1c22;
-  --text-muted: #96888e;
+  --text: #3a2832;
+  --text-light: #1a0c14;
+  --text-muted: #6e5c66;
   --border: #dcd6de;
   /* Functional overlay / background variables */
   --nav-bg: linear-gradient(180deg, rgba(210,226,246,0.95) 0%, rgba(210,226,246,0) 100%);
@@ -4438,14 +4438,14 @@ function snakeDraw() {
     snakeCtx.font = 'bold 28px "Microsoft YaHei"';
     snakeCtx.textAlign = 'center';
     snakeCtx.fillText('游戏结束', snakeCanvas.width/2, snakeCanvas.height/2 - 10);
-    snakeCtx.fillStyle = isLight ? '#4a3c42' : '#d4c5b9';
+    snakeCtx.fillStyle = isLight ? '#3a2832' : '#d4c5b9';
     snakeCtx.font = '16px "Microsoft YaHei"';
     snakeCtx.fillText('得分: ' + snakeScore, snakeCanvas.width/2, snakeCanvas.height/2 + 30);
     snakeCtx.textAlign = 'start';
   } else if (snakePaused) {
     snakeCtx.fillStyle = isLight ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)';
     snakeCtx.fillRect(0, 0, snakeCanvas.width, snakeCanvas.height);
-    snakeCtx.fillStyle = isLight ? '#4a3c42' : '#d4c5b9';
+    snakeCtx.fillStyle = isLight ? '#3a2832' : '#d4c5b9';
     snakeCtx.font = 'bold 24px "Microsoft YaHei"';
     snakeCtx.textAlign = 'center';
     snakeCtx.fillText('已暂停', snakeCanvas.width/2, snakeCanvas.height/2);
