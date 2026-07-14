@@ -52,14 +52,14 @@
   --text-muted: #96888e;
   --border: #dcd6de;
   /* Functional overlay / background variables */
-  --nav-bg: linear-gradient(180deg, rgba(220,232,246,0.95) 0%, rgba(220,232,246,0) 100%);
-  --nav-solid-bg: rgba(220,232,246,0.95);
+  --nav-bg: linear-gradient(180deg, rgba(214,228,244,0.95) 0%, rgba(214,228,244,0) 100%);
+  --nav-solid-bg: rgba(214,228,244,0.95);
   --player-bg: rgba(243,247,252,0.97);
   --player-progress-bg: rgba(0,0,0,0.04);
   --lightbox-bg: rgba(243,247,252,0.96);
   --dropdown-bg: rgba(243,247,252,0.98);
   --util-overlay-bg: rgba(243,247,252,0.93);
-  --gallery-overlay-bg: linear-gradient(transparent, rgba(220,232,246,0.9));
+  --gallery-overlay-bg: linear-gradient(transparent, rgba(220,228,242,0.9));
   --input-bg: rgba(224,168,184,0.08);
   --quote-input-bg: rgba(224,168,184,0.08);
   --dpad-btn-bg: rgba(220,232,246,0.8);
@@ -91,8 +91,10 @@ body {
   line-height: 1.6;
 }
 
-/* Light theme — thinner, airier typography */
+/* Light theme — blue-pink gradient background + thinner typography */
 [data-theme="light"] body {
+  background: linear-gradient(170deg, #d6e4f4 0%, #e4dcee 30%, #eedae4 60%, #f2dce4 100%);
+  background-attachment: fixed;
   font-weight: 300;
   letter-spacing: 0.02em;
 }
