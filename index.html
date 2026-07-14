@@ -40,32 +40,32 @@
 }
 
 [data-theme="light"] {
-  --bg: #fdf2f0;
-  --bg-card: #fffaf8;
-  --red: #d28185;
-  --red-dark: #c9a0a3;
-  --red-glow: #e8a8ab;
-  --red-dim: #fce8ea;
-  --gold: #c49b7c;
-  --text: #5d4048;
-  --text-light: #3a1c24;
-  --text-muted: #a0888e;
-  --border: #f0dcd8;
+  --bg: #f2eff7;
+  --bg-card: #faf9fc;
+  --red: #b8959e;
+  --red-dark: #c4acb5;
+  --red-glow: #d0bcc4;
+  --red-dim: #f0e8ec;
+  --gold: #b8958a;
+  --text: #4a3d45;
+  --text-light: #2a1d25;
+  --text-muted: #988b92;
+  --border: #e6dce3;
   /* Functional overlay / background variables */
-  --nav-bg: linear-gradient(180deg, rgba(253,242,240,0.95) 0%, rgba(253,242,240,0) 100%);
-  --nav-solid-bg: rgba(253,242,240,0.95);
-  --player-bg: rgba(255,250,248,0.97);
-  --player-progress-bg: rgba(0,0,0,0.05);
-  --lightbox-bg: rgba(255,250,247,0.96);
-  --dropdown-bg: rgba(255,250,248,0.98);
-  --util-overlay-bg: rgba(255,250,247,0.93);
-  --gallery-overlay-bg: linear-gradient(transparent, rgba(253,242,240,0.9));
-  --input-bg: rgba(210,130,135,0.08);
-  --quote-input-bg: rgba(210,130,135,0.08);
-  --dpad-btn-bg: rgba(253,242,240,0.8);
-  --toast-bg: rgba(255,250,248,0.95);
-  --snake-overlay-bg: rgba(255,250,248,0.7);
-  --hero-text-shadow: 0 0 30px rgba(210,130,135,0.4), 0 0 60px rgba(210,130,135,0.2), 0 2px 4px rgba(0,0,0,0.08);
+  --nav-bg: linear-gradient(180deg, rgba(242,239,247,0.95) 0%, rgba(242,239,247,0) 100%);
+  --nav-solid-bg: rgba(242,239,247,0.95);
+  --player-bg: rgba(250,249,252,0.97);
+  --player-progress-bg: rgba(0,0,0,0.04);
+  --lightbox-bg: rgba(250,249,252,0.96);
+  --dropdown-bg: rgba(250,249,252,0.98);
+  --util-overlay-bg: rgba(250,249,252,0.93);
+  --gallery-overlay-bg: linear-gradient(transparent, rgba(242,239,247,0.9));
+  --input-bg: rgba(184,150,160,0.08);
+  --quote-input-bg: rgba(184,150,160,0.08);
+  --dpad-btn-bg: rgba(242,239,247,0.8);
+  --toast-bg: rgba(250,249,252,0.95);
+  --snake-overlay-bg: rgba(250,249,252,0.7);
+  --hero-text-shadow: none;
   --gallery-img-filter: brightness(1.02);
 }
 
@@ -89,6 +89,55 @@ body {
   color: var(--text);
   overflow-x: hidden;
   line-height: 1.6;
+}
+
+/* Light theme — thinner, airier typography */
+[data-theme="light"] body {
+  font-weight: 300;
+  letter-spacing: 0.02em;
+}
+
+[data-theme="light"] h1,
+[data-theme="light"] .hero h1 {
+  font-weight: 300;
+  letter-spacing: 0.25em;
+}
+
+[data-theme="light"] .logo {
+  font-weight: 300;
+  letter-spacing: 6px;
+}
+
+[data-theme="light"] .section-header h2,
+[data-theme="light"] .section-title {
+  font-weight: 300;
+  letter-spacing: 0.08em;
+}
+
+[data-theme="light"] .quote-text {
+  font-weight: 300;
+}
+
+[data-theme="light"] .hero .subtitle {
+  font-weight: 300;
+  letter-spacing: 0.3em;
+}
+
+[data-theme="light"] .hero-badge {
+  font-weight: 300;
+  letter-spacing: 0.15em;
+}
+
+[data-theme="light"] .hero .tagline {
+  font-weight: 300;
+}
+
+[data-theme="light"] .nav-dropdown .dropdown-item {
+  font-weight: 300;
+}
+
+[data-theme="light"] .player-title {
+  font-weight: 300;
 }
 
 /* ============ Particle Canvas ============ */
@@ -157,6 +206,62 @@ nav .links a:hover::after { width: 100%; }
   z-index: 2;
   padding: 80px 20px;
   overflow: hidden;
+}
+
+/* ============ Theme Clouds (light mode) ============ */
+.theme-clouds {
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+[data-theme="light"] .theme-clouds {
+  display: block;
+}
+
+.cloud {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.35;
+}
+
+.cloud-1 {
+  width: 300px; height: 120px;
+  top: 12%; left: -8%;
+  background: radial-gradient(ellipse, rgba(180,160,200,0.5), rgba(200,185,215,0.15), transparent);
+  animation: cloudDrift 18s ease-in-out infinite;
+}
+
+.cloud-2 {
+  width: 250px; height: 100px;
+  top: 28%; right: -5%;
+  background: radial-gradient(ellipse, rgba(210,185,200,0.45), rgba(195,170,195,0.12), transparent);
+  animation: cloudDrift 22s ease-in-out 4s infinite;
+}
+
+.cloud-3 {
+  width: 350px; height: 140px;
+  top: 55%; left: 10%;
+  background: radial-gradient(ellipse, rgba(185,170,210,0.4), rgba(190,180,210,0.1), transparent);
+  animation: cloudDrift 20s ease-in-out 8s infinite;
+}
+
+.cloud-4 {
+  width: 200px; height: 90px;
+  top: 70%; right: 15%;
+  background: radial-gradient(ellipse, rgba(200,178,200,0.45), rgba(210,190,205,0.12), transparent);
+  animation: cloudDrift 24s ease-in-out 12s infinite;
+}
+
+@keyframes cloudDrift {
+  0%, 100% { transform: translateX(0) translateY(0) scale(1); }
+  25% { transform: translateX(30px) translateY(-15px) scale(1.08); }
+  50% { transform: translateX(-20px) translateY(10px) scale(0.95); }
+  75% { transform: translateX(15px) translateY(-8px) scale(1.05); }
 }
 
 /* Dragon silhouette */
@@ -240,15 +345,6 @@ nav .links a:hover::after { width: 100%; }
 @keyframes titleGlow {
   0%, 100% { text-shadow: 0 0 40px rgba(196,30,58,0.6), 0 0 80px rgba(196,30,58,0.3); }
   50% { text-shadow: 0 0 60px rgba(255,45,45,0.8), 0 0 120px rgba(196,30,58,0.5), 0 0 180px rgba(196,30,58,0.2); }
-}
-
-[data-theme="light"] .hero h1 {
-  animation: titleGlowLight 3s ease-in-out infinite;
-}
-
-@keyframes titleGlowLight {
-  0%, 100% { text-shadow: 0 0 30px rgba(210,130,135,0.35), 0 0 60px rgba(210,130,135,0.18); }
-  50% { text-shadow: 0 0 45px rgba(232,168,171,0.55), 0 0 90px rgba(210,130,135,0.35), 0 0 140px rgba(210,130,135,0.15); }
 }
 
 .hero .subtitle {
@@ -2196,6 +2292,14 @@ footer .heart {
 <!-- Hero Section -->
 <section class="hero" id="home">
 
+  <!-- Theme Clouds (light mode only) -->
+  <div class="theme-clouds">
+    <div class="cloud cloud-1"></div>
+    <div class="cloud cloud-2"></div>
+    <div class="cloud cloud-3"></div>
+    <div class="cloud cloud-4"></div>
+  </div>
+
   <!-- Dragon Silhouette SVG -->
   <svg class="dragon-silhouette" viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg">
     <path d="M520 180 Q500 120 460 100 Q440 90 420 95 Q400 100 390 110
@@ -3263,13 +3367,13 @@ class Ember {
     const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size * 2);
     var isLight = getCurrentTheme() === 'light';
     if (this.hue === 0) {
-      gradient.addColorStop(0, 'rgba(' + (isLight ? '200, 80, 40' : '255, 60, 30') + ', ' + alpha + ')');
-      gradient.addColorStop(0.5, 'rgba(' + (isLight ? '180, 60, 30' : '200, 20, 20') + ', ' + (alpha * (isLight ? 0.4 : 0.6)) + ')');
-      gradient.addColorStop(1, 'rgba(' + (isLight ? '160, 40, 10' : '150, 0, 0') + ', 0)');
+      gradient.addColorStop(0, 'rgba(' + (isLight ? '190, 150, 200' : '255, 60, 30') + ', ' + alpha + ')');
+      gradient.addColorStop(0.5, 'rgba(' + (isLight ? '170, 130, 180' : '200, 20, 20') + ', ' + (alpha * (isLight ? 0.4 : 0.6)) + ')');
+      gradient.addColorStop(1, 'rgba(' + (isLight ? '150, 110, 160' : '150, 0, 0') + ', 0)');
     } else {
-      gradient.addColorStop(0, 'rgba(' + (isLight ? '240, 140, 40' : '255, 140, 30') + ', ' + alpha + ')');
-      gradient.addColorStop(0.5, 'rgba(' + (isLight ? '210, 110, 30' : '220, 100, 20') + ', ' + (alpha * (isLight ? 0.3 : 0.5)) + ')');
-      gradient.addColorStop(1, 'rgba(' + (isLight ? '180, 80, 20' : '180, 60, 0') + ', 0)');
+      gradient.addColorStop(0, 'rgba(' + (isLight ? '210, 175, 210' : '255, 140, 30') + ', ' + alpha + ')');
+      gradient.addColorStop(0.5, 'rgba(' + (isLight ? '190, 155, 195' : '220, 100, 20') + ', ' + (alpha * (isLight ? 0.3 : 0.5)) + ')');
+      gradient.addColorStop(1, 'rgba(' + (isLight ? '170, 135, 175' : '180, 60, 0') + ', 0)');
     }
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
@@ -3314,7 +3418,7 @@ class HeartParticle {
     var x = this.x, y = this.y;
     ctx.save();
     ctx.globalAlpha = alpha;
-    ctx.fillStyle = '#e8a8ab';
+    ctx.fillStyle = '#c8b0c8';
     ctx.beginPath();
     var topY = y - s * 0.35;
     ctx.moveTo(x, y);
@@ -3358,14 +3462,14 @@ class SparkleParticle {
     var alpha = this.opacity * (1 - this.life / this.maxLife) * (0.5 + 0.5 * Math.sin(this.twinkle));
     ctx.save();
     ctx.globalAlpha = alpha;
-    ctx.fillStyle = '#f5d5c8';
+    ctx.fillStyle = '#d8c8e0';
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
     ctx.fill();
     // glow
     var glow = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius * 3);
-    glow.addColorStop(0, 'rgba(245,213,200,' + alpha + ')');
-    glow.addColorStop(1, 'rgba(245,213,200,0)');
+    glow.addColorStop(0, 'rgba(216,200,224,' + alpha + ')');
+    glow.addColorStop(1, 'rgba(216,200,224,0)');
     ctx.fillStyle = glow;
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.radius * 3, 0, Math.PI * 2);
@@ -4305,14 +4409,14 @@ function snakeDraw() {
   // Snake
   for (var i = 0; i < snake.length; i++) {
     var alpha = 1 - (i / (snake.length + 10)) * 0.5;
-    var r = i === 0 ? (isLight ? 183 : 196) : (isLight ? 120 : 100);
-    var g = i === 0 ? (isLight ? 28 : 30) : (isLight ? 15 : 10);
-    var b = i === 0 ? (isLight ? 28 : 58) : (isLight ? 12 : 8);
+    var r = i === 0 ? (isLight ? 184 : 196) : (isLight ? 150 : 100);
+    var g = i === 0 ? (isLight ? 149 : 30) : (isLight ? 130 : 10);
+    var b = i === 0 ? (isLight ? 158 : 58) : (isLight ? 145 : 8);
     snakeCtx.fillStyle = 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
     snakeCtx.fillRect(snake[i].x * snakeGrid + 1, snake[i].y * snakeGrid + 1, snakeGrid - 2, snakeGrid - 2);
     // Head glow
     if (i === 0) {
-      snakeCtx.fillStyle = isLight ? 'rgba(229,57,53,0.6)' : 'rgba(255,45,45,0.6)';
+      snakeCtx.fillStyle = isLight ? 'rgba(208,188,196,0.6)' : 'rgba(255,45,45,0.6)';
       snakeCtx.fillRect(snake[i].x * snakeGrid + 3, snake[i].y * snakeGrid + 3, snakeGrid - 6, snakeGrid - 6);
     }
   }
@@ -4326,18 +4430,18 @@ function snakeDraw() {
   if (!snakeRunning && snakeStarted) {
     snakeCtx.fillStyle = isLight ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.7)';
     snakeCtx.fillRect(0, 0, snakeCanvas.width, snakeCanvas.height);
-    snakeCtx.fillStyle = isLight ? '#b71c1c' : '#c41e3a';
+    snakeCtx.fillStyle = isLight ? '#b8959e' : '#c41e3a';
     snakeCtx.font = 'bold 28px "Microsoft YaHei"';
     snakeCtx.textAlign = 'center';
     snakeCtx.fillText('游戏结束', snakeCanvas.width/2, snakeCanvas.height/2 - 10);
-    snakeCtx.fillStyle = isLight ? '#3d3029' : '#d4c5b9';
+    snakeCtx.fillStyle = isLight ? '#4a3d45' : '#d4c5b9';
     snakeCtx.font = '16px "Microsoft YaHei"';
     snakeCtx.fillText('得分: ' + snakeScore, snakeCanvas.width/2, snakeCanvas.height/2 + 30);
     snakeCtx.textAlign = 'start';
   } else if (snakePaused) {
     snakeCtx.fillStyle = isLight ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)';
     snakeCtx.fillRect(0, 0, snakeCanvas.width, snakeCanvas.height);
-    snakeCtx.fillStyle = isLight ? '#3d3029' : '#d4c5b9';
+    snakeCtx.fillStyle = isLight ? '#4a3d45' : '#d4c5b9';
     snakeCtx.font = 'bold 24px "Microsoft YaHei"';
     snakeCtx.textAlign = 'center';
     snakeCtx.fillText('已暂停', snakeCanvas.width/2, snakeCanvas.height/2);
