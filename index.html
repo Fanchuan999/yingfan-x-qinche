@@ -1750,8 +1750,8 @@ footer .heart {
   line-height: 1;
 }
 
-/* Light theme: pink border, no fill when unchecked */
-[data-theme="light"] .todo-checkbox {
+/* Light theme: pink border, no fill when UNCHECKED */
+[data-theme="light"] .todo-checkbox:not(:checked) {
   border-color: var(--red);
   background: transparent;
 }
