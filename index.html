@@ -1532,6 +1532,69 @@ footer .heart {
   border-style: dashed;
 }
 
+/* Avatar crop modal */
+.avatar-crop-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.avatar-crop-container {
+  position: relative;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: grab;
+  border: 2px solid var(--red);
+  box-shadow: 0 0 40px rgba(196,30,58,0.3);
+}
+
+.avatar-crop-container:active { cursor: grabbing; }
+
+.avatar-crop-img {
+  position: absolute;
+  user-select: none;
+  pointer-events: none;
+}
+
+.avatar-crop-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.avatar-crop-zoom {
+  width: 120px;
+  accent-color: var(--red);
+}
+
+.avatar-crop-btn {
+  background: var(--red);
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  padding: 8px 22px;
+  border-radius: 16px;
+  font-size: 0.82rem;
+  letter-spacing: 1px;
+  transition: all 0.2s;
+}
+
+.avatar-crop-btn:hover { background: var(--red-glow); }
+
+.avatar-crop-cancel {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
 .chat-msg img { max-width: 160px; border-radius: 8px; margin-top: 4px; }
 
 .chat-input-bar {
@@ -6358,10 +6421,134 @@ function onUserAvatarSelect(e) {
   if (!file) return;
   var reader = new FileReader();
   reader.onload = function() {
-    localStorage.setItem(USER_AVATAR_KEY, reader.result);
-    document.getElementById('chatUserAvatarPreview').src = reader.result;
+    showAvatarCrop(reader.result);
   };
   reader.readAsDataURL(file);
+}
+
+function showAvatarCrop(dataUrl) {
+  // Remove existing
+  var old = document.querySelector('.avatar-crop-overlay');
+  if (old) old.remove();
+
+  var overlay = document.createElement('div');
+  overlay.className = 'avatar-crop-overlay';
+
+  var container = document.createElement('div');
+  container.className = 'avatar-crop-container';
+
+  var img = document.createElement('img');
+  img.className = 'avatar-crop-img';
+  img.src = dataUrl;
+
+  // Scale image to at least fill the 260px circle
+  var size = 260;
+  var scale = 1;
+  var offsetX = 0, offsetY = 0;
+  var dragging = false, startX, startY, startOX, startOY;
+
+  img.onload = function() {
+    var nw = img.naturalWidth, nh = img.naturalHeight;
+    scale = Math.max(size / nw, size / nh);
+    var w = nw * scale, h = nh * scale;
+    img.style.width = w + 'px';
+    img.style.height = h + 'px';
+    offsetX = (size - w) / 2;
+    offsetY = (size - h) / 2;
+    img.style.left = offsetX + 'px';
+    img.style.top = offsetY + 'px';
+  };
+
+  container.appendChild(img);
+  overlay.appendChild(container);
+
+  // Controls
+  var ctrls = document.createElement('div');
+  ctrls.className = 'avatar-crop-controls';
+  ctrls.innerHTML = '<input type="range" class="avatar-crop-zoom" min="50" max="200" value="100">' +
+    '<button class="avatar-crop-btn avatar-crop-cancel">取消</button>' +
+    '<button class="avatar-crop-btn">确认</button>';
+  overlay.appendChild(ctrls);
+
+  document.body.appendChild(overlay);
+
+  // Zoom slider
+  var zoomSlider = ctrls.querySelector('.avatar-crop-zoom');
+  var baseScale = scale;
+  zoomSlider.addEventListener('input', function() {
+    var z = parseInt(this.value) / 100;
+    var newScale = baseScale * z;
+    var w = img.naturalWidth * newScale, h = img.naturalHeight * newScale;
+    img.style.width = w + 'px';
+    img.style.height = h + 'px';
+    offsetX = (size - w) / 2;
+    offsetY = (size - h) / 2;
+    img.style.left = offsetX + 'px';
+    img.style.top = offsetY + 'px';
+    scale = newScale;
+  });
+
+  // Drag
+  container.addEventListener('mousedown', function(e) {
+    dragging = true; startX = e.clientX; startY = e.clientY;
+    startOX = offsetX; startOY = offsetY;
+    e.preventDefault();
+  });
+  container.addEventListener('touchstart', function(e) {
+    dragging = true; startX = e.touches[0].clientX; startY = e.touches[0].clientY;
+    startOX = offsetX; startOY = offsetY;
+  });
+
+  function onMove(ex, ey) {
+    if (!dragging) return;
+    offsetX = startOX + (ex - startX);
+    offsetY = startOY + (ey - startY);
+    img.style.left = offsetX + 'px';
+    img.style.top = offsetY + 'px';
+  }
+
+  function onMMove(e) { onMove(e.clientX, e.clientY); }
+  function onTMove(e) { onMove(e.touches[0].clientX, e.touches[0].clientY); }
+  function onUp() { dragging = false; }
+
+  document.addEventListener('mousemove', onMMove);
+  document.addEventListener('touchmove', onTMove);
+  document.addEventListener('mouseup', onUp);
+  document.addEventListener('touchend', onUp);
+
+  // Cleanup
+  function cleanup() {
+    document.removeEventListener('mousemove', onMMove);
+    document.removeEventListener('touchmove', onTMove);
+    document.removeEventListener('mouseup', onUp);
+    document.removeEventListener('touchend', onUp);
+    overlay.remove();
+  }
+
+  // Crop & save
+  function doCrop() {
+    var canvas = document.createElement('canvas');
+    canvas.width = 128; canvas.height = 128;
+    var ctx = canvas.getContext('2d');
+    var ratio = 128 / size;
+    var sx = -offsetX * ratio;
+    var sy = -offsetY * ratio;
+    var sw = img.naturalWidth * scale * ratio;
+    var sh = img.naturalHeight * scale * ratio;
+    ctx.beginPath();
+    ctx.arc(64, 64, 64, 0, Math.PI * 2);
+    ctx.clip();
+    ctx.drawImage(img, sx, sy, sw, sh);
+    var result = canvas.toDataURL('image/png');
+
+    localStorage.setItem(USER_AVATAR_KEY, result);
+    var preview = document.getElementById('chatUserAvatarPreview');
+    if (preview) preview.src = result;
+    cleanup();
+  }
+
+  ctrls.querySelector('.avatar-crop-btn:not(.avatar-crop-cancel)').onclick = doCrop;
+  ctrls.querySelector('.avatar-crop-cancel').onclick = cleanup;
 }
 
 function appendChatMsg(role, content, imageBase64) {
