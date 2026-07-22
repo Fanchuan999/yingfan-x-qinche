@@ -101,6 +101,9 @@ body {
   cursor: url('icon/mouse-daytime.png') 2 2, auto;
 }
 
+/* Light theme: dim placeholders so they don't look like real content */
+[data-theme="light"] ::placeholder { opacity: 0.35; }
+
 [data-theme="light"] h1,
 [data-theme="light"] .hero h1 {
   font-weight: 300;
@@ -1250,6 +1253,9 @@ footer .heart {
 
 .chat-setting-row input:focus,
 .chat-setting-row select:focus { border-color: var(--red-dark); }
+
+[data-theme="light"] .chat-setting-row input::placeholder,
+[data-theme="light"] .chat-setting-row textarea::placeholder { opacity: 0.35; }
 
 .chat-setting-row select { cursor: pointer; }
 
