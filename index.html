@@ -1158,14 +1158,20 @@ footer .heart {
 /* Chat header icons */
 .chat-collapse-btn {
   background: none;
-  border: none;
+  border: 1px solid transparent;
   color: var(--text-muted);
   cursor: pointer;
-  font-size: 0.55rem;
-  padding: 2px 4px;
+  font-size: 0.8rem;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: all 0.2s;
 }
 
+.chat-collapse-btn:hover { border-color: var(--red-dark); color: var(--red); }
 .chat-collapse-btn.open { transform: rotate(-90deg); }
 
 .chat-header-icon {
@@ -1173,9 +1179,13 @@ footer .heart {
   border: 1px solid transparent;
   cursor: pointer;
   color: var(--text-muted);
-  font-size: 0.85rem;
-  padding: 2px 6px;
-  border-radius: 4px;
+  font-size: 1.2rem;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: all 0.2s;
 }
 
