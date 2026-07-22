@@ -5842,10 +5842,15 @@ function saveChatHistory(msgs) {
 
 function initChatPanel() {
   var cfg = loadChatConfig();
-  document.getElementById('chatModelSelect').value = cfg.model || 'deepseek';
+  var model = cfg.model || 'deepseek';
+  document.getElementById('chatModelSelect').value = model;
   document.getElementById('chatApiKey').value = cfg.apiKey || '';
-  document.getElementById('chatBaseUrl').value = cfg.baseUrl || '';
-  document.getElementById('chatModelLabel').textContent = cfg.model === 'doubao' ? '豆包' : 'DeepSeek';
+  var defaultUrl = model === 'doubao'
+    ? 'https://ark.cn-beijing.volces.com/api/v3'
+    : 'https://api.deepseek.com';
+  document.getElementById('chatBaseUrl').value = cfg.baseUrl || defaultUrl;
+  if (!cfg.baseUrl) document.getElementById('chatBaseUrl').placeholder = defaultUrl;
+  document.getElementById('chatModelLabel').textContent = model === 'doubao' ? '豆包' : 'DeepSeek';
 
   var history = loadChatHistory();
   var msgsDiv = document.getElementById('chatMessages');
@@ -5863,14 +5868,13 @@ function toggleChatSettings() {
 }
 
 function onChatModelChange() {
+  var model = document.getElementById('chatModelSelect').value;
+  var defaultUrl = model === 'doubao'
+    ? 'https://ark.cn-beijing.volces.com/api/v3'
+    : 'https://api.deepseek.com';
+  document.getElementById('chatBaseUrl').value = defaultUrl;
+  document.getElementById('chatBaseUrl').placeholder = defaultUrl;
   saveChatConfig();
-  var cfg = loadChatConfig();
-  var baseUrlInput = document.getElementById('chatBaseUrl');
-  if (!cfg.baseUrl) {
-    baseUrlInput.placeholder = cfg.model === 'doubao'
-      ? 'https://ark.cn-beijing.volces.com/api/v3'
-      : 'https://api.deepseek.com';
-  }
 }
 
 function appendChatMsg(role, content, imageBase64) {
