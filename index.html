@@ -5828,6 +5828,14 @@ function loadSessions() {
 }
 
 function saveSessions(sessions) {
+  // 最多保留 20 个会话，超出删最旧的
+  if (sessions.length > 20) sessions = sessions.slice(0, 20);
+  // 每个会话的消息中去掉图片（图片只保留在当前会话，不存进历史）
+  sessions.forEach(function(s) {
+    s.messages = s.messages.slice(-40).map(function(m) {
+      return { role: m.role, content: m.content };
+    });
+  });
   localStorage.setItem(CHAT_SESSIONS_KEY, JSON.stringify(sessions));
 }
 
