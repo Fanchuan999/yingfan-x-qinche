@@ -1524,6 +1524,12 @@ footer .heart {
   object-fit: cover;
   flex-shrink: 0;
   border: 1px solid var(--border);
+  background: var(--bg);
+}
+
+.chat-avatar[src=""] {
+  background: var(--input-bg);
+  border-style: dashed;
 }
 
 .chat-msg img { max-width: 160px; border-radius: 8px; margin-top: 4px; }
@@ -6371,7 +6377,6 @@ function appendChatMsg(role, content, imageBase64) {
   var avatar = document.createElement('img');
   avatar.className = 'chat-avatar';
   avatar.src = role === 'user' ? (getUserAvatar() || '') : QINCHE_AVATAR;
-  avatar.onerror = function() { this.style.display = 'none'; };
   row.appendChild(avatar);
 
   // Message bubble
