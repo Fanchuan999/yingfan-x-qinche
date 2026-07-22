@@ -1500,6 +1500,32 @@ footer .heart {
   border-bottom-left-radius: 4px;
 }
 
+/* Chat avatars */
+.chat-msg-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  max-width: 92%;
+}
+
+.chat-msg-row.user-row {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+.chat-msg-row.ai-row {
+  align-self: flex-start;
+}
+
+.chat-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+}
+
 .chat-msg img { max-width: 160px; border-radius: 8px; margin-top: 4px; }
 
 .chat-input-bar {
@@ -3347,6 +3373,12 @@ footer .heart {
         <label>最大输出</label>
         <input type="number" id="chatMaxTokens" value="4096" min="256" max="8192" step="256" onchange="saveChatConfig()" style="width:80px; text-align:center;">
         <span style="font-size:0.65rem; color:var(--text-muted);">tokens（256-8192）</span>
+      </div>
+      <div class="chat-setting-row" style="align-items:center;">
+        <label>我的头像</label>
+        <img id="chatUserAvatarPreview" src="" alt="" style="width:32px;height:32px;border-radius:50%;object-fit:cover;border:1px solid var(--border);cursor:pointer;" onclick="document.getElementById('chatAvatarInput').click()" title="点击更换头像">
+        <input type="file" id="chatAvatarInput" accept="image/*" hidden onchange="onUserAvatarSelect(event)">
+        <span style="font-size:0.65rem;color:var(--text-muted);">点击图片更换</span>
       </div>
       <div class="chat-setting-row" style="flex-direction:column; align-items:stretch;">
         <label>系统提示词</label>
@@ -6033,6 +6065,8 @@ btnResetAll.addEventListener('click', function() {
 var CHAT_CONFIG_KEY = 'qinche_chat_config';
 var CHAT_SESSIONS_KEY = 'qinche_chat_sessions';
 var CHAT_ACTIVE_KEY = 'qinche_chat_active';
+var USER_AVATAR_KEY = 'qinche_user_avatar';
+var QINCHE_AVATAR = 'icon/qinche-avatar.png';
 var chatImageBase64 = null;
 
 function loadSessions() {
@@ -6278,6 +6312,12 @@ function initChatPanel() {
   document.getElementById('chatReasoner').checked = cfg.reasoner || false;
   document.getElementById('chatMaxTokens').value = cfg.maxTokens || 4096;
   document.getElementById('chatSystemPrompt').value = cfg.systemPrompt || '';
+
+  // Restore user avatar
+  var userAv = getUserAvatar();
+  var avp = document.getElementById('chatUserAvatarPreview');
+  if (avp && userAv) avp.src = userAv;
+
   var history = loadChatHistory();
   var msgsDiv = document.getElementById('chatMessages');
   msgsDiv.innerHTML = '';
@@ -6303,11 +6343,38 @@ function onChatModelChange() {
   saveChatConfig();
 }
 
+function getUserAvatar() {
+  try { return localStorage.getItem(USER_AVATAR_KEY) || ''; } catch(e) { return ''; }
+}
+
+function onUserAvatarSelect(e) {
+  var file = e.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function() {
+    localStorage.setItem(USER_AVATAR_KEY, reader.result);
+    document.getElementById('chatUserAvatarPreview').src = reader.result;
+  };
+  reader.readAsDataURL(file);
+}
+
 function appendChatMsg(role, content, imageBase64) {
   var msgsDiv = document.getElementById('chatMessages');
   var empty = msgsDiv.querySelector('.chat-empty');
   if (empty) empty.remove();
 
+  // Row with avatar
+  var row = document.createElement('div');
+  row.className = 'chat-msg-row ' + (role === 'user' ? 'user-row' : 'ai-row');
+
+  // Avatar
+  var avatar = document.createElement('img');
+  avatar.className = 'chat-avatar';
+  avatar.src = role === 'user' ? (getUserAvatar() || '') : QINCHE_AVATAR;
+  avatar.onerror = function() { this.style.display = 'none'; };
+  row.appendChild(avatar);
+
+  // Message bubble
   var div = document.createElement('div');
   div.className = 'chat-msg ' + role;
 
@@ -6317,7 +6384,8 @@ function appendChatMsg(role, content, imageBase64) {
   }
   html += role === 'user' ? escapeHtml2(content) : renderMarkdown(content);
   div.innerHTML = html;
-  msgsDiv.appendChild(div);
+  row.appendChild(div);
+  msgsDiv.appendChild(row);
   msgsDiv.scrollTop = msgsDiv.scrollHeight;
   return div;
 }
