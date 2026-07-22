@@ -1568,6 +1568,9 @@ footer .heart {
   gap: 12px;
   align-items: center;
   margin-top: 16px;
+  background: var(--bg-card);
+  padding: 10px 16px;
+  border-radius: 20px;
 }
 
 .avatar-crop-zoom {
@@ -6443,20 +6446,26 @@ function showAvatarCrop(dataUrl) {
 
   // Scale image to at least fill the 260px circle
   var size = 260;
+  var baseScale = 1;
   var scale = 1;
   var offsetX = 0, offsetY = 0;
   var dragging = false, startX, startY, startOX, startOY;
 
-  img.onload = function() {
-    var nw = img.naturalWidth, nh = img.naturalHeight;
-    scale = Math.max(size / nw, size / nh);
-    var w = nw * scale, h = nh * scale;
+  function updateImageSize(newScale) {
+    scale = newScale;
+    var w = img.naturalWidth * newScale, h = img.naturalHeight * newScale;
     img.style.width = w + 'px';
     img.style.height = h + 'px';
     offsetX = (size - w) / 2;
     offsetY = (size - h) / 2;
     img.style.left = offsetX + 'px';
     img.style.top = offsetY + 'px';
+  }
+
+  img.onload = function() {
+    var nw = img.naturalWidth, nh = img.naturalHeight;
+    baseScale = Math.max(size / nw, size / nh);
+    updateImageSize(baseScale);
   };
 
   container.appendChild(img);
@@ -6474,18 +6483,9 @@ function showAvatarCrop(dataUrl) {
 
   // Zoom slider
   var zoomSlider = ctrls.querySelector('.avatar-crop-zoom');
-  var baseScale = scale;
   zoomSlider.addEventListener('input', function() {
     var z = parseInt(this.value) / 100;
-    var newScale = baseScale * z;
-    var w = img.naturalWidth * newScale, h = img.naturalHeight * newScale;
-    img.style.width = w + 'px';
-    img.style.height = h + 'px';
-    offsetX = (size - w) / 2;
-    offsetY = (size - h) / 2;
-    img.style.left = offsetX + 'px';
-    img.style.top = offsetY + 'px';
-    scale = newScale;
+    updateImageSize(baseScale * z);
   });
 
   // Drag
