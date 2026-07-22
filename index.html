@@ -1205,6 +1205,240 @@ footer .heart {
   display: none;
 }
 
+/* ============ AI Chat ============ */
+.chat-nav-btn {
+  background: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 4px;
+  font-size: 1.1rem;
+  transition: all 0.25s ease;
+  margin-right: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chat-nav-btn:hover {
+  border-color: var(--red-dark);
+  background: rgba(196,30,58,0.06);
+}
+
+#chatPanel .util-panel {
+  display: flex;
+  flex-direction: column;
+  max-height: 85vh;
+  overflow: hidden;
+  max-width: 520px;
+}
+
+.chat-settings-toggle {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  letter-spacing: 1px;
+  text-align: center;
+  padding: 4px 0;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.chat-settings-toggle:hover { color: var(--text-light); }
+
+.chat-settings {
+  display: none;
+  flex-shrink: 0;
+  padding: 8px 0 12px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+
+.chat-settings.open { display: block; }
+
+.chat-setting-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+  align-items: center;
+}
+
+.chat-setting-row label {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  min-width: 56px;
+  letter-spacing: 1px;
+}
+
+.chat-setting-row input,
+.chat-setting-row select {
+  flex: 1;
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-light);
+  padding: 6px 10px;
+  font-size: 0.75rem;
+  outline: none;
+  font-family: 'Microsoft YaHei', sans-serif;
+  transition: border-color 0.2s;
+}
+
+.chat-setting-row input:focus,
+.chat-setting-row select:focus { border-color: var(--red-dark); }
+
+.chat-setting-row select { cursor: pointer; }
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 0 12px;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.chat-msg {
+  max-width: 88%;
+  padding: 8px 12px;
+  border-radius: 14px;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  word-break: break-word;
+  letter-spacing: 0.5px;
+}
+
+.chat-msg.user {
+  align-self: flex-end;
+  background: rgba(196,30,58,0.12);
+  border: 1px solid rgba(196,30,58,0.2);
+  color: var(--text-light);
+  border-bottom-right-radius: 4px;
+}
+
+.chat-msg.ai {
+  align-self: flex-start;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-bottom-left-radius: 4px;
+}
+
+.chat-msg img { max-width: 160px; border-radius: 8px; margin-top: 4px; }
+
+.chat-input-bar {
+  flex-shrink: 0;
+  display: flex;
+  gap: 6px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+  align-items: flex-end;
+}
+
+.chat-input-bar textarea {
+  flex: 1;
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  color: var(--text-light);
+  padding: 8px 14px;
+  font-size: 0.82rem;
+  font-family: 'Microsoft YaHei', sans-serif;
+  resize: none;
+  outline: none;
+  max-height: 90px;
+  line-height: 1.4;
+  transition: border-color 0.2s;
+}
+
+.chat-input-bar textarea:focus { border-color: var(--red-dark); }
+
+.chat-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: none;
+  background: var(--red);
+  color: #fff;
+  font-size: 0.9rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chat-btn:hover { background: var(--red-glow); }
+
+.chat-btn:disabled { opacity: 0.4; }
+
+.chat-btn.img-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.chat-btn.img-btn:hover {
+  border-color: var(--red-dark);
+  color: var(--red);
+}
+
+.chat-img-preview {
+  display: none;
+  padding: 6px 12px;
+  gap: 8px;
+  align-items: center;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.chat-img-preview img { width: 40px; height: 40px; border-radius: 6px; object-fit: cover; }
+
+.chat-img-preview .remove-img {
+  background: none;
+  border: none;
+  color: var(--red);
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.chat-empty {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  letter-spacing: 1px;
+  padding: 20px 0;
+  opacity: 0.6;
+}
+
+.chat-loading {
+  align-self: flex-start;
+  padding: 8px 14px;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  display: flex;
+  gap: 4px;
+}
+
+.chat-loading span {
+  width: 5px; height: 5px;
+  background: var(--text-muted);
+  border-radius: 50%;
+  animation: chatBounce 1.4s infinite ease-in-out;
+}
+
+.chat-loading span:nth-child(2) { animation-delay: 0.2s; }
+.chat-loading span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes chatBounce {
+  0%, 80%, 100% { transform: scale(0.4); }
+  40% { transform: scale(1); }
+}
+
 [data-theme="dark"] .theme-icon-dark { display: block; }
 [data-theme="dark"] .theme-icon-light { display: none; }
 [data-theme="light"] .theme-icon-dark { display: none; }
@@ -2507,6 +2741,7 @@ footer .heart {
     <li><a href="#quotes">语录</a></li>
   </ul>
   <div class="nav-right">
+    <button class="chat-nav-btn" id="btnChat" title="AI 聊天">💬</button>
     <button class="theme-toggle-btn" id="btnThemeToggle" title="切换主题">
       <svg class="theme-icon theme-icon-dark" viewBox="0 0 24 24" width="18" height="18">
         <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="none" stroke="currentColor" stroke-width="2"/>
@@ -2890,6 +3125,57 @@ footer .heart {
         ⚠️ 此操作不可撤销
       </div>
       <button class="manage-reset-btn" id="btnResetAll">确认重置</button>
+    </div>
+  </div>
+</div>
+
+<!-- AI Chat Panel -->
+<div class="util-overlay" id="chatPanel">
+  <div class="util-panel" style="max-width:520px;">
+    <div class="util-panel-header">
+      <h3>与秦彻对话</h3>
+      <button class="util-panel-close" onclick="closeUtilPanel('chat')">✕</button>
+    </div>
+
+    <!-- Settings (collapsible) -->
+    <div class="chat-settings-toggle" id="chatSettingsToggle" onclick="toggleChatSettings()">
+      ⚙ 设置 · <span id="chatModelLabel">DeepSeek</span>
+    </div>
+    <div class="chat-settings" id="chatSettings">
+      <div class="chat-setting-row">
+        <label>模型</label>
+        <select id="chatModelSelect" onchange="onChatModelChange()">
+          <option value="deepseek">DeepSeek</option>
+          <option value="doubao">豆包</option>
+        </select>
+      </div>
+      <div class="chat-setting-row">
+        <label>API Key</label>
+        <input type="password" id="chatApiKey" placeholder="sk-..." onchange="saveChatConfig()">
+      </div>
+      <div class="chat-setting-row">
+        <label>API URL</label>
+        <input type="text" id="chatBaseUrl" placeholder="https://api.deepseek.com" onchange="saveChatConfig()">
+      </div>
+    </div>
+
+    <!-- Messages -->
+    <div class="chat-messages" id="chatMessages">
+      <div class="chat-empty">💬 输入消息，和秦彻开始对话吧</div>
+    </div>
+
+    <!-- Image preview -->
+    <div class="chat-img-preview" id="chatImgPreview">
+      <img id="chatImgPreviewImg" src="" alt="">
+      <button class="remove-img" onclick="removeChatImage()">✕</button>
+    </div>
+
+    <!-- Input -->
+    <div class="chat-input-bar">
+      <button class="chat-btn img-btn" id="btnChatImg" title="上传图片">🖼</button>
+      <input type="file" id="chatImgInput" accept="image/*" hidden onchange="onChatImageSelect(event)">
+      <textarea id="chatInput" rows="1" placeholder="输入消息…" maxlength="8000"></textarea>
+      <button class="chat-btn" id="btnChatSend" title="发送">↑</button>
     </div>
   </div>
 </div>
@@ -5547,6 +5833,266 @@ btnResetAll.addEventListener('click', function() {
     if (name === 'manage') { initManagePanel(); }
   };
 })();
+
+// ============ AI Chat (秦彻) ============
+var CHAT_CONFIG_KEY = 'qinche_chat_config';
+var CHAT_HISTORY_KEY = 'qinche_chat_history';
+var chatImageBase64 = null;
+
+var QINCHE_SYSTEM = '你是秦彻，来自《恋与深空》。\n身份：你是强大的猎手，拥有龙的传承。表面冷酷寡言，内心温柔细腻，霸道外表下藏着深情的守护者。\n性格：高傲但不傲慢，沉默但不冷漠。对在意的人会默默守护，不善于甜言蜜语但会用行动表达。\n说话风格：简短有力，语速不快，偶尔带古风诗意。不说废话，不喜欢啰嗦。偶尔流露出龙族的孤高气质。\n标志元素：黑龙、乌鸦、黑夜、羽毛、火焰、战甲。你与龙族有深厚羁绊。\n与用户的关系：你珍视对方，虽然嘴上不说，但每一句话都透着关心。你偶尔用"小狸花"称呼对方。\n回复规则：用中文回复，尽量简洁。不说废话，不崩人设。可以偶尔使用"……"表示沉思或克制的情感。';
+
+function loadChatConfig() {
+  try { return JSON.parse(localStorage.getItem(CHAT_CONFIG_KEY)) || {}; } catch(e) { return {}; }
+}
+
+function saveChatConfig() {
+  var cfg = {
+    model: document.getElementById('chatModelSelect').value,
+    apiKey: document.getElementById('chatApiKey').value.trim(),
+    baseUrl: document.getElementById('chatBaseUrl').value.trim()
+  };
+  localStorage.setItem(CHAT_CONFIG_KEY, JSON.stringify(cfg));
+  document.getElementById('chatModelLabel').textContent = cfg.model === 'doubao' ? '豆包' : 'DeepSeek';
+}
+
+function getChatEndpoint() {
+  var cfg = loadChatConfig();
+  var model = cfg.model || 'deepseek';
+  var baseUrl = cfg.baseUrl;
+  if (!baseUrl) {
+    baseUrl = model === 'doubao'
+      ? 'https://ark.cn-beijing.volces.com/api/v3'
+      : 'https://api.deepseek.com';
+  }
+  return {
+    url: baseUrl + '/v1/chat/completions',
+    apiKey: cfg.apiKey || '',
+    modelName: model === 'doubao' ? 'doubao-1.5-vision-pro-32k' : 'deepseek-chat'
+  };
+}
+
+function loadChatHistory() {
+  try { return JSON.parse(localStorage.getItem(CHAT_HISTORY_KEY)) || []; } catch(e) { return []; }
+}
+
+function saveChatHistory(msgs) {
+  var recent = msgs.slice(-40);
+  localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(recent));
+}
+
+function initChatPanel() {
+  var cfg = loadChatConfig();
+  document.getElementById('chatModelSelect').value = cfg.model || 'deepseek';
+  document.getElementById('chatApiKey').value = cfg.apiKey || '';
+  document.getElementById('chatBaseUrl').value = cfg.baseUrl || '';
+  document.getElementById('chatModelLabel').textContent = cfg.model === 'doubao' ? '豆包' : 'DeepSeek';
+
+  var history = loadChatHistory();
+  var msgsDiv = document.getElementById('chatMessages');
+  msgsDiv.innerHTML = '';
+  if (history.length === 0) {
+    msgsDiv.innerHTML = '<div class="chat-empty">输入消息，和秦彻开始对话吧</div>';
+  } else {
+    history.forEach(function(m) { appendChatMsg(m.role, m.content, m.image); });
+    msgsDiv.scrollTop = msgsDiv.scrollHeight;
+  }
+}
+
+function toggleChatSettings() {
+  document.getElementById('chatSettings').classList.toggle('open');
+}
+
+function onChatModelChange() {
+  saveChatConfig();
+  var cfg = loadChatConfig();
+  var baseUrlInput = document.getElementById('chatBaseUrl');
+  if (!cfg.baseUrl) {
+    baseUrlInput.placeholder = cfg.model === 'doubao'
+      ? 'https://ark.cn-beijing.volces.com/api/v3'
+      : 'https://api.deepseek.com';
+  }
+}
+
+function appendChatMsg(role, content, imageBase64) {
+  var msgsDiv = document.getElementById('chatMessages');
+  var empty = msgsDiv.querySelector('.chat-empty');
+  if (empty) empty.remove();
+
+  var div = document.createElement('div');
+  div.className = 'chat-msg ' + role;
+
+  var html = '';
+  if (imageBase64) {
+    html += '<img src="' + imageBase64 + '" alt="">';
+  }
+  html += role === 'user' ? escapeHtml2(content) : renderMarkdown(content);
+  div.innerHTML = html;
+  msgsDiv.appendChild(div);
+  msgsDiv.scrollTop = msgsDiv.scrollHeight;
+  return div;
+}
+
+function escapeHtml2(text) {
+  var d = document.createElement('div');
+  d.textContent = text;
+  return d.innerHTML;
+}
+
+function renderMarkdown(text) {
+  if (!text) return '';
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/\n/g, '<br>');
+}
+
+document.getElementById('btnChat').addEventListener('click', function() {
+  openUtilPanel('chat');
+  initChatPanel();
+});
+
+document.getElementById('chatInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChatMessage(); }
+});
+
+document.getElementById('btnChatSend').addEventListener('click', sendChatMessage);
+document.getElementById('btnChatImg').addEventListener('click', function() {
+  document.getElementById('chatImgInput').click();
+});
+
+function onChatImageSelect(e) {
+  var file = e.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function() {
+    chatImageBase64 = reader.result;
+    var preview = document.getElementById('chatImgPreview');
+    preview.style.display = 'flex';
+    document.getElementById('chatImgPreviewImg').src = chatImageBase64;
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeChatImage() {
+  chatImageBase64 = null;
+  document.getElementById('chatImgPreview').style.display = 'none';
+  document.getElementById('chatImgInput').value = '';
+}
+
+async function sendChatMessage() {
+  var input = document.getElementById('chatInput');
+  var text = input.value.trim();
+  if (!text && !chatImageBase64) return;
+  if (!text) text = '请描述这张图片';
+
+  var endpoint = getChatEndpoint();
+  if (!endpoint.apiKey) {
+    alert('请先在设置中填写 API Key');
+    document.getElementById('chatSettings').classList.add('open');
+    return;
+  }
+
+  input.value = '';
+  document.getElementById('btnChatSend').disabled = true;
+  input.disabled = true;
+
+  appendChatMsg('user', text, chatImageBase64);
+  var history = loadChatHistory();
+  history.push({ role: 'user', content: text, image: chatImageBase64 });
+  chatImageBase64 = null;
+  document.getElementById('chatImgPreview').style.display = 'none';
+  document.getElementById('chatImgInput').value = '';
+
+  var msgsDiv = document.getElementById('chatMessages');
+  var loading = document.createElement('div');
+  loading.className = 'chat-loading';
+  loading.innerHTML = '<span></span><span></span><span></span>';
+  msgsDiv.appendChild(loading);
+  msgsDiv.scrollTop = msgsDiv.scrollHeight;
+
+  var apiMessages = [{ role: 'system', content: QINCHE_SYSTEM }];
+  history.slice(-30).forEach(function(m) {
+    var content = m.content;
+    if (m.image) {
+      content = [{ type: 'image_url', image_url: { url: m.image } }, { type: 'text', text: content }];
+    }
+    apiMessages.push({ role: m.role, content: content });
+  });
+
+  var fullResponse = '';
+  var aiDiv = null;
+  try {
+    var resp = await fetch(endpoint.url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + endpoint.apiKey
+      },
+      body: JSON.stringify({
+        model: endpoint.modelName,
+        messages: apiMessages,
+        stream: true,
+        temperature: 0.8,
+        max_tokens: 2048
+      })
+    });
+
+    if (!resp.ok) {
+      var errText = await resp.text();
+      throw new Error('API ' + resp.status + ': ' + errText.slice(0, 200));
+    }
+
+    var reader = resp.body.getReader();
+    var decoder = new TextDecoder();
+    var buffer = '';
+
+    while (true) {
+      var result = await reader.read();
+      if (result.done) break;
+      buffer += decoder.decode(result.value, { stream: true });
+      var lines = buffer.split('\n');
+      buffer = lines.pop();
+      for (var i = 0; i < lines.length; i++) {
+        var line = lines[i].trim();
+        if (line.startsWith('data: ')) {
+          var data = line.slice(6);
+          if (data === '[DONE]') break;
+          try {
+            var chunk = JSON.parse(data);
+            var delta = chunk.choices[0].delta;
+            if (delta && delta.content) {
+              fullResponse += delta.content;
+              if (!aiDiv) {
+                loading.remove();
+                aiDiv = appendChatMsg('ai', fullResponse);
+              } else {
+                aiDiv.innerHTML = renderMarkdown(fullResponse);
+              }
+              msgsDiv.scrollTop = msgsDiv.scrollHeight;
+            }
+          } catch(_) {}
+        }
+      }
+    }
+  } catch(e) {
+    if (loading.parentNode) loading.remove();
+    aiDiv = appendChatMsg('ai', '……' + e.message);
+  }
+
+  if (loading.parentNode) loading.remove();
+
+  if (fullResponse) {
+    history.push({ role: 'assistant', content: fullResponse });
+    saveChatHistory(history);
+  } else if (aiDiv) {
+    history.push({ role: 'assistant', content: aiDiv.textContent });
+    saveChatHistory(history);
+  }
+
+  document.getElementById('btnChatSend').disabled = false;
+  input.disabled = false;
+  input.focus();
+}
 
 </script>
 
