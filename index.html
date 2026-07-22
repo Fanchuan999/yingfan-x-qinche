@@ -1160,6 +1160,8 @@ footer .heart {
   display: flex;
   align-items: center;
   gap: 4px;
+  position: relative;
+  z-index: 10;
 }
 
 .chat-header-right {
@@ -1173,8 +1175,10 @@ footer .heart {
   border: none;
   color: var(--text-muted);
   cursor: pointer;
-  font-size: 0.7rem;
-  padding: 0;
+  font-size: 0.8rem;
+  padding: 4px 8px;
+  position: relative;
+  z-index: 5;
   transition: all 0.2s;
 }
 
