@@ -6530,15 +6530,17 @@ function showAvatarCrop(dataUrl) {
     var canvas = document.createElement('canvas');
     canvas.width = 128; canvas.height = 128;
     var ctx = canvas.getContext('2d');
-    var ratio = 128 / size;
-    var sx = -offsetX * ratio;
-    var sy = -offsetY * ratio;
-    var sw = img.naturalWidth * scale * ratio;
-    var sh = img.naturalHeight * scale * ratio;
+
+    // offsetX/Y 是显示图片在容器中的位置，scale 是显示缩放比
+    // 容器可见区域是 0,0 ~ size,size
+    var sx = (-offsetX) / scale;        // 图片原始坐标 X
+    var sy = (-offsetY) / scale;        // 图片原始坐标 Y
+    var sSize = size / scale;           // 图片原始可见范围
+
     ctx.beginPath();
     ctx.arc(64, 64, 64, 0, Math.PI * 2);
     ctx.clip();
-    ctx.drawImage(img, sx, sy, sw, sh);
+    ctx.drawImage(img, sx, sy, sSize, sSize, 0, 0, 128, 128);
     var result = canvas.toDataURL('image/png');
 
     localStorage.setItem(USER_AVATAR_KEY, result);
