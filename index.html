@@ -1204,10 +1204,15 @@ footer .heart {
 
 /* Session list */
 .chat-session-list {
+  display: none;
   padding: 4px 0 8px;
   border-bottom: 1px solid var(--border);
   margin-bottom: 4px;
   flex-shrink: 0;
+}
+
+.chat-session-list.open {
+  display: block;
 }
 
 .chat-session-item {
@@ -3307,7 +3312,7 @@ footer .heart {
     </div>
 
     <!-- Session list (collapsible) -->
-    <div class="chat-session-list" id="chatSessionList" style="display:none;">
+    <div class="chat-session-list" id="chatSessionList">
       <div id="chatSessionItems"></div>
     </div>
 
@@ -6128,10 +6133,13 @@ function getChatEndpoint() {
 function toggleSessionList() {
   var list = document.getElementById('chatSessionList');
   var btn = document.getElementById('btnChatCollapse');
-  var show = list.style.display === 'none';
-  list.style.display = show ? 'block' : 'none';
-  if (show) { btn.classList.add('open'); buildSessionList(); }
-  else { btn.classList.remove('open'); }
+  list.classList.toggle('open');
+  if (list.classList.contains('open')) {
+    btn.classList.add('open');
+    buildSessionList();
+  } else {
+    btn.classList.remove('open');
+  }
 }
 
 function buildSessionList() {
