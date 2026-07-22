@@ -1246,6 +1246,77 @@ footer .heart {
 .chat-session-item:hover .chat-session-del { opacity: 1; }
 .chat-session-del:hover { color: var(--red); background: rgba(196,30,58,0.1); }
 
+/* Delete confirm dialog */
+.chat-confirm-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+.chat-confirm-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px 20px 16px;
+  text-align: center;
+  max-width: 280px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+
+.chat-confirm-title {
+  font-size: 0.9rem;
+  color: var(--text-light);
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+
+.chat-confirm-hint {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  opacity: 0.6;
+  letter-spacing: 0.5px;
+  margin-bottom: 18px;
+}
+
+.chat-confirm-btns {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.chat-confirm-cancel {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 6px 20px;
+  border-radius: 16px;
+  font-size: 0.78rem;
+  letter-spacing: 1px;
+  transition: all 0.2s;
+}
+
+.chat-confirm-cancel:hover { border-color: var(--text-muted); }
+
+.chat-confirm-delete {
+  background: var(--red);
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  padding: 6px 20px;
+  border-radius: 16px;
+  font-size: 0.78rem;
+  letter-spacing: 1px;
+  transition: all 0.2s;
+}
+
+.chat-confirm-delete:hover { background: var(--red-glow); }
+
 .chat-toast {
   position: absolute;
   bottom: 80px;
@@ -6105,11 +6176,31 @@ function buildSessionList() {
       var sid = s.id;
       var sessions = loadSessions();
       if (sessions.length <= 1) return;
-      sessions = sessions.filter(function(ss) { return ss.id !== sid; });
-      saveSessions(sessions);
-      if (getActiveId() === sid) { setActiveId(sessions[0].id); }
-      buildSessionList();
-      initChatPanel();
+
+      // Show confirm dialog
+      var overlay = document.createElement('div');
+      overlay.className = 'chat-confirm-overlay';
+      overlay.innerHTML =
+        '<div class="chat-confirm-box">' +
+        '<div class="chat-confirm-title">确定删除该窗口吗</div>' +
+        '<div class="chat-confirm-hint">删除后无法复原，请谨慎删除</div>' +
+        '<div class="chat-confirm-btns">' +
+        '<button class="chat-confirm-cancel">再看看</button>' +
+        '<button class="chat-confirm-delete">删除</button>' +
+        '</div></div>';
+
+      document.getElementById('chatPanel').querySelector('.util-panel').appendChild(overlay);
+
+      overlay.querySelector('.chat-confirm-cancel').onclick = function() { overlay.remove(); };
+      overlay.querySelector('.chat-confirm-delete').onclick = function() {
+        overlay.remove();
+        var sessions = loadSessions();
+        sessions = sessions.filter(function(ss) { return ss.id !== sid; });
+        saveSessions(sessions);
+        if (getActiveId() === sid) { setActiveId(sessions[0].id); }
+        buildSessionList();
+        initChatPanel();
+      };
     });
 
     container.appendChild(div);
