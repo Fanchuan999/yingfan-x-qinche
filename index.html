@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="dark light">
-<title>秦彻·应帆</title>
+<title>秦彻·你</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'></svg>">
 <style>
 /* ============ CSS Variables (Dark & Light Themes) ============ */
@@ -2246,6 +2246,75 @@ footer .heart {
   opacity: 0.5;
 }
 
+/* ============ Personalize Panel ============ */
+.personalize-section {
+  margin-bottom: 24px;
+}
+
+.personalize-label {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--text-light);
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.personalize-hint {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+  opacity: 0.7;
+}
+
+.personalize-input {
+  width: 100%;
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-light);
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+  outline: none;
+  font-family: 'Microsoft YaHei', sans-serif;
+  transition: border-color 0.25s;
+}
+
+.personalize-input:focus {
+  border-color: var(--red);
+}
+
+.personalize-font-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.font-option {
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  cursor: pointer;
+  padding: 10px 18px;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  transition: all 0.2s ease;
+}
+
+.font-option:hover {
+  border-color: var(--red-dark);
+}
+
+.font-option.active {
+  border-color: var(--red);
+  background: rgba(196,30,58,0.1);
+  color: var(--red);
+  box-shadow: 0 0 10px rgba(196,30,58,0.15);
+}
+
 /* Upload progress toast */
 .upload-toast {
   position: fixed;
@@ -2282,7 +2351,7 @@ footer .heart {
 
 <!-- Navigation -->
 <nav>
-  <div class="logo">秦彻·应帆</div>
+  <div class="logo">秦彻·你</div>
   <ul class="links">
     <li><a href="#home">首页</a></li>
     <li><a href="#gallery">照片墙</a></li>
@@ -2363,7 +2432,7 @@ footer .heart {
 
   <div class="hero-content">
     <div class="hero-badge">LOVE</div>
-    <h1>秦彻·应帆</h1>
+    <h1>秦彻·你</h1>
     <div class="hero-divider"></div>
     <p class="subtitle">QIN CHE</p>
     <p class="tagline" style="margin-top:8px;">"总会有人欣赏你本来的样子，比如我"</p>
@@ -2482,7 +2551,7 @@ footer .heart {
     <circle cx="55" cy="24" r="1.5" fill="#ff2d2d" opacity="0.4"/>
     <circle cx="135" cy="22" r="1.5" fill="#ff2d2d" opacity="0.4"/>
   </svg>
-  <p>秦彻·应帆 <span class="heart">♥</span> · 2026</p>
+  <p>秦彻·你 <span class="heart">♥</span> · 2026</p>
 </footer>
 
 <!-- Pomodoro Panel -->
@@ -2607,6 +2676,7 @@ footer .heart {
     <div class="manage-tabs">
       <button class="manage-tab active" data-tab="photos">照片管理</button>
       <button class="manage-tab" data-tab="quotes">语录管理</button>
+      <button class="manage-tab" data-tab="personalize">✨ 个性化</button>
       <button class="manage-tab" data-tab="reset">重置数据</button>
     </div>
 
@@ -2636,6 +2706,26 @@ footer .heart {
       </div>
       <div class="manage-quote-list" id="manageQuoteList"></div>
       <div class="manage-empty-state" id="manageQuoteEmpty">还没有自定义语录</div>
+    </div>
+
+    <!-- Personalize Tab -->
+    <div class="manage-tab-content" id="tabPersonalize">
+      <div class="personalize-section">
+        <label class="personalize-label">你的昵称</label>
+        <p class="personalize-hint">设置后，页面中「秦彻·你」的「你」会替换为你的昵称</p>
+        <input type="text" class="personalize-input" id="inputNickname" placeholder="输入你的昵称..." maxlength="20">
+      </div>
+      <div class="personalize-section">
+        <label class="personalize-label">页面字体</label>
+        <p class="personalize-hint">选择你喜欢的字体风格</p>
+        <div class="personalize-font-grid" id="fontSelector">
+          <button class="font-option active" data-font="default">默认</button>
+          <button class="font-option" data-font="songti" style="font-family: 'SimSun','宋体',serif">宋体</button>
+          <button class="font-option" data-font="kaiti" style="font-family: 'KaiTi','楷体',serif">楷体</button>
+          <button class="font-option" data-font="heiti" style="font-family: 'SimHei','黑体',sans-serif">黑体</button>
+          <button class="font-option" data-font="rounded" style="font-family: 'Microsoft YaHei','PingFang SC',sans-serif; font-weight: 300">圆体</button>
+        </div>
+      </div>
     </div>
 
     <!-- Reset Tab -->
@@ -3554,10 +3644,14 @@ setTimeout(function() {
   });
 }, 100);
 
-console.log('%c秦彻·应帆 %c已就绪',
+console.log('%c秦彻·你 %c已就绪',
   'color: #c41e3a; font-size: 1.2em; font-weight: bold;',
   'color: #8a7e72;');
 console.log('%c"总会有人欣赏你本来的样子，比如我"', 'color: #c9a96e; font-style: italic;');
+
+// 应用个性化设置
+applyNickname();
+applyFont();
 
 // ============ Music Player ============
 const musicFiles = [
@@ -4720,6 +4814,95 @@ quoteInlineInput.addEventListener('keydown', function(e) {
 });
 
 // ============ Management Panel ============
+// ============ Personalize (改名 / 改字体) ============
+var NICKNAME_KEY = 'qinche_nickname';
+var FONT_KEY = 'qinche_font';
+
+function loadNickname() {
+  try { return localStorage.getItem(NICKNAME_KEY) || ''; } catch(e) { return ''; }
+}
+
+function saveNickname(name) {
+  try { localStorage.setItem(NICKNAME_KEY, name); } catch(e) {}
+}
+
+function loadFont() {
+  try { return localStorage.getItem(FONT_KEY) || 'default'; } catch(e) { return 'default'; }
+}
+
+function saveFont(font) {
+  try { localStorage.setItem(FONT_KEY, font); } catch(e) {}
+}
+
+function applyNickname() {
+  var nickname = loadNickname();
+  var displayName = nickname ? '秦彻·' + nickname : '秦彻·你';
+
+  // 更新所有显示名字的地方
+  document.title = displayName;
+  var logo = document.querySelector('.logo');
+  if (logo) logo.textContent = displayName;
+  var heroH1 = document.querySelector('.hero-content h1');
+  if (heroH1) heroH1.textContent = displayName;
+
+  // 更新 footer
+  var footerP = document.querySelector('footer p');
+  if (footerP) {
+    footerP.innerHTML = displayName + ' <span class="heart">♥</span> · 2026';
+  }
+
+  // 更新 index.html 导航栏 logo（如果在 iframe 中或单独用）
+  var allLogos = document.querySelectorAll('.logo');
+  allLogos.forEach(function(el) { el.textContent = displayName; });
+}
+
+function applyFont() {
+  var font = loadFont();
+  var fontFamily = '';
+  switch (font) {
+    case 'songti': fontFamily = '"SimSun","宋体",serif'; break;
+    case 'kaiti':  fontFamily = '"KaiTi","楷体",serif'; break;
+    case 'heiti':  fontFamily = '"SimHei","黑体",sans-serif'; break;
+    case 'rounded': fontFamily = '"Microsoft YaHei","PingFang SC",sans-serif'; break;
+    default:       fontFamily = ''; break;
+  }
+  if (fontFamily) {
+    document.body.style.fontFamily = fontFamily;
+  } else {
+    document.body.style.fontFamily = '';
+  }
+}
+
+function initPersonalizePanel() {
+  var input = document.getElementById('inputNickname');
+  var currentName = loadNickname();
+  if (input) {
+    input.value = currentName;
+    input.addEventListener('input', function() {
+      var val = this.value.trim();
+      saveNickname(val);
+      applyNickname();
+    });
+  }
+
+  // 字体选择
+  var currentFont = loadFont();
+  var fontBtns = document.querySelectorAll('#fontSelector .font-option');
+  fontBtns.forEach(function(btn) {
+    if (btn.dataset.font === currentFont) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+    btn.addEventListener('click', function() {
+      fontBtns.forEach(function(b) { b.classList.remove('active'); });
+      this.classList.add('active');
+      saveFont(this.dataset.font);
+      applyFont();
+    });
+  });
+}
+
 function initManagePanel() {
   // Refresh photo grid
   loadAllPhotos().then(function(userPhotos) {
@@ -4728,6 +4911,9 @@ function initManagePanel() {
 
   // Refresh quote list
   renderManageQuotes();
+
+  // Init personalize
+  initPersonalizePanel();
 
   // Activate first tab
   var firstTab = document.querySelector('#managePanel .manage-tab');
