@@ -1234,6 +1234,22 @@ footer .heart {
 .chat-session-item:hover .chat-session-del { opacity: 1; }
 .chat-session-del:hover { color: var(--red); background: rgba(196,30,58,0.1); }
 
+.chat-toast {
+  position: absolute;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(196,30,58,0.9);
+  color: #fff;
+  padding: 8px 22px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  letter-spacing: 1px;
+  z-index: 100;
+  pointer-events: none;
+  animation: fadeIn 0.2s ease;
+}
+
 /* Nav icon buttons (chat / theme / else 统一风格) */
 .nav-icon-btn {
   background: none;
@@ -6005,15 +6021,6 @@ function getChatEndpoint() {
   };
 }
 
-function loadChatHistory() {
-  try { return JSON.parse(localStorage.getItem(CHAT_HISTORY_KEY)) || []; } catch(e) { return []; }
-}
-
-function saveChatHistory(msgs) {
-  var recent = msgs.slice(-40);
-  localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(recent));
-}
-
 function toggleSessionList() {
   var list = document.getElementById('chatSessionList');
   var btn = document.getElementById('btnChatCollapse');
@@ -6060,12 +6067,27 @@ function buildSessionList() {
 }
 
 function newChatSession() {
-  var s = { id: Date.now().toString(36), title: '新对话', messages: [] };
   var sessions = loadSessions();
+  if (sessions.length >= 5) {
+    chatToast('最多支持五个窗口哦~');
+    return;
+  }
+  var s = { id: Date.now().toString(36), title: '新对话', messages: [] };
   sessions.unshift(s);
   saveSessions(sessions);
   setActiveId(s.id);
   initChatPanel();
+  chatToast('您已创建新对话~');
+}
+
+function chatToast(msg) {
+  var existing = document.querySelector('.chat-toast');
+  if (existing) existing.remove();
+  var t = document.createElement('div');
+  t.className = 'chat-toast';
+  t.textContent = msg;
+  document.getElementById('chatPanel').appendChild(t);
+  setTimeout(function() { t.remove(); }, 2000);
 }
 
 function initChatPanel() {
