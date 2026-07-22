@@ -1397,9 +1397,10 @@ footer .heart {
 #chatPanel .util-panel {
   display: flex;
   flex-direction: column;
-  max-height: 85vh;
+  max-height: 88vh;
+  height: 88vh;
   overflow: hidden;
-  max-width: 520px;
+  max-width: 600px;
 }
 
 .chat-settings-toggle {
@@ -1621,6 +1622,7 @@ footer .heart {
 }
 
 .chat-msg-action-btn:hover { color: var(--red); background: rgba(196,30,58,0.08); }
+.chat-msg-action-btn:hover img { opacity: 1 !important; }
 
 .chat-copy-toast {
   position: fixed;
@@ -6725,9 +6727,9 @@ function appendChatMsg(role, content, imageBase64) {
   // Action buttons (outside bubble, in the row)
   var actions = document.createElement('div');
   actions.className = 'chat-msg-actions';
-  actions.innerHTML = '<button class="chat-msg-action-btn" data-action="copy" title="复制">📋</button>';
+  actions.innerHTML = '<button class="chat-msg-action-btn" data-action="copy" title="复制"><img src="icon/copy.png" style="width:14px;height:14px;opacity:0.6;"></button>';
   if (role === 'assistant') {
-    actions.innerHTML += '<button class="chat-msg-action-btn" data-action="regen" title="重新生成">🔄</button>';
+    actions.innerHTML += '<button class="chat-msg-action-btn" data-action="regen" title="重新生成"><img src="icon/refresh.png" style="width:14px;height:14px;opacity:0.6;"></button>';
   }
   row.appendChild(actions);
 
