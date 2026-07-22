@@ -6038,31 +6038,68 @@ function buildSessionList() {
   sessions.forEach(function(s) {
     var div = document.createElement('div');
     div.className = 'chat-session-item' + (s.id === activeId ? ' active' : '');
-    div.innerHTML = '<span class="sess-title">' + escapeHtml2(s.title || '新对话') + '</span>' +
-      '<button class="chat-session-del" data-sid="' + s.id + '">✕</button>';
+    var titleEl = document.createElement('span');
+    titleEl.className = 'sess-title';
+    titleEl.textContent = s.title || '新对话';
+    div.appendChild(titleEl);
+
+    var delBtn = document.createElement('button');
+    delBtn.className = 'chat-session-del';
+    delBtn.textContent = '✕';
+    div.appendChild(delBtn);
+
+    // Switch session on click
     div.onclick = function(e) {
-      if (e.target.classList.contains('chat-session-del')) return;
+      if (e.target.classList.contains('chat-session-del') || e.target.tagName === 'INPUT') return;
       setActiveId(s.id);
       initChatPanel();
     };
-    container.appendChild(div);
-  });
 
-  // Delete buttons
-  container.querySelectorAll('.chat-session-del').forEach(function(btn) {
-    btn.addEventListener('click', function(e) {
+    // Double-click to rename
+    titleEl.addEventListener('dblclick', function(e) {
       e.stopPropagation();
-      var sid = this.dataset.sid;
+      var input = document.createElement('input');
+      input.type = 'text';
+      input.value = s.title || '';
+      input.maxLength = 30;
+      input.style.cssText = 'flex:1; background:var(--input-bg); border:1px solid var(--red-dark); border-radius:3px; color:var(--text-light); padding:2px 6px; font-size:0.75rem; outline:none; font-family:inherit;';
+      titleEl.replaceWith(input);
+      input.focus();
+      input.select();
+
+      function finish(save) {
+        input.replaceWith(titleEl);
+        if (save && input.value.trim()) {
+          var newTitle = input.value.trim();
+          titleEl.textContent = newTitle;
+          var sessions = loadSessions();
+          for (var j = 0; j < sessions.length; j++) {
+            if (sessions[j].id === s.id) { sessions[j].title = newTitle; break; }
+          }
+          saveSessions(sessions);
+        }
+      }
+      input.addEventListener('blur', function() { finish(true); });
+      input.addEventListener('keydown', function(ev) {
+        if (ev.key === 'Enter') { ev.preventDefault(); finish(true); }
+        if (ev.key === 'Escape') { ev.preventDefault(); finish(false); }
+      });
+    });
+
+    // Delete
+    delBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var sid = s.id;
       var sessions = loadSessions();
       if (sessions.length <= 1) return;
-      sessions = sessions.filter(function(s) { return s.id !== sid; });
+      sessions = sessions.filter(function(ss) { return ss.id !== sid; });
       saveSessions(sessions);
-      if (getActiveId() === sid) {
-        setActiveId(sessions[0].id);
-      }
+      if (getActiveId() === sid) { setActiveId(sessions[0].id); }
       buildSessionList();
       initChatPanel();
     });
+
+    container.appendChild(div);
   });
 }
 
