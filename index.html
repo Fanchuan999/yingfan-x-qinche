@@ -1156,7 +1156,17 @@ footer .heart {
 }
 
 /* Chat header icons */
-.chat-collapse-btn {
+.chat-header-left {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.chat-header-right {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
   background: none;
   border: 1px solid transparent;
   color: var(--text-muted);
@@ -3288,11 +3298,15 @@ footer .heart {
 <div class="util-overlay" id="chatPanel">
   <div class="util-panel" style="max-width:520px;">
     <div class="util-panel-header">
-      <button class="chat-collapse-btn" id="btnChatCollapse" onclick="toggleSessionList()" title="会话列表">▼</button>
-      <h3>秦彻</h3>
-      <button class="chat-header-icon" onclick="newChatSession()" title="新对话">＋</button>
-      <button class="chat-header-icon" onclick="toggleChatSettings()" title="设置">⚙</button>
-      <button class="util-panel-close" onclick="closeUtilPanel('chat')">✕</button>
+      <div class="chat-header-left">
+        <button class="chat-collapse-btn" id="btnChatCollapse" onclick="toggleSessionList()" title="会话列表">▼</button>
+        <h3>秦彻</h3>
+      </div>
+      <div class="chat-header-right">
+        <button class="chat-header-icon" onclick="newChatSession()" title="新对话">＋</button>
+        <button class="chat-header-icon" onclick="toggleChatSettings()" title="设置">⚙</button>
+        <button class="util-panel-close" onclick="closeUtilPanel('chat')">✕</button>
+      </div>
     </div>
 
     <!-- Session list (collapsible) -->
