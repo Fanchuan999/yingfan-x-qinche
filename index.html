@@ -3104,6 +3104,13 @@ footer .heart {
       <button class="util-panel-close" onclick="closeUtilPanel('chat')">✕</button>
     </div>
 
+    <!-- Session switcher -->
+    <div class="chat-session-bar" id="chatSessionBar">
+      <select id="chatSessionSelect" onchange="switchChatSession()" style="flex:1; background:var(--input-bg); border:1px solid var(--border); border-radius:4px; color:var(--text-light); padding:5px 8px; font-size:0.75rem; outline:none; font-family:inherit;"></select>
+      <button class="chat-btn" onclick="newChatSession()" style="width:28px; height:28px; font-size:0.8rem; border-radius:6px;" title="新对话">＋</button>
+      <button class="chat-btn" onclick="deleteChatSession()" style="width:28px; height:28px; font-size:0.75rem; border-radius:6px; background:transparent; border:1px solid var(--border); color:var(--text-muted);" title="删除">✕</button>
+    </div>
+
     <!-- Settings (collapsible) -->
     <div class="chat-settings-toggle" id="chatSettingsToggle" onclick="toggleChatSettings()">
       ⚙ 设置 · <span id="chatModelLabel">DeepSeek</span>
@@ -5812,8 +5819,65 @@ btnResetAll.addEventListener('click', function() {
 
 // ============ AI Chat (秦彻) ============
 var CHAT_CONFIG_KEY = 'qinche_chat_config';
-var CHAT_HISTORY_KEY = 'qinche_chat_history';
+var CHAT_SESSIONS_KEY = 'qinche_chat_sessions';
+var CHAT_ACTIVE_KEY = 'qinche_chat_active';
 var chatImageBase64 = null;
+
+function loadSessions() {
+  try { return JSON.parse(localStorage.getItem(CHAT_SESSIONS_KEY)) || []; } catch(e) { return []; }
+}
+
+function saveSessions(sessions) {
+  localStorage.setItem(CHAT_SESSIONS_KEY, JSON.stringify(sessions));
+}
+
+function getActiveId() {
+  return localStorage.getItem(CHAT_ACTIVE_KEY) || '';
+}
+
+function setActiveId(id) {
+  localStorage.setItem(CHAT_ACTIVE_KEY, id);
+}
+
+function getActiveSession() {
+  var sessions = loadSessions();
+  var id = getActiveId();
+  var s = sessions.find(function(s) { return s.id === id; });
+  if (!s && sessions.length > 0) {
+    s = sessions[0];
+    setActiveId(s.id);
+  }
+  if (!s) {
+    s = { id: Date.now().toString(36), title: '新对话', messages: [] };
+    sessions.push(s);
+    saveSessions(sessions);
+    setActiveId(s.id);
+  }
+  return s;
+}
+
+function loadChatHistory() {
+  return getActiveSession().messages;
+}
+
+function saveChatHistory(msgs) {
+  var sessions = loadSessions();
+  var id = getActiveId();
+  for (var i = 0; i < sessions.length; i++) {
+    if (sessions[i].id === id) {
+      sessions[i].messages = msgs.slice(-40);
+      if (msgs.length > 0) {
+        var lastUser = msgs.filter(function(m) { return m.role === 'user'; });
+        if (lastUser.length > 0) {
+          var t = lastUser[lastUser.length-1].content.slice(0, 20);
+          sessions[i].title = t + (lastUser[lastUser.length-1].content.length > 20 ? '…' : '');
+        }
+      }
+      break;
+    }
+  }
+  saveSessions(sessions);
+}
 
 function loadChatConfig() {
   try { return JSON.parse(localStorage.getItem(CHAT_CONFIG_KEY)) || {}; } catch(e) { return {}; }
@@ -5860,6 +5924,52 @@ function saveChatHistory(msgs) {
   localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(recent));
 }
 
+function buildSessionSelect() {
+  var sel = document.getElementById('chatSessionSelect');
+  if (!sel) return;
+  var sessions = loadSessions();
+  var activeId = getActiveId();
+  sel.innerHTML = '';
+  sessions.forEach(function(s) {
+    var opt = document.createElement('option');
+    opt.value = s.id;
+    opt.textContent = s.title || '新对话';
+    if (s.id === activeId) opt.selected = true;
+    sel.appendChild(opt);
+  });
+}
+
+function newChatSession() {
+  var s = { id: Date.now().toString(36), title: '新对话', messages: [] };
+  var sessions = loadSessions();
+  sessions.unshift(s);
+  saveSessions(sessions);
+  setActiveId(s.id);
+  initChatPanel();
+}
+
+function switchChatSession() {
+  var sel = document.getElementById('chatSessionSelect');
+  setActiveId(sel.value);
+  initChatPanel();
+}
+
+function deleteChatSession() {
+  var sessions = loadSessions();
+  var activeId = getActiveId();
+  if (sessions.length <= 1) {
+    sessions = [{ id: Date.now().toString(36), title: '新对话', messages: [] }];
+    activeId = sessions[0].id;
+    setActiveId(activeId);
+    saveSessions(sessions);
+  } else {
+    sessions = sessions.filter(function(s) { return s.id !== activeId; });
+    saveSessions(sessions);
+    setActiveId(sessions[0].id);
+  }
+  initChatPanel();
+}
+
 function initChatPanel() {
   var cfg = loadChatConfig();
   var model = cfg.model || 'deepseek';
@@ -5873,6 +5983,8 @@ function initChatPanel() {
   document.getElementById('chatReasoner').checked = cfg.reasoner || false;
   document.getElementById('chatSystemPrompt').value = cfg.systemPrompt || '';
   document.getElementById('chatModelLabel').textContent = model === 'doubao' ? '豆包' : 'DeepSeek';
+
+  buildSessionSelect();
 
   var history = loadChatHistory();
   var msgsDiv = document.getElementById('chatMessages');
