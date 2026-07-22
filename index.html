@@ -2377,40 +2377,20 @@ footer .heart {
   src: url('fonts/JinNianYeYaoJiaYouYa-2.ttf') format('truetype');
 }
 @font-face {
-  font-family: 'Font-4-猪圆体';
-  src: url('fonts/MaoKenZhuYuanTi-MaokenZhuyuanTi-2.ttf') format('truetype');
-}
-@font-face {
-  font-family: 'Font-5-江湖狼';
+  font-family: 'Font-4-江湖狼';
   src: url('fonts/PingFangLaiJiangHuLangTi-2.ttf') format('truetype');
 }
 @font-face {
-  font-family: 'Font-6-乐天体';
+  font-family: 'Font-5-乐天体';
   src: url('fonts/PingFangLiuAngLeTianTi-2.ttf') format('truetype');
 }
 @font-face {
-  font-family: 'Font-7-萌萌体';
+  font-family: 'Font-6-萌萌体';
   src: url('fonts/PingFangMengMeng-2.ttf') format('truetype');
 }
 @font-face {
-  font-family: 'Font-8-烧华体';
+  font-family: 'Font-7-烧华体';
   src: url('fonts/PingFangShaoHuaTi-2.ttf') format('truetype');
-}
-@font-face {
-  font-family: 'Font-9-线宾宋';
-  src: url('fonts/TangXianBinSong-2.otf') format('opentype');
-}
-@font-face {
-  font-family: 'Font-10-奶酪体';
-  src: url('fonts/XiaoKeNaiLaoTiShangYongMianFei@QingKeZiTi-2.ttf') format('truetype');
-}
-@font-face {
-  font-family: 'Font-11-佛系体';
-  src: url('fonts/Slidefu-Regular-2.ttf') format('truetype');
-}
-@font-face {
-  font-family: 'Font-12-小石头';
-  src: url('fonts/YeZiGongChangXiaoShiTou-2.ttf') format('truetype');
 }
 
 /* ============ Personalize Panel ============ */
@@ -2890,15 +2870,10 @@ footer .heart {
           <button class="font-option" data-font="font1" style="font-family:'Font-1-方圆体'">字体1</button>
           <button class="font-option" data-font="font2" style="font-family:'Font-2-律师手写'">字体2</button>
           <button class="font-option" data-font="font3" style="font-family:'Font-3-加油鸭'">字体3</button>
-          <button class="font-option" data-font="font4" style="font-family:'Font-4-猪圆体'">字体4</button>
-          <button class="font-option" data-font="font5" style="font-family:'Font-5-江湖狼'">字体5</button>
-          <button class="font-option" data-font="font6" style="font-family:'Font-6-乐天体'">字体6</button>
-          <button class="font-option" data-font="font7" style="font-family:'Font-7-萌萌体'">字体7</button>
-          <button class="font-option" data-font="font8" style="font-family:'Font-8-烧华体'">字体8</button>
-          <button class="font-option" data-font="font9" style="font-family:'Font-9-线宾宋'">字体9</button>
-          <button class="font-option" data-font="font10" style="font-family:'Font-10-奶酪体'">字体10</button>
-          <button class="font-option" data-font="font11" style="font-family:'Font-11-佛系体'">字体11</button>
-          <button class="font-option" data-font="font12" style="font-family:'Font-12-小石头'">字体12</button>
+          <button class="font-option" data-font="font4" style="font-family:'Font-4-江湖狼'">字体4</button>
+          <button class="font-option" data-font="font5" style="font-family:'Font-5-乐天体'">字体5</button>
+          <button class="font-option" data-font="font6" style="font-family:'Font-6-萌萌体'">字体6</button>
+          <button class="font-option" data-font="font7" style="font-family:'Font-7-烧华体'">字体7</button>
         </div>
       </div>
     </div>
@@ -5221,18 +5196,13 @@ function applyNickname() {
 function applyFont() {
   var font = loadFont();
   var fontMap = {
-    font1:  '"Font-1-方圆体", sans-serif',
-    font2:  '"Font-2-律师手写", serif',
-    font3:  '"Font-3-加油鸭", sans-serif',
-    font4:  '"Font-4-猪圆体", sans-serif',
-    font5:  '"Font-5-江湖狼", sans-serif',
-    font6:  '"Font-6-乐天体", sans-serif',
-    font7:  '"Font-7-萌萌体", sans-serif',
-    font8:  '"Font-8-烧华体", sans-serif',
-    font9:  '"Font-9-线宾宋", serif',
-    font10: '"Font-10-奶酪体", sans-serif',
-    font11: '"Font-11-佛系体", serif',
-    font12: '"Font-12-小石头", sans-serif'
+    font1: '"Font-1-方圆体", sans-serif',
+    font2: '"Font-2-律师手写", serif',
+    font3: '"Font-3-加油鸭", sans-serif',
+    font4: '"Font-4-江湖狼", sans-serif',
+    font5: '"Font-5-乐天体", sans-serif',
+    font6: '"Font-6-萌萌体", sans-serif',
+    font7: '"Font-7-烧华体", sans-serif'
   };
   document.body.style.fontFamily = fontMap[font] || '';
 }
