@@ -1155,6 +1155,85 @@ footer .heart {
   align-items: center;
 }
 
+/* Chat header icons */
+.chat-collapse-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.55rem;
+  padding: 2px 4px;
+  transition: all 0.2s;
+}
+
+.chat-collapse-btn.open { transform: rotate(-90deg); }
+
+.chat-header-icon {
+  background: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.chat-header-icon:hover {
+  border-color: var(--red-dark);
+  color: var(--red);
+}
+
+/* Session list */
+.chat-session-list {
+  padding: 4px 0 8px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 4px;
+  flex-shrink: 0;
+}
+
+.chat-session-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  color: var(--text);
+  letter-spacing: 0.5px;
+  transition: background 0.15s;
+}
+
+.chat-session-item:hover { background: rgba(196,30,58,0.06); }
+
+.chat-session-item.active {
+  background: rgba(196,30,58,0.1);
+  color: var(--red);
+}
+
+.chat-session-item .sess-title {
+  flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.chat-session-del {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.65rem;
+  padding: 2px 6px;
+  border-radius: 3px;
+  opacity: 0;
+  transition: all 0.15s;
+}
+
+.chat-session-item:hover .chat-session-del { opacity: 1; }
+.chat-session-del:hover { color: var(--red); background: rgba(196,30,58,0.1); }
+
 /* Nav icon buttons (chat / theme / else 统一风格) */
 .nav-icon-btn {
   background: none;
@@ -3100,21 +3179,18 @@ footer .heart {
 <div class="util-overlay" id="chatPanel">
   <div class="util-panel" style="max-width:520px;">
     <div class="util-panel-header">
+      <button class="chat-collapse-btn" id="btnChatCollapse" onclick="toggleSessionList()" title="会话列表">▼</button>
       <h3>秦彻</h3>
+      <button class="chat-header-icon" onclick="toggleChatSettings()" title="设置">⚙</button>
+      <button class="chat-header-icon" onclick="newChatSession()" title="新对话">＋</button>
       <button class="util-panel-close" onclick="closeUtilPanel('chat')">✕</button>
     </div>
 
-    <!-- Session switcher -->
-    <div class="chat-session-bar" id="chatSessionBar">
-      <select id="chatSessionSelect" onchange="switchChatSession()" style="flex:1; background:var(--input-bg); border:1px solid var(--border); border-radius:4px; color:var(--text-light); padding:5px 8px; font-size:0.75rem; outline:none; font-family:inherit;"></select>
-      <button class="chat-btn" onclick="newChatSession()" style="width:28px; height:28px; font-size:0.8rem; border-radius:6px;" title="新对话">＋</button>
-      <button class="chat-btn" onclick="deleteChatSession()" style="width:28px; height:28px; font-size:0.75rem; border-radius:6px; background:transparent; border:1px solid var(--border); color:var(--text-muted);" title="删除">✕</button>
+    <!-- Session list (collapsible) -->
+    <div class="chat-session-list" id="chatSessionList" style="display:none;">
+      <div id="chatSessionItems"></div>
     </div>
 
-    <!-- Settings (collapsible) -->
-    <div class="chat-settings-toggle" id="chatSettingsToggle" onclick="toggleChatSettings()">
-      ⚙ 设置 · <span id="chatModelLabel">DeepSeek</span>
-    </div>
     <div class="chat-settings" id="chatSettings">
       <div class="chat-setting-row">
         <label>模型</label>
@@ -5906,7 +5982,6 @@ function saveChatConfig() {
     systemPrompt: document.getElementById('chatSystemPrompt').value
   };
   localStorage.setItem(CHAT_CONFIG_KEY, JSON.stringify(cfg));
-  document.getElementById('chatModelLabel').textContent = cfg.model === 'doubao' ? '豆包' : 'DeepSeek';
 }
 
 function getChatEndpoint() {
@@ -5939,18 +6014,48 @@ function saveChatHistory(msgs) {
   localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(recent));
 }
 
-function buildSessionSelect() {
-  var sel = document.getElementById('chatSessionSelect');
-  if (!sel) return;
+function toggleSessionList() {
+  var list = document.getElementById('chatSessionList');
+  var btn = document.getElementById('btnChatCollapse');
+  var show = list.style.display === 'none';
+  list.style.display = show ? 'block' : 'none';
+  if (show) { btn.classList.add('open'); buildSessionList(); }
+  else { btn.classList.remove('open'); }
+}
+
+function buildSessionList() {
+  var container = document.getElementById('chatSessionItems');
   var sessions = loadSessions();
   var activeId = getActiveId();
-  sel.innerHTML = '';
+  container.innerHTML = '';
   sessions.forEach(function(s) {
-    var opt = document.createElement('option');
-    opt.value = s.id;
-    opt.textContent = s.title || '新对话';
-    if (s.id === activeId) opt.selected = true;
-    sel.appendChild(opt);
+    var div = document.createElement('div');
+    div.className = 'chat-session-item' + (s.id === activeId ? ' active' : '');
+    div.innerHTML = '<span class="sess-title">' + escapeHtml2(s.title || '新对话') + '</span>' +
+      '<button class="chat-session-del" data-sid="' + s.id + '">✕</button>';
+    div.onclick = function(e) {
+      if (e.target.classList.contains('chat-session-del')) return;
+      setActiveId(s.id);
+      initChatPanel();
+    };
+    container.appendChild(div);
+  });
+
+  // Delete buttons
+  container.querySelectorAll('.chat-session-del').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var sid = this.dataset.sid;
+      var sessions = loadSessions();
+      if (sessions.length <= 1) return;
+      sessions = sessions.filter(function(s) { return s.id !== sid; });
+      saveSessions(sessions);
+      if (getActiveId() === sid) {
+        setActiveId(sessions[0].id);
+      }
+      buildSessionList();
+      initChatPanel();
+    });
   });
 }
 
@@ -5960,28 +6065,6 @@ function newChatSession() {
   sessions.unshift(s);
   saveSessions(sessions);
   setActiveId(s.id);
-  initChatPanel();
-}
-
-function switchChatSession() {
-  var sel = document.getElementById('chatSessionSelect');
-  setActiveId(sel.value);
-  initChatPanel();
-}
-
-function deleteChatSession() {
-  var sessions = loadSessions();
-  var activeId = getActiveId();
-  if (sessions.length <= 1) {
-    sessions = [{ id: Date.now().toString(36), title: '新对话', messages: [] }];
-    activeId = sessions[0].id;
-    setActiveId(activeId);
-    saveSessions(sessions);
-  } else {
-    sessions = sessions.filter(function(s) { return s.id !== activeId; });
-    saveSessions(sessions);
-    setActiveId(sessions[0].id);
-  }
   initChatPanel();
 }
 
@@ -5998,10 +6081,6 @@ function initChatPanel() {
   document.getElementById('chatReasoner').checked = cfg.reasoner || false;
   document.getElementById('chatMaxTokens').value = cfg.maxTokens || 4096;
   document.getElementById('chatSystemPrompt').value = cfg.systemPrompt || '';
-  document.getElementById('chatModelLabel').textContent = model === 'doubao' ? '豆包' : 'DeepSeek';
-
-  buildSessionSelect();
-
   var history = loadChatHistory();
   var msgsDiv = document.getElementById('chatMessages');
   msgsDiv.innerHTML = '';
