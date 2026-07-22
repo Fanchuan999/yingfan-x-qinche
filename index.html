@@ -1258,19 +1258,19 @@ footer .heart {
   border-radius: 8px;
 }
 
-[data-theme="light"] .chat-confirm-overlay {
-  background: rgba(0,0,0,0.25);
-}
-
 .chat-confirm-box {
-  background: var(--surface);
-  opacity: 1;
+  background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 24px 20px 16px;
   text-align: center;
   max-width: 280px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+}
+
+[data-theme="light"] .chat-confirm-box {
+  background: #fff;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
 }
 
 .chat-confirm-title {
