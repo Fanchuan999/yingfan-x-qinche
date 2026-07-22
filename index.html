@@ -1625,24 +1625,135 @@ footer .heart {
   scrollbar-color: var(--red-dark) transparent;
 }
 
+/* ---- Date Group ---- */
+.todo-date-group {
+  margin-bottom: 6px;
+}
+
+.todo-date-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 4px;
+  cursor: pointer;
+  user-select: none;
+  border-radius: 4px;
+  transition: background 0.2s;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  position: sticky;
+  top: 0;
+  background: var(--bg-card);
+  z-index: 2;
+}
+
+.todo-date-header:hover { background: rgba(255,255,255,0.04); }
+
+.todo-date-header .collapse-icon {
+  transition: transform 0.3s ease;
+  font-size: 0.55rem;
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+
+.todo-date-header.collapsed .collapse-icon {
+  transform: rotate(-90deg);
+}
+
+.todo-date-header .date-label {
+  flex: 1;
+}
+
+.todo-date-header .date-label .check-mark {
+  color: var(--red);
+  margin-left: 4px;
+  font-size: 0.7rem;
+}
+
+.todo-date-header .done-badge {
+  font-size: 0.6rem;
+  opacity: 0.5;
+  letter-spacing: 1px;
+}
+
+/* Hide items when collapsed */
+.todo-date-group.collapsed .todo-date-group-items { display: none; }
+
+/* ---- Items ---- */
 .todo-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 4px;
-  border-bottom: 1px solid rgba(255,255,255,0.03);
+  gap: 8px;
+  padding: 9px 4px;
+  border-bottom: 1px solid rgba(255,255,255,0.02);
   transition: all 0.2s ease;
+  cursor: default;
 }
 
 .todo-item:hover { background: rgba(255,255,255,0.02); }
+
+.todo-item.dragging {
+  opacity: 0.4;
+  background: rgba(196,30,58,0.08);
+}
+
+.todo-item.drag-over {
+  border-top: 2px solid var(--red);
+  padding-top: 7px;
+}
+
+/* Drag handle */
+.todo-drag-handle {
+  cursor: grab;
+  color: var(--text-muted);
+  opacity: 0.25;
+  font-size: 0.7rem;
+  padding: 0 2px;
+  user-select: none;
+  letter-spacing: -1px;
+  flex-shrink: 0;
+}
+
+.todo-item:hover .todo-drag-handle { opacity: 0.6; }
+
+.todo-drag-handle:active { cursor: grabbing; }
 
 .todo-checkbox {
   width: 18px;
   height: 18px;
   flex-shrink: 0;
   cursor: pointer;
-  accent-color: var(--red);
+  appearance: none;
+  -webkit-appearance: none;
+  border: 2px solid var(--text-muted);
   border-radius: 3px;
+  background: transparent;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.todo-checkbox:checked {
+  border-color: var(--red);
+  background: var(--red);
+}
+
+.todo-checkbox:checked::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #fff;
+  font-size: 11px;
+  font-weight: bold;
+  line-height: 1;
+}
+
+/* Light theme: pink border, no fill when UNCHECKED */
+[data-theme="light"] .todo-checkbox:not(:checked) {
+  border-color: var(--red);
+  background: transparent;
 }
 
 .todo-text {
@@ -1661,13 +1772,19 @@ footer .heart {
   opacity: 0.5;
 }
 
-.todo-date-tag {
-  font-size: 0.6rem;
-  color: var(--text-muted);
-  opacity: 0.5;
+/* 双击编辑输入框 */
+.todo-edit-input {
+  flex: 1;
+  background: var(--input-bg);
+  border: 1px solid var(--red-dark);
+  border-radius: 3px;
+  color: var(--text-light);
+  padding: 3px 8px;
+  font-size: 0.85rem;
   letter-spacing: 1px;
-  flex-shrink: 0;
-  margin-right: 6px;
+  outline: none;
+  font-family: 'Microsoft YaHei', sans-serif;
+  line-height: 1.5;
 }
 
 .todo-delete {
@@ -4313,23 +4430,41 @@ var todoCount = document.getElementById('todoCount');
 function loadTodos() {
   try {
     var data = localStorage.getItem(TODO_KEY);
-    return data ? JSON.parse(data) : [];
-  } catch(e) { return []; }
+    if (!data) return [];
+    var parsed = JSON.parse(data);
+    // 确保是数组，兼容旧数据格式
+    if (!Array.isArray(parsed)) return [];
+    // 过滤掉没有 text 字段的无效条目
+    return parsed.filter(function(t) { return t && typeof t.text === 'string'; });
+  } catch(e) { console.error('loadTodos 失败:', e); return []; }
 }
 
 function saveTodos(todos) {
-  localStorage.setItem(TODO_KEY, JSON.stringify(todos));
+  try {
+    localStorage.setItem(TODO_KEY, JSON.stringify(todos));
+  } catch(e) { console.error('saveTodos 失败:', e); }
 }
 
-function formatTodoDate(ts) {
+function getDateKey(ts) {
   var d = new Date(ts);
-  return (d.getMonth()+1) + '/' + d.getDate();
+  return d.getFullYear() + '-' + pad2(d.getMonth()+1) + '-' + pad2(d.getDate());
+}
+
+function pad2(n) { return n < 10 ? '0' + n : '' + n; }
+
+function formatGroupLabel(dateKey) {
+  var today = getDateKey(Date.now());
+  if (dateKey === today) return '今天';
+  var parts = dateKey.split('-');
+  return parseInt(parts[1]) + '月' + parseInt(parts[2]) + '日';
 }
 
 function renderTodos() {
+  try {
   var todos = loadTodos();
   todoList.innerHTML = '';
   var activeCount = 0;
+  var doneCount = 0;
 
   if (todos.length === 0) {
     todoList.innerHTML = '<div class="todo-empty">还没有待办事项，开始添加吧</div>';
@@ -4337,54 +4472,223 @@ function renderTodos() {
     return;
   }
 
+  var today = getDateKey(Date.now());
+
+  // Count stats & build groups preserving flat-array order
+  var groups = [];       // [{dateKey, items:[{todo, idx}], allDone}]
+  var groupMap = {};     // dateKey → group
+
   todos.forEach(function(todo, i) {
-    if (!todo.done) activeCount++;
-    var item = document.createElement('div');
-    item.className = 'todo-item' + (todo.done ? ' done' : '');
-    item.innerHTML =
-      '<input type="checkbox" class="todo-checkbox" data-idx="' + i + '"' + (todo.done ? ' checked' : '') + '>' +
-      '<span class="todo-text">' + todo.text.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</span>' +
-      '<span class="todo-date-tag">' + formatTodoDate(todo.createdAt) + '</span>' +
-      '<button class="todo-delete" data-idx="' + i + '">删除</button>';
+    if (todo.done) doneCount++; else activeCount++;
 
-    // Toggle done
-    item.querySelector('.todo-checkbox').addEventListener('change', function() {
-      var idx = parseInt(this.dataset.idx);
-      var tds = loadTodos();
-      tds[idx].done = this.checked;
-      saveTodos(tds);
-      renderTodos();
-    });
-
-    // Delete
-    item.querySelector('.todo-delete').addEventListener('click', function() {
-      var idx = parseInt(this.dataset.idx);
-      var tds = loadTodos();
-      tds.splice(idx, 1);
-      saveTodos(tds);
-      renderTodos();
-    });
-
-    todoList.appendChild(item);
+    var dk = getDateKey(todo.createdAt);
+    if (!groupMap[dk]) {
+      var g = { dateKey: dk, items: [], allDone: true };
+      groups.push(g);
+      groupMap[dk] = g;
+    }
+    groupMap[dk].items.push({ todo: todo, idx: i });
+    if (!todo.done) groupMap[dk].allDone = false;
   });
 
-  var total = todos.length;
-  var doneCount = total - activeCount;
+  // Render groups
+  groups.forEach(function(group) {
+    var isToday = group.dateKey === today;
+    var allDone = group.allDone;
+    var shouldCollapse = allDone && !isToday;
+
+    var groupDiv = document.createElement('div');
+    groupDiv.className = 'todo-date-group' + (shouldCollapse ? ' collapsed' : '');
+
+    // ---- Header ----
+    var header = document.createElement('div');
+    header.className = 'todo-date-header' + (shouldCollapse ? ' collapsed' : '');
+    var doneInGroup = 0;
+    group.items.forEach(function(it) { if (it.todo.done) doneInGroup++; });
+    header.innerHTML =
+      '<span class="collapse-icon">▼</span>' +
+      '<span class="date-label">' + formatGroupLabel(group.dateKey) +
+        (allDone ? '<span class="check-mark">✔</span>' : '') + '</span>' +
+      '<span class="done-badge">' + doneInGroup + '/' + group.items.length + '</span>';
+
+    header.addEventListener('click', function() {
+      groupDiv.classList.toggle('collapsed');
+      header.classList.toggle('collapsed');
+    });
+
+    groupDiv.appendChild(header);
+
+    // ---- Items ----
+    var itemsDiv = document.createElement('div');
+    itemsDiv.className = 'todo-date-group-items';
+
+    group.items.forEach(function(item) {
+      var todo = item.todo;
+      var idx = item.idx;
+
+      var itemDiv = document.createElement('div');
+      itemDiv.className = 'todo-item' + (todo.done ? ' done' : '');
+      itemDiv.draggable = true;
+      itemDiv.dataset.idx = idx;
+
+      itemDiv.innerHTML =
+        '<span class="todo-drag-handle" draggable="false">⋮⋮</span>' +
+        '<input type="checkbox" class="todo-checkbox" data-idx="' + idx + '"' + (todo.done ? ' checked' : '') + '>' +
+        '<span class="todo-text">' + todo.text.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</span>' +
+        '<button class="todo-delete" data-idx="' + idx + '">删除</button>';
+
+      // Checkbox toggle
+      itemDiv.querySelector('.todo-checkbox').addEventListener('change', function() {
+        var tds = loadTodos();
+        tds[parseInt(this.dataset.idx)].done = this.checked;
+        saveTodos(tds);
+        renderTodos();
+      });
+
+      // Delete
+      itemDiv.querySelector('.todo-delete').addEventListener('click', function(e) {
+        e.stopPropagation();
+        var tds = loadTodos();
+        tds.splice(parseInt(this.dataset.idx), 1);
+        saveTodos(tds);
+        renderTodos();
+      });
+
+      // ---- Double-click to edit ----
+      (function() {
+        var textEl = itemDiv.querySelector('.todo-text');
+        var editing = false;
+
+        textEl.addEventListener('dblclick', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          if (editing) return;
+          editing = true;
+
+          var originalText = todo.text;
+          var input = document.createElement('input');
+          input.type = 'text';
+          input.className = 'todo-edit-input';
+          input.value = originalText;
+          input.maxLength = 200;
+
+          textEl.replaceWith(input);
+          input.focus();
+          input.select();
+
+          function finishEdit(save) {
+            if (!editing) return;
+            editing = false;
+
+            var newText = input.value.trim();
+            if (save && newText && newText !== originalText) {
+              var tds = loadTodos();
+              if (tds[idx]) { tds[idx].text = newText; saveTodos(tds); }
+            }
+            // 始终重新渲染以恢复干净状态
+            renderTodos();
+          }
+
+          input.addEventListener('blur', function() { finishEdit(true); });
+          input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') { e.preventDefault(); finishEdit(true); }
+            if (e.key === 'Escape') { e.preventDefault(); finishEdit(false); }
+          });
+        });
+      })();
+
+      // ---- Drag & Drop ----
+      itemDiv.addEventListener('dragstart', function(e) {
+        // Don't start drag on interactive elements
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON') {
+          e.preventDefault();
+          return;
+        }
+        e.dataTransfer.setData('text/plain', this.dataset.idx);
+        e.dataTransfer.effectAllowed = 'move';
+        this.classList.add('dragging');
+      });
+
+      itemDiv.addEventListener('dragend', function() {
+        this.classList.remove('dragging');
+        var allItems = todoList.querySelectorAll('.todo-item');
+        allItems.forEach(function(el) { el.classList.remove('drag-over'); });
+      });
+
+      itemDiv.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        if (!this.classList.contains('dragging')) {
+          this.classList.add('drag-over');
+        }
+      });
+
+      itemDiv.addEventListener('dragleave', function() {
+        this.classList.remove('drag-over');
+      });
+
+      itemDiv.addEventListener('drop', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.remove('drag-over');
+
+        var fromIdx = parseInt(e.dataTransfer.getData('text/plain'));
+        var toIdx = parseInt(this.dataset.idx);
+
+        if (isNaN(fromIdx) || isNaN(toIdx) || fromIdx === toIdx) return;
+
+        // Determine insert-before vs insert-after by vertical position
+        var rect = this.getBoundingClientRect();
+        var after = (e.clientY - rect.top) > rect.height / 2;
+
+        var tds = loadTodos();
+        var moved = tds.splice(fromIdx, 1)[0];
+
+        // After removal, indices shifted — adjust if fromIdx < toIdx
+        var adjustedTo = fromIdx < toIdx ? toIdx - 1 : toIdx;
+        var insertAt = after ? adjustedTo + 1 : adjustedTo;
+        // Clamp
+        if (insertAt < 0) insertAt = 0;
+        if (insertAt > tds.length) insertAt = tds.length;
+
+        tds.splice(insertAt, 0, moved);
+        saveTodos(tds);
+        renderTodos();
+      });
+
+      itemsDiv.appendChild(itemDiv);
+    });
+
+    groupDiv.appendChild(itemsDiv);
+    todoList.appendChild(groupDiv);
+  });
+
+  // Stats footer
   todoCount.innerHTML = '<span>' + activeCount + '</span> 项待完成  /  <span>' + doneCount + '</span> 项已完成';
+  } catch(e) {
+    console.error('renderTodos 出错:', e);
+    todoList.innerHTML = '<div class="todo-empty">加载失败，请刷新页面重试</div>';
+    todoCount.textContent = '';
+  }
 }
 
 function addTodo() {
   var text = todoInput.value.trim();
   if (!text) return;
-  var todos = loadTodos();
-  todos.unshift({ text: text, done: false, createdAt: Date.now() });
-  saveTodos(todos);
-  todoInput.value = '';
-  renderTodos();
+  try {
+    var todos = loadTodos();
+    todos.unshift({ text: text, done: false, createdAt: Date.now() });
+    saveTodos(todos);
+    todoInput.value = '';
+    renderTodos();
+  } catch(e) {
+    console.error('addTodo 出错:', e);
+    alert('添加失败，请查看控制台（F12）了解详情');
+  }
 }
 
-btnTodoAdd.addEventListener('click', addTodo);
-todoInput.addEventListener('keydown', function(e) {
+if (btnTodoAdd) btnTodoAdd.addEventListener('click', addTodo);
+if (todoInput) todoInput.addEventListener('keydown', function(e) {
   if (e.key === 'Enter') addTodo();
 });
 
