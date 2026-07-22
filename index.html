@@ -3117,6 +3117,15 @@ footer .heart {
         <label>API URL</label>
         <input type="text" id="chatBaseUrl" placeholder="https://api.deepseek.com" onchange="saveChatConfig()">
       </div>
+      <div class="chat-setting-row" style="align-items: center;">
+        <label>深度思考</label>
+        <input type="checkbox" id="chatReasoner" onchange="saveChatConfig()" style="width:auto; cursor:pointer; accent-color: var(--red);">
+        <span style="font-size:0.65rem; color:var(--text-muted);">仅DeepSeek有效</span>
+      </div>
+      <div class="chat-setting-row" style="flex-direction:column; align-items:stretch;">
+        <label>系统提示词</label>
+        <textarea id="chatSystemPrompt" placeholder="设定AI角色，比如：你是秦彻，来自《恋与深空》..." onchange="saveChatConfig()" style="min-height:80px; resize:vertical; font-size:0.72rem; padding:8px 10px; border-radius:4px; border:1px solid var(--border); background:var(--input-bg); color:var(--text-light); outline:none; font-family: 'Microsoft YaHei', sans-serif;"></textarea>
+      </div>
     </div>
 
     <!-- Messages -->
@@ -5799,8 +5808,6 @@ var CHAT_CONFIG_KEY = 'qinche_chat_config';
 var CHAT_HISTORY_KEY = 'qinche_chat_history';
 var chatImageBase64 = null;
 
-var QINCHE_SYSTEM = '你是秦彻，来自《恋与深空》。\n身份：你是强大的猎手，拥有龙的传承。表面冷酷寡言，内心温柔细腻，霸道外表下藏着深情的守护者。\n性格：高傲但不傲慢，沉默但不冷漠。对在意的人会默默守护，不善于甜言蜜语但会用行动表达。\n说话风格：简短有力，语速不快，偶尔带古风诗意。不说废话，不喜欢啰嗦。偶尔流露出龙族的孤高气质。\n标志元素：黑龙、乌鸦、黑夜、羽毛、火焰、战甲。你与龙族有深厚羁绊。\n与用户的关系：你珍视对方，虽然嘴上不说，但每一句话都透着关心。你偶尔用"小狸花"称呼对方。\n回复规则：用中文回复，尽量简洁。不说废话，不崩人设。可以偶尔使用"……"表示沉思或克制的情感。';
-
 function loadChatConfig() {
   try { return JSON.parse(localStorage.getItem(CHAT_CONFIG_KEY)) || {}; } catch(e) { return {}; }
 }
@@ -5809,7 +5816,9 @@ function saveChatConfig() {
   var cfg = {
     model: document.getElementById('chatModelSelect').value,
     apiKey: document.getElementById('chatApiKey').value.trim(),
-    baseUrl: document.getElementById('chatBaseUrl').value.trim()
+    baseUrl: document.getElementById('chatBaseUrl').value.trim(),
+    reasoner: document.getElementById('chatReasoner').checked,
+    systemPrompt: document.getElementById('chatSystemPrompt').value
   };
   localStorage.setItem(CHAT_CONFIG_KEY, JSON.stringify(cfg));
   document.getElementById('chatModelLabel').textContent = cfg.model === 'doubao' ? '豆包' : 'DeepSeek';
@@ -5824,10 +5833,14 @@ function getChatEndpoint() {
       ? 'https://ark.cn-beijing.volces.com/api/v3'
       : 'https://api.deepseek.com';
   }
+  var modelName = model === 'doubao'
+    ? 'doubao-1.5-vision-pro-32k'
+    : (cfg.reasoner ? 'deepseek-reasoner' : 'deepseek-chat');
   return {
     url: baseUrl + '/v1/chat/completions',
     apiKey: cfg.apiKey || '',
-    modelName: model === 'doubao' ? 'doubao-1.5-vision-pro-32k' : 'deepseek-chat'
+    modelName: modelName,
+    systemPrompt: cfg.systemPrompt || ''
   };
 }
 
@@ -5850,6 +5863,8 @@ function initChatPanel() {
     : 'https://api.deepseek.com';
   document.getElementById('chatBaseUrl').value = cfg.baseUrl || defaultUrl;
   if (!cfg.baseUrl) document.getElementById('chatBaseUrl').placeholder = defaultUrl;
+  document.getElementById('chatReasoner').checked = cfg.reasoner || false;
+  document.getElementById('chatSystemPrompt').value = cfg.systemPrompt || '';
   document.getElementById('chatModelLabel').textContent = model === 'doubao' ? '豆包' : 'DeepSeek';
 
   var history = loadChatHistory();
@@ -5974,7 +5989,10 @@ async function sendChatMessage() {
   msgsDiv.appendChild(loading);
   msgsDiv.scrollTop = msgsDiv.scrollHeight;
 
-  var apiMessages = [{ role: 'system', content: QINCHE_SYSTEM }];
+  var apiMessages = [];
+  if (endpoint.systemPrompt) {
+    apiMessages.push({ role: 'system', content: endpoint.systemPrompt });
+  }
   history.slice(-30).forEach(function(m) {
     var content = m.content;
     if (m.image) {
