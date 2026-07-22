@@ -6592,10 +6592,10 @@ function escapeHtml2(text) {
 
 function renderMarkdown(text) {
   if (!text) return '';
-  return '{{ ' + text
+  return text
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.+?)\*/g, '<em>$1</em>')
-    .replace(/\n/g, '<br>') + ' }}';
+    .replace(/\n/g, '<br>');
 }
 
 document.getElementById('btnChat').addEventListener('click', function() {
