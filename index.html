@@ -2363,6 +2363,56 @@ footer .heart {
   opacity: 0.5;
 }
 
+/* ============ Custom Fonts ============ */
+@font-face {
+  font-family: 'Font-1-方圆体';
+  src: url('fonts/AlimamaFangYuanTiVF-Thin-2.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Font-2-律师手写';
+  src: url('fonts/huangkaihuaLawyerfont-2.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Font-3-加油鸭';
+  src: url('fonts/JinNianYeYaoJiaYouYa-2.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Font-4-猪圆体';
+  src: url('fonts/MaoKenZhuYuanTi-MaokenZhuyuanTi-2.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Font-5-江湖狼';
+  src: url('fonts/PingFangLaiJiangHuLangTi-2.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Font-6-乐天体';
+  src: url('fonts/PingFangLiuAngLeTianTi-2.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Font-7-萌萌体';
+  src: url('fonts/PingFangMengMeng-2.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Font-8-烧华体';
+  src: url('fonts/PingFangShaoHuaTi-2.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Font-9-线宾宋';
+  src: url('fonts/TangXianBinSong-2.otf') format('opentype');
+}
+@font-face {
+  font-family: 'Font-10-奶酪体';
+  src: url('fonts/XiaoKeNaiLaoTiShangYongMianFei@QingKeZiTi-2.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Font-11-佛系体';
+  src: url('fonts/Slidefu-Regular-2.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Font-12-小石头';
+  src: url('fonts/YeZiGongChangXiaoShiTou-2.ttf') format('truetype');
+}
+
 /* ============ Personalize Panel ============ */
 .personalize-section {
   margin-bottom: 24px;
@@ -2793,7 +2843,7 @@ footer .heart {
     <div class="manage-tabs">
       <button class="manage-tab active" data-tab="photos">照片管理</button>
       <button class="manage-tab" data-tab="quotes">语录管理</button>
-      <button class="manage-tab" data-tab="personalize">✨ 个性化</button>
+      <button class="manage-tab" data-tab="personalize">个性化</button>
       <button class="manage-tab" data-tab="reset">重置数据</button>
     </div>
 
@@ -2837,10 +2887,18 @@ footer .heart {
         <p class="personalize-hint">选择你喜欢的字体风格</p>
         <div class="personalize-font-grid" id="fontSelector">
           <button class="font-option active" data-font="default">默认</button>
-          <button class="font-option" data-font="songti" style="font-family: 'SimSun','宋体',serif">宋体</button>
-          <button class="font-option" data-font="kaiti" style="font-family: 'KaiTi','楷体',serif">楷体</button>
-          <button class="font-option" data-font="heiti" style="font-family: 'SimHei','黑体',sans-serif">黑体</button>
-          <button class="font-option" data-font="rounded" style="font-family: 'Microsoft YaHei','PingFang SC',sans-serif; font-weight: 300">圆体</button>
+          <button class="font-option" data-font="font1" style="font-family:'Font-1-方圆体'">字体1</button>
+          <button class="font-option" data-font="font2" style="font-family:'Font-2-律师手写'">字体2</button>
+          <button class="font-option" data-font="font3" style="font-family:'Font-3-加油鸭'">字体3</button>
+          <button class="font-option" data-font="font4" style="font-family:'Font-4-猪圆体'">字体4</button>
+          <button class="font-option" data-font="font5" style="font-family:'Font-5-江湖狼'">字体5</button>
+          <button class="font-option" data-font="font6" style="font-family:'Font-6-乐天体'">字体6</button>
+          <button class="font-option" data-font="font7" style="font-family:'Font-7-萌萌体'">字体7</button>
+          <button class="font-option" data-font="font8" style="font-family:'Font-8-烧华体'">字体8</button>
+          <button class="font-option" data-font="font9" style="font-family:'Font-9-线宾宋'">字体9</button>
+          <button class="font-option" data-font="font10" style="font-family:'Font-10-奶酪体'">字体10</button>
+          <button class="font-option" data-font="font11" style="font-family:'Font-11-佛系体'">字体11</button>
+          <button class="font-option" data-font="font12" style="font-family:'Font-12-小石头'">字体12</button>
         </div>
       </div>
     </div>
@@ -5162,19 +5220,21 @@ function applyNickname() {
 
 function applyFont() {
   var font = loadFont();
-  var fontFamily = '';
-  switch (font) {
-    case 'songti': fontFamily = '"SimSun","宋体",serif'; break;
-    case 'kaiti':  fontFamily = '"KaiTi","楷体",serif'; break;
-    case 'heiti':  fontFamily = '"SimHei","黑体",sans-serif'; break;
-    case 'rounded': fontFamily = '"Microsoft YaHei","PingFang SC",sans-serif'; break;
-    default:       fontFamily = ''; break;
-  }
-  if (fontFamily) {
-    document.body.style.fontFamily = fontFamily;
-  } else {
-    document.body.style.fontFamily = '';
-  }
+  var fontMap = {
+    font1:  '"Font-1-方圆体", sans-serif',
+    font2:  '"Font-2-律师手写", serif',
+    font3:  '"Font-3-加油鸭", sans-serif',
+    font4:  '"Font-4-猪圆体", sans-serif',
+    font5:  '"Font-5-江湖狼", sans-serif',
+    font6:  '"Font-6-乐天体", sans-serif',
+    font7:  '"Font-7-萌萌体", sans-serif',
+    font8:  '"Font-8-烧华体", sans-serif',
+    font9:  '"Font-9-线宾宋", serif',
+    font10: '"Font-10-奶酪体", sans-serif',
+    font11: '"Font-11-佛系体", serif',
+    font12: '"Font-12-小石头", sans-serif'
+  };
+  document.body.style.fontFamily = fontMap[font] || '';
 }
 
 function initPersonalizePanel() {
