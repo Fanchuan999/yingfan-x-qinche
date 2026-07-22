@@ -6405,38 +6405,37 @@ function showCopyToast() {
 
 function regenerateMessage() {
   var history = loadChatHistory();
-  // Remove last AI message
+  if (history.length < 2) return;
+
+  // Remove last AI message(s) from history
   while (history.length > 0 && history[history.length - 1].role === 'assistant') {
     history.pop();
   }
+
+  // Get the last user message (it's now the last element)
+  if (history.length === 0 || history[history.length - 1].role !== 'user') return;
+  var lastUser = history[history.length - 1];
+
+  // Save cleaned history
   saveChatHistory(history);
 
-  // Find last user message
-  var lastUser = null;
-  for (var i = history.length - 1; i >= 0; i--) {
-    if (history[i].role === 'user') { lastUser = history[i]; break; }
-  }
-  if (!lastUser) return;
+  // Call internal send (pass the last user message text + optional image)
+  sendChatInternal(lastUser.content, lastUser.image || null);
+}
 
-  // Remove it from history so sendChatMessage doesn't duplicate
-  history.pop();
-  saveChatHistory(history);
-
-  // Re-render
-  var msgsDiv = document.getElementById('chatMessages');
-  msgsDiv.innerHTML = '';
-  history.forEach(function(m) { appendChatMsg(m.role, m.content, m.image); });
-  msgsDiv.scrollTop = msgsDiv.scrollHeight;
-
-  // Simulate sending: sendChatMessage style call
+function sendChatInternal(text, imageBase64) {
   var endpoint = getChatEndpoint();
   if (!endpoint.apiKey) { chatToast('请先设置API Key'); return; }
 
   document.getElementById('btnChatSend').disabled = true;
   document.getElementById('chatInput').disabled = true;
 
-  appendChatMsg('user', lastUser.content, lastUser.image);
-  history.push({ role: 'user', content: lastUser.content, image: lastUser.image });
+  var history = loadChatHistory();
+  history.push({ role: 'user', content: text, image: imageBase64 || undefined });
+  saveChatHistory(history);
+
+  var msgsDiv = document.getElementById('chatMessages');
+  appendChatMsg('user', text, imageBase64 || undefined);
 
   var loading = document.createElement('div');
   loading.className = 'chat-loading';
@@ -6445,7 +6444,8 @@ function regenerateMessage() {
   msgsDiv.scrollTop = msgsDiv.scrollHeight;
 
   var apiMessages = [];
-  if (endpoint.systemPrompt) apiMessages.push({ role: 'system', content: endpoint.systemPrompt });
+  var ep = endpoint;
+  if (ep.systemPrompt) apiMessages.push({ role: 'system', content: ep.systemPrompt });
   history.slice(-100).forEach(function(m) {
     var cont = m.content;
     if (m.image) cont = [{ type: 'image_url', image_url: { url: m.image } }, { type: 'text', text: cont }];
@@ -6454,10 +6454,10 @@ function regenerateMessage() {
 
   var fullResponse = '';
   var aiDiv = null;
-  fetch(endpoint.url, {
+  fetch(ep.url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + endpoint.apiKey },
-    body: JSON.stringify({ model: endpoint.modelName, messages: apiMessages, stream: true, temperature: 0.8, max_tokens: endpoint.maxTokens })
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + ep.apiKey },
+    body: JSON.stringify({ model: ep.modelName, messages: apiMessages, stream: true, temperature: 0.8, max_tokens: ep.maxTokens })
   }).then(async function(resp) {
     if (!resp.ok) throw new Error('API ' + resp.status);
     var reader = resp.body.getReader();
@@ -6488,7 +6488,7 @@ function regenerateMessage() {
       }
     }
   }).catch(function(e) {
-    loading.remove();
+    if (loading.parentNode) loading.remove();
     appendChatMsg('ai', '……' + e.message);
   }).finally(function() {
     if (loading.parentNode) loading.remove();
@@ -6719,21 +6719,23 @@ function appendChatMsg(role, content, imageBase64) {
   }
   html += role === 'user' ? escapeHtml2(content) : renderMarkdown(content);
 
-  // Action buttons
-  html += '<div class="chat-msg-actions">' +
-    '<button class="chat-msg-action-btn" data-action="copy" title="复制">复制</button>';
-  if (role === 'assistant') {
-    html += '<button class="chat-msg-action-btn" data-action="regen" title="重新生成">重新生成</button>';
-  }
-  html += '</div>';
-
   div.innerHTML = html;
   row.appendChild(div);
+
+  // Action buttons (outside bubble, in the row)
+  var actions = document.createElement('div');
+  actions.className = 'chat-msg-actions';
+  actions.innerHTML = '<button class="chat-msg-action-btn" data-action="copy" title="复制">📋</button>';
+  if (role === 'assistant') {
+    actions.innerHTML += '<button class="chat-msg-action-btn" data-action="regen" title="重新生成">🔄</button>';
+  }
+  row.appendChild(actions);
+
   msgsDiv.appendChild(row);
   msgsDiv.scrollTop = msgsDiv.scrollHeight;
 
   // Bind actions
-  div.querySelectorAll('.chat-msg-action-btn').forEach(function(btn) {
+  actions.querySelectorAll('.chat-msg-action-btn').forEach(function(btn) {
     btn.addEventListener('click', function(e) {
       e.stopPropagation();
       if (this.dataset.action === 'copy') {
