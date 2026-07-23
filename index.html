@@ -6421,11 +6421,14 @@ function regenerateMessage() {
   // Save cleaned history
   saveChatHistory(history);
 
-  // Call internal send (pass the last user message text + optional image)
-  sendChatInternal(lastUser.content, lastUser.image || null);
+  // Re-render the cleaned conversation so the old AI reply disappears.
+  initChatPanel();
+
+  // Reuse the existing last user message instead of adding it a second time.
+  sendChatInternal(lastUser.content, lastUser.image || null, true);
 }
 
-function sendChatInternal(text, imageBase64) {
+function sendChatInternal(text, imageBase64, reuseExistingUser) {
   var endpoint = getChatEndpoint();
   if (!endpoint.apiKey) { chatToast('请先设置API Key'); return; }
 
@@ -6433,11 +6436,12 @@ function sendChatInternal(text, imageBase64) {
   document.getElementById('chatInput').disabled = true;
 
   var history = loadChatHistory();
-  history.push({ role: 'user', content: text, image: imageBase64 || undefined });
-  saveChatHistory(history);
-
   var msgsDiv = document.getElementById('chatMessages');
-  appendChatMsg('user', text, imageBase64 || undefined);
+  if (!reuseExistingUser) {
+    history.push({ role: 'user', content: text, image: imageBase64 || undefined });
+    saveChatHistory(history);
+    appendChatMsg('user', text, imageBase64 || undefined);
+  }
 
   var loading = document.createElement('div');
   loading.className = 'chat-loading';
@@ -6481,7 +6485,7 @@ function sendChatInternal(text, imageBase64) {
             var delta = chunk.choices[0].delta;
             if (delta && delta.content) {
               fullResponse += delta.content;
-              if (!aiDiv) { loading.remove(); aiDiv = appendChatMsg('ai', fullResponse); }
+              if (!aiDiv) { loading.remove(); aiDiv = appendChatMsg('assistant', fullResponse); }
               else { aiDiv.innerHTML = renderMarkdown(fullResponse); }
               msgsDiv.scrollTop = msgsDiv.scrollHeight;
             }
@@ -6491,7 +6495,7 @@ function sendChatInternal(text, imageBase64) {
     }
   }).catch(function(e) {
     if (loading.parentNode) loading.remove();
-    appendChatMsg('ai', '……' + e.message);
+    appendChatMsg('assistant', '……' + e.message);
   }).finally(function() {
     if (loading.parentNode) loading.remove();
     if (fullResponse) {
@@ -6888,7 +6892,7 @@ async function sendChatMessage() {
               fullResponse += delta.content;
               if (!aiDiv) {
                 loading.remove();
-                aiDiv = appendChatMsg('ai', fullResponse);
+                aiDiv = appendChatMsg('assistant', fullResponse);
               } else {
                 aiDiv.innerHTML = renderMarkdown(fullResponse);
               }
@@ -6900,7 +6904,7 @@ async function sendChatMessage() {
     }
   } catch(e) {
     if (loading.parentNode) loading.remove();
-    aiDiv = appendChatMsg('ai', '……' + e.message);
+    aiDiv = appendChatMsg('assistant', '……' + e.message);
   }
 
   if (loading.parentNode) loading.remove();
