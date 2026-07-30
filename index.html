@@ -1464,6 +1464,20 @@ footer .heart {
 
 .chat-setting-row select { cursor: pointer; }
 
+.chat-api-clear {
+  flex: none;
+  padding: 5px 8px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.68rem;
+}
+
+.chat-api-clear:hover { border-color: var(--red-dark); color: var(--red); }
+
 .chat-messages {
   flex: 1;
   overflow-y: auto;
@@ -3536,6 +3550,9 @@ footer .heart {
       </div>
       <div class="chat-header-right">
         <button class="chat-header-icon" onclick="newChatSession()" title="新对话">＋</button>
+        <button class="chat-header-icon" onclick="exportChatSessions()" title="导出对话">↓</button>
+        <button class="chat-header-icon" onclick="document.getElementById('chatImportInput').click()" title="导入对话">↑</button>
+        <input type="file" id="chatImportInput" accept="application/json,.json" hidden onchange="onChatImport(event)">
         <button class="chat-header-icon" onclick="toggleChatSettings()" title="设置">⚙</button>
         <button class="util-panel-close" onclick="closeUtilPanel('chat')">✕</button>
       </div>
@@ -3552,17 +3569,28 @@ footer .heart {
         <select id="chatModelSelect" onchange="onChatModelChange()">
           <option value="deepseek">DeepSeek</option>
           <option value="doubao">豆包</option>
+          <option value="custom">兼容接口</option>
         </select>
       </div>
       <div class="chat-setting-row">
         <label>API Key</label>
         <input type="password" id="chatApiKey" placeholder="sk-..." onchange="saveChatConfig()">
+        <button class="chat-api-clear" type="button" onclick="clearChatApiKey()">清除</button>
+      </div>
+      <div class="chat-setting-row">
+        <label>记住密钥</label>
+        <input type="checkbox" id="chatRememberApiKey" onchange="saveChatConfig()" style="width:auto; cursor:pointer; accent-color:var(--red); flex:none;">
+        <span style="font-size:0.65rem; color:var(--text-muted); margin-left:auto;">默认仅本次使用</span>
       </div>
       <div class="chat-setting-row">
         <label>API URL</label>
         <input type="text" id="chatBaseUrl" placeholder="https://api.deepseek.com" onchange="saveChatConfig()">
       </div>
-      <div class="chat-setting-row">
+      <div class="chat-setting-row" id="chatCustomModelRow" hidden>
+        <label>模型名</label>
+        <input type="text" id="chatCustomModelName" placeholder="qwen2.5:7b" onchange="saveChatConfig()">
+      </div>
+      <div class="chat-setting-row" id="chatReasonerRow">
         <label class="chat-label-short">深度思考</label>
         <input type="checkbox" id="chatReasoner" onchange="saveChatConfig()" style="width:auto; cursor:pointer; accent-color:var(--red); flex:none;">
         <span style="font-size:0.65rem; color:var(--text-muted); margin-left:auto;">仅DeepSeek有效</span>
@@ -6275,6 +6303,7 @@ btnResetAll.addEventListener('click', function() {
 
 // ============ AI Chat (秦彻) ============
 var CHAT_CONFIG_KEY = 'qinche_chat_config';
+var CHAT_SESSION_API_KEY = 'qinche_chat_session_api_key';
 var CHAT_SESSIONS_KEY = 'qinche_chat_sessions';
 var CHAT_ACTIVE_KEY = 'qinche_chat_active';
 var USER_AVATAR_KEY = 'qinche_user_avatar';
@@ -6358,44 +6387,172 @@ function saveChatHistory(msgs, sessionId) {
 }
 
 function loadChatConfig() {
-  try { return JSON.parse(localStorage.getItem(CHAT_CONFIG_KEY)) || {}; } catch(e) { return {}; }
+  try {
+    var cfg = JSON.parse(localStorage.getItem(CHAT_CONFIG_KEY)) || {};
+    // Keep existing users' prior preference when upgrading from the old storage format.
+    if (cfg.apiKey && typeof cfg.rememberApiKey === 'undefined') cfg.rememberApiKey = true;
+    return cfg;
+  } catch(e) { return {}; }
+}
+
+function getSessionApiKey() {
+  try { return sessionStorage.getItem(CHAT_SESSION_API_KEY) || ''; } catch(e) { return ''; }
+}
+
+function getSavedChatApiKey(cfg) {
+  return getSessionApiKey() || (cfg.rememberApiKey === true ? cfg.apiKey || '' : '');
 }
 
 function saveChatConfig() {
   var maxTokens = parseInt(document.getElementById('chatMaxTokens').value, 10);
   var contextMessages = parseInt(document.getElementById('chatContextMessages').value, 10);
+  var apiKey = document.getElementById('chatApiKey').value.trim();
+  var rememberApiKey = document.getElementById('chatRememberApiKey').checked;
   var cfg = {
     model: document.getElementById('chatModelSelect').value,
-    apiKey: document.getElementById('chatApiKey').value.trim(),
     baseUrl: document.getElementById('chatBaseUrl').value.trim(),
+    customModelName: document.getElementById('chatCustomModelName').value.trim(),
+    rememberApiKey: rememberApiKey,
     reasoner: document.getElementById('chatReasoner').checked,
     maxTokens: maxTokens >= 256 && maxTokens <= 8192 ? maxTokens : 2048,
     contextMessages: [8, 12, 20].indexOf(contextMessages) !== -1 ? contextMessages : 12,
     systemPrompt: document.getElementById('chatSystemPrompt').value
   };
-  localStorage.setItem(CHAT_CONFIG_KEY, JSON.stringify(cfg));
+  if (rememberApiKey && apiKey) cfg.apiKey = apiKey;
+  try {
+    if (apiKey) sessionStorage.setItem(CHAT_SESSION_API_KEY, apiKey);
+    else sessionStorage.removeItem(CHAT_SESSION_API_KEY);
+    localStorage.setItem(CHAT_CONFIG_KEY, JSON.stringify(cfg));
+  } catch(e) {}
+}
+
+function clearChatApiKey() {
+  document.getElementById('chatApiKey').value = '';
+  document.getElementById('chatRememberApiKey').checked = false;
+  try {
+    sessionStorage.removeItem(CHAT_SESSION_API_KEY);
+    var cfg = loadChatConfig();
+    delete cfg.apiKey;
+    cfg.rememberApiKey = false;
+    localStorage.setItem(CHAT_CONFIG_KEY, JSON.stringify(cfg));
+  } catch(e) {}
+  chatToast('API Key 已清除');
+}
+
+function getDefaultChatBaseUrl(model) {
+  if (model === 'doubao') return 'https://ark.cn-beijing.volces.com/api/v3';
+  if (model === 'custom') return 'http://127.0.0.1:11434/v1';
+  return 'https://api.deepseek.com';
+}
+
+function getChatCompletionsUrl(baseUrl) {
+  var normalized = baseUrl.replace(/\/+$/, '');
+  if (/\/chat\/completions$/i.test(normalized)) return normalized;
+  if (/\/v\d+$/i.test(normalized)) return normalized + '/chat/completions';
+  return normalized + '/v1/chat/completions';
 }
 
 function getChatEndpoint() {
   var cfg = loadChatConfig();
   var model = cfg.model || 'deepseek';
-  var baseUrl = cfg.baseUrl;
-  if (!baseUrl) {
-    baseUrl = model === 'doubao'
-      ? 'https://ark.cn-beijing.volces.com/api/v3'
-      : 'https://api.deepseek.com';
-  }
-  var modelName = model === 'doubao'
-    ? 'doubao-1.5-vision-pro-32k'
-    : (cfg.reasoner ? 'deepseek-reasoner' : 'deepseek-chat');
+  var baseUrl = cfg.baseUrl || getDefaultChatBaseUrl(model);
+  var modelName = model === 'custom'
+    ? (cfg.customModelName || '').trim()
+    : (model === 'doubao' ? 'doubao-1.5-vision-pro-32k' : (cfg.reasoner ? 'deepseek-reasoner' : 'deepseek-chat'));
   return {
-    url: baseUrl + '/v1/chat/completions',
-    apiKey: cfg.apiKey || '',
+    url: getChatCompletionsUrl(baseUrl),
+    apiKey: getSavedChatApiKey(cfg),
+    requiresApiKey: model !== 'custom',
+    configError: model === 'custom' && !modelName ? '请填写兼容接口的模型名' : '',
     modelName: modelName,
     systemPrompt: cfg.systemPrompt || '',
     maxTokens: cfg.maxTokens || 2048,
     contextMessages: [8, 12, 20].indexOf(cfg.contextMessages) !== -1 ? cfg.contextMessages : 12
   };
+}
+
+function exportChatSessions() {
+  var existingSessions = loadSessions();
+  if (!existingSessions.length) {
+    chatToast('暂无可导出的对话');
+    return;
+  }
+  var sessions = normalizeImportedSessions({ sessions: existingSessions });
+
+  var payload = {
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    activeSessionId: getActiveId(),
+    sessions: sessions
+  };
+  var blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  var url = URL.createObjectURL(blob);
+  var link = document.createElement('a');
+  link.href = url;
+  link.download = 'qinche-chat-' + new Date().toISOString().slice(0, 10) + '.json';
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
+  chatToast('对话已导出');
+}
+
+function normalizeImportedSessions(payload) {
+  var rawSessions = Array.isArray(payload) ? payload : payload && payload.sessions;
+  if (!Array.isArray(rawSessions)) throw new Error('未找到有效的会话数据');
+
+  var usedIds = {};
+  var imported = rawSessions.slice(0, 5).map(function(source, index) {
+    if (!source || !Array.isArray(source.messages)) return null;
+    var id = typeof source.id === 'string' ? source.id.trim().slice(0, 64) : '';
+    if (!id || usedIds[id]) id = 'import_' + Date.now().toString(36) + '_' + index;
+    usedIds[id] = true;
+
+    var messages = source.messages.filter(function(message) {
+      return message && (message.role === 'user' || message.role === 'assistant') && typeof message.content === 'string';
+    }).slice(-CHAT_HISTORY_LIMIT).map(function(message) {
+      var normalized = { role: message.role, content: message.content };
+      if (message.imageAttached) normalized.imageAttached = true;
+      return normalized;
+    });
+    var title = typeof source.title === 'string' ? source.title.trim().slice(0, 30) : '';
+    return { id: id, title: title || '导入的对话', messages: messages };
+  }).filter(function(session) { return session; });
+
+  if (!imported.length) throw new Error('导入文件中没有可用对话');
+  return imported;
+}
+
+function onChatImport(event) {
+  var file = event.target.files[0];
+  event.target.value = '';
+  if (!file) return;
+  if (file.size > 2 * 1024 * 1024) {
+    chatToast('导入文件不能超过 2 MB');
+    return;
+  }
+
+  var reader = new FileReader();
+  reader.onload = function() {
+    try {
+      var payload = JSON.parse(reader.result);
+      var imported = normalizeImportedSessions(payload);
+      if (!window.confirm('导入会替换当前全部对话，是否继续？')) return;
+      saveSessions(imported);
+      var requestedActiveId = payload && payload.activeSessionId;
+      var activeId = imported.some(function(session) { return session.id === requestedActiveId; })
+        ? requestedActiveId
+        : imported[0].id;
+      setActiveId(activeId);
+      initChatPanel();
+      if (document.getElementById('chatSessionList').classList.contains('open')) buildSessionList();
+      chatToast('已导入 ' + imported.length + ' 个对话');
+    } catch(error) {
+      chatToast('导入失败：' + error.message);
+    }
+  };
+  reader.onerror = function() { chatToast('无法读取导入文件'); };
+  reader.readAsText(file, 'UTF-8');
 }
 
 function toggleSessionList() {
@@ -6593,7 +6750,11 @@ function readChatStreamLine(line, onContent) {
 
 async function requestChatResponse(history, imageBase64, sessionId) {
   var endpoint = getChatEndpoint();
-  if (!endpoint.apiKey) {
+  if (endpoint.configError) {
+    chatToast(endpoint.configError);
+    return;
+  }
+  if (endpoint.requiresApiKey && !endpoint.apiKey) {
     chatToast('请先设置 API Key');
     return;
   }
@@ -6632,12 +6793,11 @@ async function requestChatResponse(history, imageBase64, sessionId) {
   }
 
   try {
+    var headers = { 'Content-Type': 'application/json' };
+    if (endpoint.apiKey) headers.Authorization = 'Bearer ' + endpoint.apiKey;
     var resp = await fetch(endpoint.url, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + endpoint.apiKey
-      },
+      headers: headers,
       body: JSON.stringify({
         model: endpoint.modelName,
         messages: buildChatApiMessages(endpoint, history, imageBase64),
@@ -6718,13 +6878,14 @@ function chatToast(msg) {
 function initChatPanel() {
   var cfg = loadChatConfig();
   var model = cfg.model || 'deepseek';
+  if (['deepseek', 'doubao', 'custom'].indexOf(model) === -1) model = 'deepseek';
   document.getElementById('chatModelSelect').value = model;
-  document.getElementById('chatApiKey').value = cfg.apiKey || '';
-  var defaultUrl = model === 'doubao'
-    ? 'https://ark.cn-beijing.volces.com/api/v3'
-    : 'https://api.deepseek.com';
+  document.getElementById('chatApiKey').value = getSavedChatApiKey(cfg);
+  document.getElementById('chatRememberApiKey').checked = cfg.rememberApiKey === true;
+  var defaultUrl = getDefaultChatBaseUrl(model);
   document.getElementById('chatBaseUrl').value = cfg.baseUrl || defaultUrl;
-  if (!cfg.baseUrl) document.getElementById('chatBaseUrl').placeholder = defaultUrl;
+  document.getElementById('chatCustomModelName').value = cfg.customModelName || '';
+  updateChatModelUi(model);
   document.getElementById('chatReasoner').checked = cfg.reasoner || false;
   document.getElementById('chatMaxTokens').value = cfg.maxTokens || 2048;
   document.getElementById('chatContextMessages').value = [8, 12, 20].indexOf(cfg.contextMessages) !== -1 ? cfg.contextMessages : 12;
@@ -6752,13 +6913,17 @@ function toggleChatSettings() {
   document.getElementById('chatSettings').classList.toggle('open');
 }
 
+function updateChatModelUi(model) {
+  document.getElementById('chatCustomModelRow').hidden = model !== 'custom';
+  document.getElementById('chatReasonerRow').hidden = model !== 'deepseek';
+  document.getElementById('chatBaseUrl').placeholder = getDefaultChatBaseUrl(model);
+}
+
 function onChatModelChange() {
   var model = document.getElementById('chatModelSelect').value;
-  var defaultUrl = model === 'doubao'
-    ? 'https://ark.cn-beijing.volces.com/api/v3'
-    : 'https://api.deepseek.com';
+  var defaultUrl = getDefaultChatBaseUrl(model);
   document.getElementById('chatBaseUrl').value = defaultUrl;
-  document.getElementById('chatBaseUrl').placeholder = defaultUrl;
+  updateChatModelUi(model);
   saveChatConfig();
 }
 
@@ -7191,8 +7356,10 @@ async function sendChatMessage() {
   if (!text && !imageBase64) return;
   if (!text) text = '请描述这张图片';
 
-  if (!getChatEndpoint().apiKey) {
-    chatToast('请先在设置中填写 API Key');
+  saveChatConfig();
+  var endpoint = getChatEndpoint();
+  if (endpoint.configError || (endpoint.requiresApiKey && !endpoint.apiKey)) {
+    chatToast(endpoint.configError || '请先在设置中填写 API Key');
     document.getElementById('chatSettings').classList.add('open');
     return;
   }
