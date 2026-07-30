@@ -1492,7 +1492,8 @@ footer .heart {
   border-bottom-right-radius: 4px;
 }
 
-.chat-msg.ai {
+.chat-msg.ai,
+.chat-msg.assistant {
   align-self: flex-start;
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -1515,6 +1516,18 @@ footer .heart {
 .chat-msg-row.ai-row {
   align-self: flex-start;
 }
+
+.chat-msg-content {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  max-width: calc(100% - 40px);
+}
+
+.user-row .chat-msg-content { align-items: flex-end; }
+.ai-row .chat-msg-content { align-items: flex-start; }
+
+.chat-msg-content .chat-msg { max-width: 100%; }
 
 .chat-avatar {
   width: 32px;
@@ -1607,6 +1620,9 @@ footer .heart {
   transition: opacity 0.15s;
 }
 
+.user-row .chat-msg-actions { justify-content: flex-end; }
+.ai-row .chat-msg-actions { justify-content: flex-start; }
+
 .chat-msg-row:hover .chat-msg-actions { opacity: 1; }
 
 .chat-msg-action-btn {
@@ -1623,6 +1639,53 @@ footer .heart {
 
 .chat-msg-action-btn:hover { color: var(--red); background: rgba(196,30,58,0.08); }
 .chat-msg-action-btn:hover img { opacity: 1 !important; }
+
+.chat-msg-edit {
+  width: min(360px, 70vw);
+  min-height: 72px;
+  resize: vertical;
+  padding: 8px 10px;
+  border: 1px solid rgba(255,255,255,0.85);
+  border-radius: 10px;
+  outline: none;
+  background: #fff;
+  color: #252025;
+  font: inherit;
+  line-height: 1.5;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.12);
+}
+
+.chat-msg-edit:focus {
+  border-color: #fff;
+  box-shadow: 0 0 0 2px rgba(255,255,255,0.25), inset 0 1px 3px rgba(0,0,0,0.12);
+}
+
+.chat-msg-edit-controls {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.chat-msg-edit-btn {
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-card);
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.7rem;
+}
+
+.chat-msg-edit-save {
+  border-color: var(--red-dark);
+  color: var(--text-light);
+  background: rgba(196,30,58,0.15);
+}
+
+@media (hover: none) {
+  .chat-msg-actions { opacity: 1; }
+}
 
 .chat-copy-toast {
   position: fixed;
@@ -3196,7 +3259,7 @@ footer .heart {
 </section>
 
 <!-- Music Player -->
-<audio id="bgm" preload="auto"></audio>
+<audio id="bgm" preload="none"></audio>
 <div class="music-player" id="musicPlayer">
   <div class="player-main">
     <button class="player-btn play-btn" id="btnPlay" title="播放/暂停">▶</button>
@@ -4462,6 +4525,7 @@ const musicFiles = [
 let currentTrack = 0;
 let playMode = 'list-loop';
 let playlistOrder = musicFiles.map(function(_, i) { return i; });
+let isTrackLoaded = false;
 
 const bgm = document.getElementById('bgm');
 const btnPlay = document.getElementById('btnPlay');
@@ -4489,9 +4553,20 @@ function loadTrack(index) {
   currentTrack = index;
   var fileIndex = playlistOrder[index];
   bgm.src = 'music/' + musicFiles[fileIndex];
+  isTrackLoaded = true;
   var name = musicFiles[fileIndex].replace('.mp3','');
   playerTitle.textContent = name;
   playerTitle.title = name;
+}
+
+function setTrackPreview(index) {
+  currentTrack = index;
+  var fileIndex = playlistOrder[index];
+  var name = musicFiles[fileIndex].replace('.mp3','');
+  playerTitle.textContent = name;
+  playerTitle.title = name;
+  playerTime.textContent = '00:00 / 00:00';
+  progressFill.style.width = '0%';
 }
 
 function updatePlayBtn() {
@@ -4576,8 +4651,8 @@ function playTrack(index) {
 }
 
 function togglePlay() {
-  if (!bgm.src || bgm.src === window.location.href) {
-    loadTrack(0);
+  if (!isTrackLoaded) {
+    loadTrack(currentTrack);
   }
   if (bgm.paused) {
     bgm.play().then(function() { updatePlayBtn(); }).catch(function() { showToast('点击任意位置开始播放'); });
@@ -4748,18 +4823,10 @@ btnVolumeIcon.addEventListener('click', function(e) {
 
 // Auto-play
 function tryAutoPlay() {
-  loadTrack(0);
   bgm.volume = 0.5;
-  bgm.play().then(function() {
-    updatePlayBtn();
-    updateProgress();
-  }).catch(function() {
-    document.addEventListener('click', function startOnClick() {
-      if (bgm.paused && bgm.src && bgm.src !== window.location.href) {
-        bgm.play().then(function() { updatePlayBtn(); });
-      }
-    }, { once: true });
-  });
+  setTrackPreview(0);
+  updatePlayBtn();
+  updateProgress();
 }
 
 tryAutoPlay();
@@ -6405,26 +6472,28 @@ function showCopyToast() {
   chatToast('已复制');
 }
 
-function regenerateMessage() {
-  var history = loadChatHistory();
-  if (history.length < 2) return;
-
-  // Remove last AI message(s) from history
-  while (history.length > 0 && history[history.length - 1].role === 'assistant') {
-    history.pop();
+function regenerateMessage(messageIndex) {
+  if (document.getElementById('chatInput').disabled) {
+    chatToast('请等待当前回复完成');
+    return;
   }
 
-  // Get the last user message (it's now the last element)
-  if (history.length === 0 || history[history.length - 1].role !== 'user') return;
-  var lastUser = history[history.length - 1];
+  var history = loadChatHistory();
+  if (typeof messageIndex !== 'number' || history[messageIndex] == null ||
+      history[messageIndex].role !== 'assistant') return;
 
-  // Save cleaned history
+  // Find the user message that produced this AI reply.
+  var userIndex = messageIndex - 1;
+  while (userIndex >= 0 && history[userIndex].role !== 'user') {
+    userIndex--;
+  }
+  if (userIndex < 0) return;
+  var lastUser = history[userIndex];
+
+  // Remove this AI reply and every later branch of the conversation.
+  history = history.slice(0, userIndex + 1);
   saveChatHistory(history);
-
-  // Re-render the cleaned conversation so the old AI reply disappears.
   initChatPanel();
-
-  // Reuse the existing last user message instead of adding it a second time.
   sendChatInternal(lastUser.content, lastUser.image || null, true);
 }
 
@@ -6440,8 +6509,10 @@ function sendChatInternal(text, imageBase64, reuseExistingUser) {
   if (!reuseExistingUser) {
     history.push({ role: 'user', content: text, image: imageBase64 || undefined });
     saveChatHistory(history);
-    appendChatMsg('user', text, imageBase64 || undefined);
+    history = loadChatHistory();
+    appendChatMsg('user', text, imageBase64 || undefined, history.length - 1);
   }
+  var assistantMessageIndex = Math.min(history.length, 39);
 
   var loading = document.createElement('div');
   loading.className = 'chat-loading';
@@ -6485,8 +6556,13 @@ function sendChatInternal(text, imageBase64, reuseExistingUser) {
             var delta = chunk.choices[0].delta;
             if (delta && delta.content) {
               fullResponse += delta.content;
-              if (!aiDiv) { loading.remove(); aiDiv = appendChatMsg('assistant', fullResponse); }
-              else { aiDiv.innerHTML = renderMarkdown(fullResponse); }
+              if (!aiDiv) {
+                loading.remove();
+                aiDiv = appendChatMsg('assistant', fullResponse, undefined, assistantMessageIndex);
+              } else {
+                aiDiv.innerHTML = renderMarkdown(fullResponse);
+                aiDiv.closest('.chat-msg-row')._chatContent = fullResponse;
+              }
               msgsDiv.scrollTop = msgsDiv.scrollHeight;
             }
           } catch(_) {}
@@ -6495,7 +6571,7 @@ function sendChatInternal(text, imageBase64, reuseExistingUser) {
     }
   }).catch(function(e) {
     if (loading.parentNode) loading.remove();
-    appendChatMsg('assistant', '……' + e.message);
+    appendChatMsg('assistant', '……' + e.message, undefined, assistantMessageIndex);
   }).finally(function() {
     if (loading.parentNode) loading.remove();
     if (fullResponse) {
@@ -6543,7 +6619,9 @@ function initChatPanel() {
   if (history.length === 0) {
     msgsDiv.innerHTML = '<div class="chat-empty">输入消息，和秦彻开始对话吧</div>';
   } else {
-    history.forEach(function(m) { appendChatMsg(m.role, m.content, m.image); });
+    history.forEach(function(m, index) {
+      appendChatMsg(m.role, m.content, m.image, index);
+    });
     msgsDiv.scrollTop = msgsDiv.scrollHeight;
   }
 }
@@ -6700,7 +6778,88 @@ function showAvatarCrop(dataUrl) {
   ctrls.querySelector('.avatar-crop-cancel').onclick = cleanup;
 }
 
-function appendChatMsg(role, content, imageBase64) {
+function editUserMessage(messageIndex, row) {
+  if (document.getElementById('chatInput').disabled) {
+    chatToast('请等待当前回复完成');
+    return;
+  }
+
+  var history = loadChatHistory();
+  var message = history[messageIndex];
+  if (!message || message.role !== 'user') return;
+
+  var bubble = row.querySelector('.chat-msg');
+  var actions = row.querySelector('.chat-msg-actions');
+  var originalHtml = bubble.innerHTML;
+  actions.style.display = 'none';
+  bubble.innerHTML = '';
+
+  if (message.image) {
+    var image = document.createElement('img');
+    image.src = message.image;
+    image.alt = '';
+    bubble.appendChild(image);
+  }
+
+  var editor = document.createElement('textarea');
+  editor.className = 'chat-msg-edit';
+  editor.value = message.content;
+  bubble.appendChild(editor);
+
+  var controls = document.createElement('div');
+  controls.className = 'chat-msg-edit-controls';
+  controls.innerHTML =
+    '<button class="chat-msg-edit-btn chat-msg-edit-cancel">取消</button>' +
+    '<button class="chat-msg-edit-btn chat-msg-edit-save">重新发送</button>';
+  bubble.appendChild(controls);
+
+  function cancelEdit() {
+    bubble.innerHTML = originalHtml;
+    actions.style.display = '';
+  }
+
+  function saveEdit() {
+    var newContent = editor.value.trim();
+    if (!newContent) {
+      chatToast('消息内容不能为空');
+      editor.focus();
+      return;
+    }
+
+    var latestHistory = loadChatHistory();
+    if (!latestHistory[messageIndex] || latestHistory[messageIndex].role !== 'user') {
+      initChatPanel();
+      return;
+    }
+
+    var editedMessage = {
+      role: 'user',
+      content: newContent,
+      image: latestHistory[messageIndex].image || undefined
+    };
+    latestHistory[messageIndex] = editedMessage;
+    latestHistory = latestHistory.slice(0, messageIndex + 1);
+    saveChatHistory(latestHistory);
+    initChatPanel();
+    sendChatInternal(editedMessage.content, editedMessage.image || null, true);
+  }
+
+  controls.querySelector('.chat-msg-edit-cancel').addEventListener('click', cancelEdit);
+  controls.querySelector('.chat-msg-edit-save').addEventListener('click', saveEdit);
+  editor.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      cancelEdit();
+    } else if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+      e.preventDefault();
+      saveEdit();
+    }
+  });
+  editor.focus();
+  editor.setSelectionRange(editor.value.length, editor.value.length);
+}
+
+function appendChatMsg(role, content, imageBase64, messageIndex) {
   var msgsDiv = document.getElementById('chatMessages');
   var empty = msgsDiv.querySelector('.chat-empty');
   if (empty) empty.remove();
@@ -6708,12 +6867,17 @@ function appendChatMsg(role, content, imageBase64) {
   // Row with avatar
   var row = document.createElement('div');
   row.className = 'chat-msg-row ' + (role === 'user' ? 'user-row' : 'ai-row');
+  row._chatContent = content;
+  row.dataset.messageIndex = typeof messageIndex === 'number' ? messageIndex : '';
 
   // Avatar
   var avatar = document.createElement('img');
   avatar.className = 'chat-avatar';
   avatar.src = role === 'user' ? (getUserAvatar() || '') : QINCHE_AVATAR;
   row.appendChild(avatar);
+
+  var contentWrap = document.createElement('div');
+  contentWrap.className = 'chat-msg-content';
 
   // Message bubble
   var div = document.createElement('div');
@@ -6726,16 +6890,19 @@ function appendChatMsg(role, content, imageBase64) {
   html += role === 'user' ? escapeHtml2(content) : renderMarkdown(content);
 
   div.innerHTML = html;
-  row.appendChild(div);
+  contentWrap.appendChild(div);
 
-  // Action buttons (outside bubble, in the row)
+  // Action buttons sit directly below the message bubble.
   var actions = document.createElement('div');
   actions.className = 'chat-msg-actions';
   actions.innerHTML = '<button class="chat-msg-action-btn" data-action="copy" title="复制"><img src="icon/copy.png" style="width:14px;height:14px;opacity:0.6;"></button>';
-  if (role === 'assistant') {
+  if (role === 'user') {
+    actions.innerHTML += '<button class="chat-msg-action-btn" data-action="edit" title="编辑">编辑</button>';
+  } else if (role === 'assistant') {
     actions.innerHTML += '<button class="chat-msg-action-btn" data-action="regen" title="重新生成"><img src="icon/refresh.png" style="width:14px;height:14px;opacity:0.6;"></button>';
   }
-  row.appendChild(actions);
+  contentWrap.appendChild(actions);
+  row.appendChild(contentWrap);
 
   msgsDiv.appendChild(row);
   msgsDiv.scrollTop = msgsDiv.scrollHeight;
@@ -6745,11 +6912,13 @@ function appendChatMsg(role, content, imageBase64) {
     btn.addEventListener('click', function(e) {
       e.stopPropagation();
       if (this.dataset.action === 'copy') {
-        navigator.clipboard.writeText(content).then(function() {
+        navigator.clipboard.writeText(row._chatContent).then(function() {
           showCopyToast();
         }).catch(function() {});
+      } else if (this.dataset.action === 'edit') {
+        editUserMessage(Number(row.dataset.messageIndex), row);
       } else if (this.dataset.action === 'regen') {
-        regenerateMessage();
+        regenerateMessage(Number(row.dataset.messageIndex));
       }
     });
   });
@@ -6821,9 +6990,12 @@ async function sendChatMessage() {
   document.getElementById('btnChatSend').disabled = true;
   input.disabled = true;
 
-  appendChatMsg('user', text, chatImageBase64);
   var history = loadChatHistory();
   history.push({ role: 'user', content: text, image: chatImageBase64 });
+  saveChatHistory(history);
+  history = loadChatHistory();
+  appendChatMsg('user', text, chatImageBase64, history.length - 1);
+  var assistantMessageIndex = Math.min(history.length, 39);
   chatImageBase64 = null;
   document.getElementById('chatImgPreview').style.display = 'none';
   document.getElementById('chatImgInput').value = '';
@@ -6892,9 +7064,10 @@ async function sendChatMessage() {
               fullResponse += delta.content;
               if (!aiDiv) {
                 loading.remove();
-                aiDiv = appendChatMsg('assistant', fullResponse);
+                aiDiv = appendChatMsg('assistant', fullResponse, undefined, assistantMessageIndex);
               } else {
                 aiDiv.innerHTML = renderMarkdown(fullResponse);
+                aiDiv.closest('.chat-msg-row')._chatContent = fullResponse;
               }
               msgsDiv.scrollTop = msgsDiv.scrollHeight;
             }
@@ -6904,7 +7077,7 @@ async function sendChatMessage() {
     }
   } catch(e) {
     if (loading.parentNode) loading.remove();
-    aiDiv = appendChatMsg('assistant', '……' + e.message);
+    aiDiv = appendChatMsg('assistant', '……' + e.message, undefined, assistantMessageIndex);
   }
 
   if (loading.parentNode) loading.remove();
