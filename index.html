@@ -460,6 +460,47 @@ nav .links a:hover::after { width: 100%; }
   gap: 16px;
 }
 
+.gallery-filter-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin: 0 0 22px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.gallery-filter-bar[hidden] {
+  display: none;
+}
+
+.gallery-view-summary {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  letter-spacing: 1px;
+}
+
+.gallery-date-select {
+  min-width: 156px;
+  max-width: 100%;
+  padding: 7px 30px 7px 10px;
+  border: 1px solid var(--red-dark);
+  border-radius: 4px;
+  background: var(--input-bg);
+  color: var(--text-light);
+  font: inherit;
+  font-size: 0.78rem;
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+
+.gallery-date-select:focus {
+  outline: none;
+  border-color: var(--red);
+  box-shadow: 0 0 0 2px rgba(196,30,58,0.14);
+}
+
 .gallery-item {
   position: relative;
   aspect-ratio: 3/4;
@@ -808,6 +849,8 @@ footer .heart {
   .hero h1 { letter-spacing: 8px; }
   .gallery { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; }
   .gallery-item { aspect-ratio: 2/3; }
+  .gallery-filter-bar { align-items: stretch; flex-direction: column; gap: 8px; }
+  .gallery-date-select { width: 100%; }
   .quote-text { font-size: 1rem; }
   .lightbox-nav { width: 40px; height: 40px; font-size: 1.5rem; }
   .lightbox-prev { left: 8px; }
@@ -3501,6 +3544,12 @@ footer .heart {
       <button class="section-action-btn" id="btnUploadPhoto" title="上传照片">＋ 上传照片</button>
     </div>
   </div>
+  <div class="gallery-filter-bar" id="galleryFilterBar" hidden>
+    <p class="gallery-view-summary" id="galleryViewSummary"></p>
+    <select class="gallery-date-select" id="galleryDateFilter" aria-label="按日期筛选照片">
+      <option value="recent">最近 40 张</option>
+    </select>
+  </div>
   <div class="gallery" id="galleryGrid"></div>
 </section>
 
@@ -4056,12 +4105,20 @@ function openDB() {
   });
 }
 
-function savePhoto(dataUrl, filename) {
+function getPhotoDateTimestamp(file) {
+  var timestamp = Number(file && file.lastModified);
+  if (!isFinite(timestamp) || timestamp <= 0 || timestamp > Date.now() + 86400000) {
+    return Date.now();
+  }
+  return timestamp;
+}
+
+function savePhoto(dataUrl, filename, createdAt) {
   return openDB().then(function(db) {
     return new Promise(function(resolve, reject) {
       var tx = db.transaction(STORE_NAME, 'readwrite');
       var store = tx.objectStore(STORE_NAME);
-      var record = { dataUrl: dataUrl, filename: filename, createdAt: Date.now() };
+      var record = { dataUrl: dataUrl, filename: filename, createdAt: createdAt || Date.now() };
       var request = store.add(record);
       request.onsuccess = function() { resolve(request.result); };
       request.onerror = function() { reject(request.error); };
@@ -4292,7 +4349,10 @@ function showUploadToast(msg) {
 
 // ============ Gallery Items (unified array) ============
 var galleryItems = [];
+var galleryVisibleItems = [];
 var currentGalleryIndex = 0;
+var galleryFilterValue = 'recent';
+var GALLERY_RECENT_LIMIT = 40;
 
 // ============ Gallery Order Persistence ============
 function getGalleryOrderKey() { return 'qinche_gallery_order_' + getCurrentTheme(); }
@@ -4346,7 +4406,7 @@ function buildDefaultGalleryItems(userPhotos) {
     return { type: 'default', src: photosDir + f, filename: f };
   });
   return defaultItems.concat((userPhotos || []).map(function(p) {
-    return { type: 'user', src: p.dataUrl, filename: p.filename, dbId: p.id };
+    return { type: 'user', src: p.dataUrl, filename: p.filename, dbId: p.id, createdAt: p.createdAt };
   }));
 }
 
@@ -4394,6 +4454,101 @@ function buildGalleryItems(userPhotos) {
   saveGalleryOrder(galleryItems);
 }
 
+function getGalleryItemKey(item) {
+  return item.type === 'default' ? 'd_' + item.filename : 'u_' + item.dbId;
+}
+
+function getGalleryDateKey(timestamp) {
+  var date = new Date(timestamp);
+  if (isNaN(date.getTime())) return '';
+  var month = String(date.getMonth() + 1).padStart(2, '0');
+  var day = String(date.getDate()).padStart(2, '0');
+  return date.getFullYear() + '-' + month + '-' + day;
+}
+
+function formatGalleryDate(dateKey) {
+  var parts = dateKey.split('-');
+  return parts[0] + '年' + Number(parts[1]) + '月' + Number(parts[2]) + '日';
+}
+
+function getGalleryDateBuckets() {
+  var buckets = {};
+  galleryItems.forEach(function(item) {
+    if (item.type !== 'user') return;
+    var dateKey = getGalleryDateKey(item.createdAt);
+    if (!dateKey) return;
+    buckets[dateKey] = (buckets[dateKey] || 0) + 1;
+  });
+  return Object.keys(buckets).sort(function(a, b) { return b.localeCompare(a); }).map(function(dateKey) {
+    return { dateKey: dateKey, count: buckets[dateKey] };
+  });
+}
+
+function getRecentGalleryItems() {
+  var originalIndex = {};
+  galleryItems.forEach(function(item, index) { originalIndex[getGalleryItemKey(item)] = index; });
+  var userItems = galleryItems.filter(function(item) { return item.type === 'user'; });
+  userItems.sort(function(a, b) {
+    var timeDifference = Number(b.createdAt || 0) - Number(a.createdAt || 0);
+    return timeDifference || originalIndex[getGalleryItemKey(a)] - originalIndex[getGalleryItemKey(b)];
+  });
+  return userItems.concat(galleryItems.filter(function(item) { return item.type === 'default'; })).slice(0, GALLERY_RECENT_LIMIT);
+}
+
+function getFilteredGalleryItems() {
+  if (galleryFilterValue === 'recent') return getRecentGalleryItems();
+  if (galleryFilterValue === 'all') return galleryItems.slice();
+  if (galleryFilterValue === 'defaults') return galleryItems.filter(function(item) { return item.type === 'default'; });
+  return galleryItems.filter(function(item) {
+    return item.type === 'user' && getGalleryDateKey(item.createdAt) === galleryFilterValue;
+  });
+}
+
+function updateGalleryDateFilter() {
+  var bar = document.getElementById('galleryFilterBar');
+  var select = document.getElementById('galleryDateFilter');
+  var userItems = galleryItems.filter(function(item) { return item.type === 'user'; });
+  var dateBuckets = getGalleryDateBuckets();
+  var showFilter = userItems.length > 0 || galleryItems.length > GALLERY_RECENT_LIMIT;
+  bar.hidden = !showFilter;
+  if (!showFilter) {
+    galleryFilterValue = 'recent';
+    return;
+  }
+
+  var allowedValues = ['recent', 'all', 'defaults'].concat(dateBuckets.map(function(bucket) { return bucket.dateKey; }));
+  if (allowedValues.indexOf(galleryFilterValue) === -1) galleryFilterValue = 'recent';
+  select.innerHTML = '';
+
+  [
+    { value: 'recent', text: '最近 ' + GALLERY_RECENT_LIMIT + ' 张' },
+    { value: 'all', text: '全部照片' },
+    { value: 'defaults', text: '默认照片' }
+  ].forEach(function(option) {
+    var element = document.createElement('option');
+    element.value = option.value;
+    element.textContent = option.text;
+    select.appendChild(element);
+  });
+  dateBuckets.forEach(function(bucket) {
+    var element = document.createElement('option');
+    element.value = bucket.dateKey;
+    element.textContent = formatGalleryDate(bucket.dateKey) + ' · ' + bucket.count + ' 张';
+    select.appendChild(element);
+  });
+  select.value = galleryFilterValue;
+}
+
+function updateGalleryViewSummary() {
+  var summary = document.getElementById('galleryViewSummary');
+  var visibleCount = galleryVisibleItems.length;
+  if (galleryFilterValue === 'recent' && galleryItems.length > GALLERY_RECENT_LIMIT) {
+    summary.textContent = '最近 ' + visibleCount + ' 张，另有 ' + (galleryItems.length - visibleCount) + ' 张已按日期收纳';
+    return;
+  }
+  summary.textContent = '已展示 ' + visibleCount + ' 张照片';
+}
+
 // Single gallery item element builder
 function createGalleryItemElement(item, idx) {
   var d = document.createElement('div');
@@ -4416,11 +4571,11 @@ function createGalleryItemElement(item, idx) {
     openLightbox(idx);
   });
   // Drag
-  d.draggable = true;
-  d.dataset.galleryIndex = idx;
+  d.draggable = galleryFilterValue === 'all' || galleryFilterValue === 'defaults';
+  d.dataset.galleryKey = getGalleryItemKey(item);
   d.addEventListener('dragstart', function(e) {
     e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/plain', this.dataset.galleryIndex);
+    e.dataTransfer.setData('text/plain', this.dataset.galleryKey);
     this.classList.add('dragging');
   });
   d.addEventListener('dragend', function() { this.classList.remove('dragging'); });
@@ -4429,9 +4584,11 @@ function createGalleryItemElement(item, idx) {
   d.addEventListener('drop', function(e) {
     e.preventDefault();
     this.classList.remove('drag-over');
-    var fromIdx = parseInt(e.dataTransfer.getData('text/plain'));
-    var toIdx = parseInt(this.dataset.galleryIndex);
-    if (fromIdx !== toIdx && !isNaN(fromIdx) && !isNaN(toIdx)) {
+    var fromKey = e.dataTransfer.getData('text/plain');
+    var toKey = this.dataset.galleryKey;
+    var fromIdx = galleryItems.findIndex(function(entry) { return getGalleryItemKey(entry) === fromKey; });
+    var toIdx = galleryItems.findIndex(function(entry) { return getGalleryItemKey(entry) === toKey; });
+    if (fromIdx !== toIdx && fromIdx !== -1 && toIdx !== -1) {
       var moved = galleryItems.splice(fromIdx, 1)[0];
       galleryItems.splice(toIdx, 0, moved);
       saveGalleryOrder(galleryItems);
@@ -4445,18 +4602,27 @@ function createGalleryItemElement(item, idx) {
 function renderGalleryGrid() {
   var grid = document.getElementById('galleryGrid');
   grid.innerHTML = '';
-  galleryItems.forEach(function(item, i) {
+  galleryVisibleItems = getFilteredGalleryItems();
+  galleryVisibleItems.forEach(function(item, i) {
     grid.appendChild(createGalleryItemElement(item, i));
   });
+  updateGalleryViewSummary();
 }
 
 function renderGallery(userPhotos) {
   buildGalleryItems(userPhotos);
+  updateGalleryDateFilter();
   renderGalleryGrid();
 }
 
 // ============ Build Gallery ============
 const galleryGrid = document.getElementById('galleryGrid');
+const galleryDateFilter = document.getElementById('galleryDateFilter');
+
+galleryDateFilter.addEventListener('change', function() {
+  galleryFilterValue = this.value;
+  renderGalleryGrid();
+});
 
 // Initial render: default photos first, then load user photos
 buildGalleryItems([]);
@@ -4475,9 +4641,10 @@ const lightboxImg = document.getElementById('lightboxImg');
 const lightboxCounter = document.getElementById('lightboxCounter');
 
 function openLightbox(index) {
+  if (!galleryVisibleItems.length) return;
   currentGalleryIndex = index;
-  lightboxImg.src = galleryItems[index].src;
-  lightboxCounter.textContent = (index + 1) + ' / ' + galleryItems.length;
+  lightboxImg.src = galleryVisibleItems[index].src;
+  lightboxCounter.textContent = (index + 1) + ' / ' + galleryVisibleItems.length;
   lightbox.classList.add('active');
   document.body.style.overflow = 'hidden';
 }
@@ -4488,11 +4655,12 @@ function closeLightbox() {
 }
 
 function navigateLightbox(dir) {
-  currentGalleryIndex = (currentGalleryIndex + dir + galleryItems.length) % galleryItems.length;
+  if (!galleryVisibleItems.length) return;
+  currentGalleryIndex = (currentGalleryIndex + dir + galleryVisibleItems.length) % galleryVisibleItems.length;
   lightboxImg.style.opacity = '0';
   setTimeout(function() {
-    lightboxImg.src = galleryItems[currentGalleryIndex].src;
-    lightboxCounter.textContent = (currentGalleryIndex + 1) + ' / ' + galleryItems.length;
+    lightboxImg.src = galleryVisibleItems[currentGalleryIndex].src;
+    lightboxCounter.textContent = (currentGalleryIndex + 1) + ' / ' + galleryVisibleItems.length;
     lightboxImg.style.opacity = '1';
   }, 150);
 }
@@ -6117,9 +6285,11 @@ function handlePhotoFiles(files) {
   var fileCount = files.length;
   var promises = [];
   for (var i = 0; i < fileCount; i++) {
-    promises.push(resizeImage(files[i]).then(function(dataUrl) {
-      return savePhoto(dataUrl, '');
-    }));
+    (function(file) {
+      promises.push(resizeImage(file).then(function(dataUrl) {
+        return savePhoto(dataUrl, '', getPhotoDateTimestamp(file));
+      }));
+    })(files[i]);
   }
   Promise.all(promises).then(function() {
     showUploadToast('已上传 ' + fileCount + ' 张照片');
