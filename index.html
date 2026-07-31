@@ -2092,6 +2092,28 @@ footer .heart {
 
 .vault-upload-zone .vault-primary-btn { width: auto; margin-top: 12px; }
 
+.vault-link-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+  gap: 8px;
+  margin: 0 0 18px;
+}
+
+.vault-link-input {
+  min-width: 0;
+  padding: 9px 10px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  outline: none;
+  background: var(--input-bg);
+  color: var(--text-light);
+  font: inherit;
+  font-size: 0.74rem;
+}
+
+.vault-link-input:focus { border-color: var(--red-dark); }
+.vault-link-form .vault-primary-btn { width: auto; }
+
 .vault-media-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
@@ -2192,6 +2214,8 @@ footer .heart {
 @media (max-width: 768px) {
   #privateVaultPanel .util-panel { padding: 20px; }
   .vault-toolbar .vault-usage { flex-basis: 100%; order: 2; }
+  .vault-link-form { grid-template-columns: 1fr; }
+  .vault-link-form .vault-primary-btn { width: 100%; }
   .vault-media-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 }
 
@@ -7573,8 +7597,8 @@ function compressChatImage(file) {
 
 // ============ Encrypted Private Vault ============
 const VAULT_CHUNK_BYTES = 4 * 1024 * 1024;
-const VAULT_FILE_LIMIT = 200 * 1024 * 1024;
-const VAULT_SOFT_LIMIT = 1024 * 1024 * 1024;
+const VAULT_FILE_LIMIT = 300 * 1024 * 1024;
+const VAULT_SOFT_LIMIT = 2 * 1024 * 1024 * 1024;
 const VAULT_VERIFIER = 'qinche-private-vault-v1';
 var vaultCryptoKey = null;
 var vaultSettings = null;
@@ -7720,7 +7744,7 @@ async function vaultGetUsage() {
 async function vaultEnsureCapacity(fileSize) {
   var currentUsage = await vaultGetUsage();
   if (currentUsage + fileSize > VAULT_SOFT_LIMIT) {
-    throw new Error('私藏空间最多保存约 1 GB 内容，请先删除部分视频');
+    throw new Error('私藏空间最多保存约 2 GB 内容，请先删除部分视频');
   }
   if (navigator.storage && navigator.storage.estimate) {
     var estimate = null;
@@ -7879,12 +7903,13 @@ async function vaultGetMediaViews() {
 }
 
 function vaultCreateMediaItem(view) {
+  var isLink = view.record.kind === 'link' || view.metadata.kind === 'link';
   var item = document.createElement('article');
   item.className = 'vault-media-item';
 
   var thumbnail = document.createElement('div');
   thumbnail.className = 'vault-media-thumb';
-  if (view.thumbnailUrl) {
+  if (!isLink && view.thumbnailUrl) {
     var image = document.createElement('img');
     image.src = view.thumbnailUrl;
     image.alt = '';
@@ -7892,11 +7917,14 @@ function vaultCreateMediaItem(view) {
   } else {
     var placeholder = document.createElement('div');
     placeholder.className = 'vault-media-placeholder';
-    placeholder.textContent = '视频';
+    placeholder.textContent = isLink ? '链接' : '视频';
     thumbnail.appendChild(placeholder);
   }
-  thumbnail.title = '播放视频';
-  thumbnail.addEventListener('click', function() { playVaultMedia(view.record.id, view.metadata); });
+  thumbnail.title = isLink ? '打开链接' : '播放视频';
+  thumbnail.addEventListener('click', function() {
+    if (isLink) openVaultLink(view.metadata.url);
+    else playVaultMedia(view.record.id, view.metadata);
+  });
   item.appendChild(thumbnail);
 
   var details = document.createElement('div');
@@ -7909,23 +7937,30 @@ function vaultCreateMediaItem(view) {
 
   var meta = document.createElement('div');
   meta.className = 'vault-media-meta';
-  meta.textContent = vaultFormatBytes(view.record.byteSize || 0) + ' · ' + new Date(view.metadata.createdAt).toLocaleDateString();
+  meta.textContent = (isLink ? '视频链接' : vaultFormatBytes(view.record.byteSize || 0)) + ' · ' + new Date(view.metadata.createdAt).toLocaleDateString();
   details.appendChild(meta);
 
   var actions = document.createElement('div');
   actions.className = 'vault-media-actions';
   var playButton = document.createElement('button');
   playButton.type = 'button';
-  playButton.textContent = '播放';
-  playButton.addEventListener('click', function() { playVaultMedia(view.record.id, view.metadata); });
+  playButton.textContent = isLink ? '打开链接' : '播放';
+  playButton.addEventListener('click', function() {
+    if (isLink) openVaultLink(view.metadata.url);
+    else playVaultMedia(view.record.id, view.metadata);
+  });
   actions.appendChild(playButton);
   var deleteButton = document.createElement('button');
   deleteButton.type = 'button';
   deleteButton.textContent = '删除';
   deleteButton.addEventListener('click', async function() {
-    if (!window.confirm('确定删除这个私藏视频吗？')) return;
-    await vaultDeleteMedia(view.record.id);
-    renderPrivateVault();
+    if (!window.confirm('确定删除这条私藏内容吗？')) return;
+    try {
+      await vaultDeleteMedia(view.record.id);
+      renderPrivateVault();
+    } catch (error) {
+      vaultSetStatus('删除失败：' + (error.message || '请重试'));
+    }
   });
   actions.appendChild(deleteButton);
   details.appendChild(actions);
@@ -7943,7 +7978,7 @@ async function renderVaultMedia() {
     if (!views.length) {
       var empty = document.createElement('div');
       empty.className = 'vault-empty';
-      empty.textContent = '这里还没有私藏视频';
+      empty.textContent = '这里还没有私藏内容';
       grid.appendChild(empty);
       return;
     }
@@ -7961,7 +7996,7 @@ async function updateVaultUsage() {
   if (!usage) return;
   try {
     var used = await vaultGetUsage();
-    usage.textContent = '已使用 ' + vaultFormatBytes(used) + ' / 1 GB';
+    usage.textContent = '已使用 ' + vaultFormatBytes(used) + ' / 2 GB';
   } catch (error) {
     usage.textContent = '无法读取存储空间';
   }
@@ -8012,7 +8047,7 @@ function createVaultVideoThumbnail(file) {
 async function saveVaultVideo(file) {
   if (!vaultCryptoKey) throw new Error('请先解锁私藏空间');
   if (!file || !file.type || file.type.indexOf('video/') !== 0) throw new Error('请选择视频文件');
-  if (file.size > VAULT_FILE_LIMIT) throw new Error('单个视频不能超过 200 MB');
+  if (file.size > VAULT_FILE_LIMIT) throw new Error('单个视频不能超过 300 MB');
   await vaultEnsureCapacity(file.size);
 
   var mediaId = vaultNewId();
@@ -8046,6 +8081,83 @@ async function saveVaultVideo(file) {
   } catch (error) {
     await vaultDeleteMedia(mediaId).catch(function() {});
     throw error;
+  }
+}
+
+function vaultNormalizeVideoLink(value) {
+  var source = (value || '').trim();
+  if (!source) throw new Error('请输入视频链接');
+  if (!/^[a-z][a-z0-9+.-]*:/i.test(source)) source = 'https://' + source;
+  var url;
+  try {
+    url = new URL(source);
+  } catch (error) {
+    throw new Error('请输入有效的视频链接');
+  }
+  if (url.protocol !== 'https:' && url.protocol !== 'http:') {
+    throw new Error('仅支持 http 或 https 视频链接');
+  }
+  return url.href;
+}
+
+function vaultLinkTitle(title, url) {
+  var value = (title || '').trim();
+  if (value) return value;
+  try {
+    return new URL(url).hostname.replace(/^www\./i, '') || '未命名视频链接';
+  } catch (error) {
+    return '未命名视频链接';
+  }
+}
+
+async function saveVaultVideoLink(title, url) {
+  if (!vaultCryptoKey) throw new Error('请先解锁私藏空间');
+  var normalizedUrl = vaultNormalizeVideoLink(url);
+  var createdAt = Date.now();
+  var metadata = await vaultEncrypt(vaultCryptoKey, vaultEncode(JSON.stringify({
+    kind: 'link',
+    name: vaultLinkTitle(title, normalizedUrl),
+    url: normalizedUrl,
+    createdAt: createdAt
+  })));
+  await vaultPutMediaRecord({
+    id: vaultNewId(),
+    kind: 'link',
+    createdAt: createdAt,
+    byteSize: 0,
+    chunkCount: 0,
+    metadata: metadata,
+    thumbnail: null,
+    thumbnailType: ''
+  });
+}
+
+function openVaultLink(value) {
+  try {
+    var url = vaultNormalizeVideoLink(value);
+    var opened = window.open(url, '_blank', 'noopener,noreferrer');
+    if (opened) opened.opener = null;
+  } catch (error) {
+    vaultSetStatus('链接无法打开：' + (error.message || '请检查地址'));
+  }
+}
+
+async function handleVaultVideoLink() {
+  var titleInput = document.getElementById('vaultLinkTitle');
+  var urlInput = document.getElementById('vaultLinkUrl');
+  var saveButton = document.getElementById('btnVaultSaveLink');
+  if (!urlInput) return;
+  if (saveButton) saveButton.disabled = true;
+  try {
+    await saveVaultVideoLink(titleInput ? titleInput.value : '', urlInput.value);
+    if (titleInput) titleInput.value = '';
+    urlInput.value = '';
+    vaultSetStatus('视频链接已保存');
+    await renderVaultMedia();
+  } catch (error) {
+    vaultSetStatus('保存失败：' + (error.message || '请重试'));
+  } finally {
+    if (saveButton) saveButton.disabled = false;
   }
 }
 
@@ -8128,6 +8240,11 @@ function renderPrivateVault() {
       '<input type="file" id="vaultVideoInput" accept="video/*" hidden>' +
       '<button class="vault-primary-btn" type="button" id="btnVaultUpload">上传视频</button>' +
     '</div>' +
+    '<form class="vault-link-form" id="vaultLinkForm">' +
+      '<input class="vault-link-input" id="vaultLinkTitle" type="text" maxlength="80" placeholder="视频名称（可选）">' +
+      '<input class="vault-link-input" id="vaultLinkUrl" type="url" inputmode="url" placeholder="粘贴视频链接" required>' +
+      '<button class="vault-primary-btn" type="submit" id="btnVaultSaveLink">保存链接</button>' +
+    '</form>' +
     '<div class="vault-media-grid" id="vaultMediaGrid"></div>';
 
   var lockButton = document.getElementById('btnVaultLock');
@@ -8146,6 +8263,10 @@ function renderPrivateVault() {
     event.preventDefault();
     uploadZone.classList.remove('drag-over');
     handleVaultVideoFiles(event.dataTransfer.files);
+  });
+  document.getElementById('vaultLinkForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    handleVaultVideoLink();
   });
 
   document.getElementById('btnVaultExport').addEventListener('click', exportPrivateVaultBackup);
@@ -8230,6 +8351,7 @@ async function exportPrivateVaultBackup() {
       }
       manifest.media.push({
         id: record.id,
+        kind: record.kind || 'video',
         createdAt: record.createdAt,
         byteSize: record.byteSize,
         chunkCount: record.chunkCount,
@@ -8292,6 +8414,7 @@ async function importPrivateVaultBackup() {
       }
       await vaultPutMediaRecord({
         id: source.id,
+        kind: source.kind || 'video',
         createdAt: source.createdAt,
         byteSize: source.byteSize,
         chunkCount: source.chunkCount,
