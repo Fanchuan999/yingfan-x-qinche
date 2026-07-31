@@ -2541,6 +2541,8 @@ footer .heart {
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 0;
+  background: none;
   font-size: 0.8rem;
   color: var(--text);
   cursor: pointer;
@@ -2551,12 +2553,157 @@ footer .heart {
 
 .period-day:hover { border-color: var(--red-dark); color: var(--text-light); }
 .period-day.empty { cursor: default; }
+.period-day:disabled { cursor: default; opacity: 0.5; }
 .period-day.today { border-color: var(--red-dark); }
 .period-day.marked {
   background: rgba(196,30,58,0.25);
   color: var(--red-glow);
   border-color: var(--red);
   font-weight: 600;
+}
+
+.period-day.predicted {
+  border-color: rgba(196,30,58,0.58);
+  border-style: dashed;
+  color: var(--red-glow);
+}
+
+.period-prediction {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: end;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.period-prediction-label,
+.period-start-label,
+.period-setting label,
+.period-reminder-status,
+.period-legend {
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  letter-spacing: 1px;
+}
+
+.period-prediction-label,
+.period-start-label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.period-prediction-date {
+  display: block;
+  color: var(--red);
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.period-prediction-note {
+  margin: 5px 0 0;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  letter-spacing: 1px;
+}
+
+.period-start-control {
+  min-width: 170px;
+}
+
+.period-start-row,
+.period-settings {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.period-start-input,
+.period-setting input,
+.period-setting select {
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--input-bg);
+  color: var(--text-light);
+  padding: 7px 8px;
+  font: inherit;
+  font-size: 0.78rem;
+  outline: none;
+}
+
+.period-start-input:focus,
+.period-setting input:focus,
+.period-setting select:focus {
+  border-color: var(--red);
+  box-shadow: 0 0 0 2px rgba(196,30,58,0.14);
+}
+
+.period-action-btn {
+  flex-shrink: 0;
+  border: 1px solid var(--red-dark);
+  border-radius: 4px;
+  background: none;
+  color: var(--text-light);
+  cursor: pointer;
+  padding: 7px 10px;
+  font-size: 0.74rem;
+  letter-spacing: 1px;
+  transition: all 0.2s ease;
+}
+
+.period-action-btn:hover {
+  border-color: var(--red);
+  color: var(--red);
+}
+
+.period-action-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.period-settings {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+  margin-bottom: 10px;
+}
+
+.period-setting label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.period-setting input,
+.period-setting select {
+  width: 100%;
+}
+
+.period-reminder-status {
+  margin: 0 0 12px;
+}
+
+.period-legend {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin: 0 0 8px;
+}
+
+.period-legend span::before {
+  content: '';
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 4px;
+  border-radius: 50%;
+  background: var(--red);
+}
+
+.period-legend .period-legend-predicted::before {
+  background: transparent;
+  border: 1px dashed var(--red);
 }
 
 .period-stats {
@@ -2582,6 +2729,13 @@ footer .heart {
   font-size: 0.65rem;
   color: var(--text-muted);
   letter-spacing: 2px;
+}
+
+@media (max-width: 560px) {
+  .period-prediction { grid-template-columns: 1fr; align-items: start; }
+  .period-start-control { width: 100%; }
+  .period-settings { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .period-settings .period-action-btn { grid-column: span 2; }
 }
 
 /* ============ Todo List ============ */
@@ -3771,6 +3925,42 @@ footer .heart {
       <h3>经期记录</h3>
       <button class="util-panel-close" onclick="closeUtilPanel('period')">✕</button>
     </div>
+    <div class="period-prediction">
+      <div>
+        <span class="period-prediction-label">下次预计</span>
+        <strong class="period-prediction-date" id="periodPredictionDate">--</strong>
+        <p class="period-prediction-note" id="periodPredictionNote">记录开始日期后显示估算</p>
+      </div>
+      <div class="period-start-control">
+        <label class="period-start-label" for="periodStartInput">本次开始</label>
+        <div class="period-start-row">
+          <input class="period-start-input" id="periodStartInput" type="date">
+          <button class="period-action-btn" id="btnPeriodRecordStart" type="button">记录</button>
+        </div>
+      </div>
+    </div>
+    <div class="period-settings">
+      <div class="period-setting">
+        <label for="periodCycleInput">周期天数</label>
+        <input id="periodCycleInput" type="number" min="20" max="45" inputmode="numeric">
+      </div>
+      <div class="period-setting">
+        <label for="periodLengthInput">经期天数</label>
+        <input id="periodLengthInput" type="number" min="1" max="14" inputmode="numeric">
+      </div>
+      <div class="period-setting">
+        <label for="periodReminderDays">提前提醒</label>
+        <select id="periodReminderDays">
+          <option value="1">提前 1 天</option>
+          <option value="2">提前 2 天</option>
+          <option value="3">提前 3 天</option>
+          <option value="5">提前 5 天</option>
+          <option value="7">提前 7 天</option>
+        </select>
+      </div>
+      <button class="period-action-btn" id="btnPeriodReminder" type="button">开启提醒</button>
+    </div>
+    <p class="period-reminder-status" id="periodReminderStatus"></p>
     <div class="period-month-nav">
       <button id="btnPeriodPrev">◂</button>
       <div class="period-date-pickers">
@@ -3785,6 +3975,10 @@ footer .heart {
     <div class="period-picker-wrap" id="periodMonthPickerWrap">
       <div class="period-picker-list" id="periodMonthList"></div>
     </div>
+    <div class="period-legend">
+      <span>已记录</span>
+      <span class="period-legend-predicted">预计</span>
+    </div>
     <div class="period-calendar" id="periodCalendar"></div>
     <div class="period-stats">
       <div class="period-stat">
@@ -3795,7 +3989,10 @@ footer .heart {
         <div class="stat-num" id="periodMarkedCount">--</div>
         <div class="stat-label">本月标记</div>
       </div>
-
+      <div class="period-stat">
+        <div class="stat-num" id="periodRecordCount">--</div>
+        <div class="stat-label">已记周期</div>
+      </div>
     </div>
   </div>
 </div>
@@ -5615,7 +5812,10 @@ function openUtilPanel(name) {
   document.getElementById(panelId).classList.add('active');
   document.body.style.overflow = 'hidden';
   if (name === 'pomodoro') resetPomodoro();
-  if (name === 'period') renderPeriodCalendar();
+  if (name === 'period') {
+    renderPeriodCalendar();
+    checkPeriodReminder();
+  }
   if (name === 'privateVault') initPrivateVault();
 }
 
@@ -5730,11 +5930,180 @@ document.querySelectorAll('.pomodoro-preset').forEach(function(btn) {
 });
 
 // ============ Period Tracker ============
+var PERIOD_DATA_KEY = 'qinche_period_data';
+var PERIOD_SETTINGS_KEY = 'qinche_period_settings';
+var PERIOD_DEFAULTS = { cycleLength: 28, periodLength: 5, reminderDays: 2, remindersEnabled: false, lastReminderFor: '' };
 var periodViewYear, periodViewMonth;
-var periodData = JSON.parse(localStorage.getItem('qinche_period_data') || '{}');
+
+function loadPeriodData() {
+  try {
+    var stored = JSON.parse(localStorage.getItem(PERIOD_DATA_KEY) || '{}');
+    return stored && typeof stored === 'object' && !Array.isArray(stored) ? stored : {};
+  } catch (error) {
+    return {};
+  }
+}
+
+function clampPeriodValue(value, minimum, maximum, fallback) {
+  var number = parseInt(value, 10);
+  if (isNaN(number)) return fallback;
+  return Math.min(maximum, Math.max(minimum, number));
+}
+
+function loadPeriodSettings() {
+  try {
+    var stored = JSON.parse(localStorage.getItem(PERIOD_SETTINGS_KEY) || '{}');
+    stored = stored && typeof stored === 'object' ? stored : {};
+    return {
+      cycleLength: clampPeriodValue(stored.cycleLength, 20, 45, PERIOD_DEFAULTS.cycleLength),
+      periodLength: clampPeriodValue(stored.periodLength, 1, 14, PERIOD_DEFAULTS.periodLength),
+      reminderDays: clampPeriodValue(stored.reminderDays, 1, 7, PERIOD_DEFAULTS.reminderDays),
+      remindersEnabled: stored.remindersEnabled === true,
+      lastReminderFor: typeof stored.lastReminderFor === 'string' ? stored.lastReminderFor : ''
+    };
+  } catch (error) {
+    return Object.assign({}, PERIOD_DEFAULTS);
+  }
+}
+
+var periodData = loadPeriodData();
+var periodSettings = loadPeriodSettings();
 
 function savePeriodData() {
-  localStorage.setItem('qinche_period_data', JSON.stringify(periodData));
+  localStorage.setItem(PERIOD_DATA_KEY, JSON.stringify(periodData));
+}
+
+function savePeriodSettings() {
+  localStorage.setItem(PERIOD_SETTINGS_KEY, JSON.stringify(periodSettings));
+}
+
+function resetPeriodTracker() {
+  periodData = {};
+  periodSettings = Object.assign({}, PERIOD_DEFAULTS);
+  periodViewYear = null;
+  periodViewMonth = null;
+}
+
+function getPeriodDateKey(date) {
+  return date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
+}
+
+function getPeriodDateNumber(dateKey) {
+  var parts = String(dateKey).split('-').map(Number);
+  if (parts.length !== 3 || !parts[0] || !parts[1] || !parts[2]) return NaN;
+  return Date.UTC(parts[0], parts[1] - 1, parts[2]);
+}
+
+function addPeriodDays(dateKey, offset) {
+  var dateNumber = getPeriodDateNumber(dateKey);
+  if (isNaN(dateNumber)) return '';
+  var date = new Date(dateNumber + offset * 86400000);
+  return date.getUTCFullYear() + '-' + String(date.getUTCMonth() + 1).padStart(2, '0') + '-' + String(date.getUTCDate()).padStart(2, '0');
+}
+
+function getPeriodStartDates() {
+  return Object.keys(periodData).filter(function(dateKey) { return !!periodData[dateKey]; }).sort().filter(function(dateKey) {
+    return !periodData[addPeriodDays(dateKey, -1)];
+  });
+}
+
+function getObservedCycleLength() {
+  var starts = getPeriodStartDates();
+  if (starts.length < 2) return null;
+  var total = 0;
+  var count = 0;
+  for (var i = 1; i < starts.length; i++) {
+    var difference = Math.round((getPeriodDateNumber(starts[i]) - getPeriodDateNumber(starts[i - 1])) / 86400000);
+    if (difference >= 15 && difference <= 60) {
+      total += difference;
+      count++;
+    }
+  }
+  return count ? Math.round(total / count) : null;
+}
+
+function getNextPredictedStart() {
+  var starts = getPeriodStartDates();
+  if (!starts.length) return '';
+  var next = addPeriodDays(starts[starts.length - 1], periodSettings.cycleLength);
+  var today = getPeriodDateKey(new Date());
+  while (getPeriodDateNumber(next) < getPeriodDateNumber(today)) {
+    next = addPeriodDays(next, periodSettings.cycleLength);
+  }
+  return next;
+}
+
+function getPredictedDatesForMonth(year, month) {
+  var starts = getPeriodStartDates();
+  if (!starts.length) return {};
+  var predicted = {};
+  var candidate = addPeriodDays(starts[starts.length - 1], periodSettings.cycleLength);
+  var monthStart = Date.UTC(year, month - 1, 1);
+  var monthEnd = Date.UTC(year, month, 0);
+  var todayNumber = getPeriodDateNumber(getPeriodDateKey(new Date()));
+
+  for (var cycle = 0; cycle < 24 && getPeriodDateNumber(candidate) <= monthEnd; cycle++) {
+    if (getPeriodDateNumber(candidate) >= todayNumber) {
+      for (var day = 0; day < periodSettings.periodLength; day++) {
+        var predictedDay = addPeriodDays(candidate, day);
+        var predictedNumber = getPeriodDateNumber(predictedDay);
+        if (predictedNumber >= monthStart && predictedNumber <= monthEnd) predicted[predictedDay] = true;
+      }
+    }
+    candidate = addPeriodDays(candidate, periodSettings.cycleLength);
+  }
+  return predicted;
+}
+
+function formatPeriodDate(dateKey) {
+  var parts = dateKey.split('-').map(Number);
+  return parts[1] + '月' + parts[2] + '日';
+}
+
+function updatePeriodInputsAndSummary() {
+  var startInput = document.getElementById('periodStartInput');
+  var prediction = getNextPredictedStart();
+  var predictionDate = document.getElementById('periodPredictionDate');
+  var predictionNote = document.getElementById('periodPredictionNote');
+  var today = getPeriodDateKey(new Date());
+
+  if (!startInput.value) startInput.value = today;
+  document.getElementById('periodCycleInput').value = periodSettings.cycleLength;
+  document.getElementById('periodLengthInput').value = periodSettings.periodLength;
+  document.getElementById('periodReminderDays').value = periodSettings.reminderDays;
+
+  if (prediction) {
+    var daysUntil = Math.round((getPeriodDateNumber(prediction) - getPeriodDateNumber(today)) / 86400000);
+    predictionDate.textContent = formatPeriodDate(prediction);
+    predictionNote.textContent = '按 ' + periodSettings.cycleLength + ' 天周期估算' + (daysUntil === 0 ? ' · 预计今天' : ' · 约 ' + daysUntil + ' 天后');
+  } else {
+    predictionDate.textContent = '--';
+    predictionNote.textContent = '记录开始日期后显示估算';
+  }
+
+  updatePeriodReminderStatus();
+}
+
+function updatePeriodReminderStatus() {
+  var status = document.getElementById('periodReminderStatus');
+  var button = document.getElementById('btnPeriodReminder');
+  if (!('Notification' in window)) {
+    status.textContent = '提醒：当前浏览器不支持';
+    button.disabled = true;
+    return;
+  }
+  button.disabled = false;
+  if (Notification.permission === 'denied') {
+    status.textContent = '提醒：已在浏览器中关闭';
+    button.textContent = '浏览器已关闭';
+    button.disabled = true;
+  } else if (periodSettings.remindersEnabled && Notification.permission === 'granted') {
+    status.textContent = '提醒：将在打开网站时检查';
+    button.textContent = '提醒已开启';
+  } else {
+    status.textContent = '提醒：未开启';
+    button.textContent = '开启提醒';
+  }
 }
 
 function renderPeriodCalendar() {
@@ -5745,69 +6114,126 @@ function renderPeriodCalendar() {
 
   var firstDay = new Date(periodViewYear, periodViewMonth - 1, 1).getDay();
   var daysInMonth = new Date(periodViewYear, periodViewMonth, 0).getDate();
-
+  var predictedDates = getPredictedDatesForMonth(periodViewYear, periodViewMonth);
   var html = '';
   var headers = ['日', '一', '二', '三', '四', '五', '六'];
-  headers.forEach(function(h) {
-    html += '<div class="period-day-header">' + h + '</div>';
+  headers.forEach(function(header) {
+    html += '<div class="period-day-header">' + header + '</div>';
   });
 
   for (var i = 0; i < firstDay; i++) {
     html += '<div class="period-day empty"></div>';
   }
 
-  var todayStr = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0');
-  var markedCount = 0;
-
-  for (var d = 1; d <= daysInMonth; d++) {
-    var dateStr = periodViewYear + '-' + String(periodViewMonth).padStart(2,'0') + '-' + String(d).padStart(2,'0');
-    var cls = 'period-day';
-    if (dateStr === todayStr) cls += ' today';
-    if (periodData[dateStr]) { cls += ' marked'; markedCount++; }
-    html += '<div class="' + cls + '" data-date="' + dateStr + '">' + d + '</div>';
+  var todayStr = getPeriodDateKey(now);
+  var todayNumber = getPeriodDateNumber(todayStr);
+  for (var day = 1; day <= daysInMonth; day++) {
+    var dateStr = periodViewYear + '-' + String(periodViewMonth).padStart(2, '0') + '-' + String(day).padStart(2, '0');
+    var isFuture = getPeriodDateNumber(dateStr) > todayNumber;
+    var isMarked = !!periodData[dateStr];
+    var isPredicted = !isMarked && !!predictedDates[dateStr];
+    var className = 'period-day' + (dateStr === todayStr ? ' today' : '') + (isMarked ? ' marked' : '') + (isPredicted ? ' predicted' : '');
+    var label = dateStr + (isMarked ? '，已记录' : isPredicted ? '，预计' : '');
+    html += '<button class="' + className + '" type="button" data-date="' + dateStr + '" aria-label="' + label + '" title="' + (isMarked ? '已记录，点击取消' : isPredicted ? '预计日期' : '点击记录') + '"' + (isFuture ? ' disabled' : '') + '>' + day + '</button>';
   }
 
   document.getElementById('periodCalendar').innerHTML = html;
-  document.getElementById('periodMarkedCount').textContent = markedCount;
-
-  // Click to toggle marks
-  document.querySelectorAll('.period-day:not(.empty)').forEach(function(dayEl) {
+  document.querySelectorAll('#periodCalendar .period-day:not(.empty)').forEach(function(dayEl) {
     dayEl.addEventListener('click', function() {
       var date = this.dataset.date;
-      if (periodData[date]) {
-        delete periodData[date];
-        this.classList.remove('marked');
-      } else {
-        periodData[date] = true;
-        this.classList.add('marked');
-      }
+      if (periodData[date]) delete periodData[date];
+      else periodData[date] = true;
       savePeriodData();
-      updatePeriodStats();
+      renderPeriodCalendar();
+      checkPeriodReminder();
     });
   });
 
   updatePeriodStats();
+  updatePeriodInputsAndSummary();
 }
 
 function updatePeriodStats() {
-  var dates = Object.keys(periodData).sort();
-  var markedCount = 0;
-  var monthPrefix = periodViewYear + '-' + String(periodViewMonth).padStart(2,'0');
-  dates.forEach(function(d) { if (d.startsWith(monthPrefix)) markedCount++; });
+  var monthPrefix = periodViewYear + '-' + String(periodViewMonth).padStart(2, '0');
+  var markedCount = Object.keys(periodData).filter(function(dateKey) { return periodData[dateKey] && dateKey.startsWith(monthPrefix); }).length;
+  var observedCycle = getObservedCycleLength();
+  var starts = getPeriodStartDates();
   document.getElementById('periodMarkedCount').textContent = markedCount || '--';
+  document.getElementById('periodCycleLen').textContent = observedCycle || periodSettings.cycleLength;
+  document.getElementById('periodRecordCount').textContent = starts.length || '--';
+}
 
-  // Average cycle length
-  if (dates.length >= 2) {
-    var sum = 0, count = 0;
-    for (var i = 1; i < dates.length; i++) {
-      var diff = (new Date(dates[i]) - new Date(dates[i-1])) / (1000*60*60*24);
-      if (diff > 1 && diff < 60) { sum += diff; count++; }
-    }
-    document.getElementById('periodCycleLen').textContent = count > 0 ? Math.round(sum / count) : '--';
-  } else {
-    document.getElementById('periodCycleLen').textContent = '--';
+function savePeriodSettingsFromControls() {
+  periodSettings.cycleLength = clampPeriodValue(document.getElementById('periodCycleInput').value, 20, 45, PERIOD_DEFAULTS.cycleLength);
+  periodSettings.periodLength = clampPeriodValue(document.getElementById('periodLengthInput').value, 1, 14, PERIOD_DEFAULTS.periodLength);
+  periodSettings.reminderDays = clampPeriodValue(document.getElementById('periodReminderDays').value, 1, 7, PERIOD_DEFAULTS.reminderDays);
+  savePeriodSettings();
+  renderPeriodCalendar();
+  checkPeriodReminder();
+}
+
+function recordPeriodStart() {
+  var input = document.getElementById('periodStartInput');
+  var dateKey = input.value;
+  if (isNaN(getPeriodDateNumber(dateKey))) {
+    showUploadToast('请选择有效的开始日期');
+    return;
   }
+  if (getPeriodDateNumber(dateKey) > getPeriodDateNumber(getPeriodDateKey(new Date()))) {
+    showUploadToast('开始日期不能晚于今天');
+    return;
+  }
+  periodData[dateKey] = true;
+  savePeriodData();
+  var parts = dateKey.split('-').map(Number);
+  periodViewYear = parts[0];
+  periodViewMonth = parts[1];
+  renderPeriodCalendar();
+  checkPeriodReminder();
+  showUploadToast('已记录本次开始日期');
+}
 
+async function requestPeriodReminder() {
+  if (!('Notification' in window)) {
+    showUploadToast('当前浏览器不支持提醒');
+    return;
+  }
+  if (!window.isSecureContext) {
+    showUploadToast('提醒需要在 HTTPS 网站中开启');
+    return;
+  }
+  var permission = Notification.permission;
+  if (permission === 'default') permission = await Notification.requestPermission();
+  if (permission === 'granted') {
+    periodSettings.remindersEnabled = true;
+    periodSettings.lastReminderFor = '';
+    savePeriodSettings();
+    updatePeriodReminderStatus();
+    checkPeriodReminder();
+    showUploadToast('经期提醒已开启');
+  } else {
+    periodSettings.remindersEnabled = false;
+    savePeriodSettings();
+    updatePeriodReminderStatus();
+    showUploadToast('提醒权限未开启');
+  }
+}
+
+function checkPeriodReminder() {
+  if (!periodSettings.remindersEnabled || !('Notification' in window) || Notification.permission !== 'granted') return;
+  var prediction = getNextPredictedStart();
+  if (!prediction) return;
+  var today = getPeriodDateKey(new Date());
+  var daysUntil = Math.round((getPeriodDateNumber(prediction) - getPeriodDateNumber(today)) / 86400000);
+  if (daysUntil < 0 || daysUntil > periodSettings.reminderDays || periodSettings.lastReminderFor === prediction) return;
+  try {
+    new Notification('经期提醒', {
+      body: daysUntil === 0 ? '预计今天来临，记得照顾好自己。' : '预计 ' + formatPeriodDate(prediction) + ' 来临，提前照顾好自己。',
+      tag: 'qinche-period-' + prediction
+    });
+    periodSettings.lastReminderFor = prediction;
+    savePeriodSettings();
+  } catch (error) {}
 }
 
 document.getElementById('btnPeriodPrev').addEventListener('click', function() {
@@ -5821,6 +6247,16 @@ document.getElementById('btnPeriodNext').addEventListener('click', function() {
   if (periodViewMonth > 12) { periodViewMonth = 1; periodViewYear++; }
   renderPeriodCalendar();
 });
+
+document.getElementById('btnPeriodRecordStart').addEventListener('click', recordPeriodStart);
+document.getElementById('periodCycleInput').addEventListener('change', savePeriodSettingsFromControls);
+document.getElementById('periodLengthInput').addEventListener('change', savePeriodSettingsFromControls);
+document.getElementById('periodReminderDays').addEventListener('change', savePeriodSettingsFromControls);
+document.getElementById('btnPeriodReminder').addEventListener('click', requestPeriodReminder);
+document.addEventListener('visibilitychange', function() {
+  if (!document.hidden) checkPeriodReminder();
+});
+setTimeout(checkPeriodReminder, 1200);
 
 // Year/Month pickers
 var yearPickerWrap = document.getElementById('periodYearPickerWrap');
@@ -6975,7 +7411,12 @@ btnResetAll.addEventListener('click', function() {
     localStorage.removeItem(DELETED_QUOTES_KEY);
     localStorage.removeItem('qinche_gallery_order_dark');
     localStorage.removeItem('qinche_gallery_order_light');
+    localStorage.removeItem('qinche_gallery_featured_dark');
+    localStorage.removeItem('qinche_gallery_featured_light');
     localStorage.removeItem(QUOTES_ORDER_KEY);
+    localStorage.removeItem(PERIOD_DATA_KEY);
+    localStorage.removeItem(PERIOD_SETTINGS_KEY);
+    resetPeriodTracker();
     showUploadToast('所有数据已重置');
     return loadAllPhotos();
   }).then(function(userPhotos) {
@@ -6990,7 +7431,12 @@ btnResetAll.addEventListener('click', function() {
     localStorage.removeItem(DELETED_QUOTES_KEY);
     localStorage.removeItem('qinche_gallery_order_dark');
     localStorage.removeItem('qinche_gallery_order_light');
+    localStorage.removeItem('qinche_gallery_featured_dark');
+    localStorage.removeItem('qinche_gallery_featured_light');
     localStorage.removeItem(QUOTES_ORDER_KEY);
+    localStorage.removeItem(PERIOD_DATA_KEY);
+    localStorage.removeItem(PERIOD_SETTINGS_KEY);
+    resetPeriodTracker();
     loadAllPhotos().then(function(userPhotos) { renderGallery(userPhotos); }).catch(function(){});
     renderManageQuotes();
     refreshQuotes();
