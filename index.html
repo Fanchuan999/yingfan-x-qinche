@@ -1206,6 +1206,8 @@ footer .heart {
   color: var(--red);
 }
 
+.chat-header-icon[hidden] { display: none; }
+
 /* Session list */
 .chat-session-list {
   display: none;
@@ -1971,6 +1973,226 @@ footer .heart {
 .util-panel-close:hover {
   color: var(--red);
   border-color: var(--red-dark);
+}
+
+/* ============ Private Vault ============ */
+#privateVaultPanel .util-panel { max-width: 760px; }
+
+.private-vault-body { min-height: 260px; }
+
+.vault-gate {
+  max-width: 360px;
+  margin: 28px auto 10px;
+  text-align: center;
+}
+
+.vault-gate h4 {
+  margin: 0 0 8px;
+  color: var(--text-light);
+  font-size: 1rem;
+  letter-spacing: 2px;
+}
+
+.vault-gate p {
+  margin: 0 0 18px;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  line-height: 1.7;
+}
+
+.vault-password-input {
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0 0 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--input-bg);
+  color: var(--text-light);
+  outline: none;
+  font: inherit;
+  font-size: 0.82rem;
+}
+
+.vault-password-input:focus { border-color: var(--red-dark); }
+
+.vault-primary-btn,
+.vault-secondary-btn,
+.vault-danger-btn {
+  border-radius: 4px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  padding: 8px 12px;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.vault-primary-btn {
+  width: 100%;
+  border: 1px solid var(--red);
+  background: var(--red);
+  color: #fff;
+}
+
+.vault-primary-btn:hover { background: var(--red-glow); }
+
+.vault-secondary-btn,
+.vault-danger-btn {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+}
+
+.vault-secondary-btn:hover { border-color: var(--red-dark); color: var(--text-light); }
+.vault-danger-btn:hover { border-color: var(--red); color: var(--red); }
+
+.vault-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding-bottom: 12px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.vault-usage {
+  flex: 1 1 180px;
+  min-width: 0;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.vault-upload-zone {
+  margin: 0 0 18px;
+  padding: 22px;
+  border: 1px dashed rgba(196,30,58,0.42);
+  border-radius: 6px;
+  text-align: center;
+}
+
+.vault-upload-zone.drag-over { border-color: var(--red); background: rgba(196,30,58,0.06); }
+
+.vault-upload-title {
+  color: var(--text-light);
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+}
+
+.vault-upload-status {
+  min-height: 18px;
+  margin-top: 8px;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+}
+
+.vault-upload-zone .vault-primary-btn { width: auto; margin-top: 12px; }
+
+.vault-media-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 12px;
+}
+
+.vault-media-item {
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--input-bg);
+}
+
+.vault-media-thumb {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: rgba(196,30,58,0.08);
+  cursor: pointer;
+}
+
+.vault-media-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.vault-media-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.vault-media-details { padding: 9px 10px 10px; }
+
+.vault-media-name {
+  overflow: hidden;
+  color: var(--text-light);
+  font-size: 0.75rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vault-media-meta {
+  margin-top: 4px;
+  color: var(--text-muted);
+  font-size: 0.66rem;
+}
+
+.vault-media-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 9px;
+}
+
+.vault-media-actions button {
+  flex: 1;
+  padding: 5px 6px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.68rem;
+}
+
+.vault-media-actions button:hover { border-color: var(--red-dark); color: var(--red); }
+
+.vault-empty {
+  padding: 36px 0;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  text-align: center;
+}
+
+.vault-player-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.6);
+  z-index: 2;
+}
+
+.vault-player {
+  width: min(88vw, 760px);
+  max-height: 70vh;
+  background: #000;
+}
+
+@media (max-width: 768px) {
+  #privateVaultPanel .util-panel { padding: 20px; }
+  .vault-toolbar .vault-usage { flex-basis: 100%; order: 2; }
+  .vault-media-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 }
 
 /* ============ Pomodoro Timer ============ */
@@ -3170,6 +3392,7 @@ footer .heart {
       <div class="dropdown-item" data-panel="period">经期记录</div>
       <div class="dropdown-item" data-panel="todo">待办清单</div>
       <div class="dropdown-item" data-panel="snake">贪吃鸦</div>
+      <div class="dropdown-item" data-panel="privateVault">我的私藏</div>
       <div class="dropdown-item" data-panel="manage">内容管理</div>
     </div>
   </div>
@@ -3540,6 +3763,20 @@ footer .heart {
   </div>
 </div>
 
+<!-- Private Vault Panel -->
+<div class="util-overlay" id="privateVaultPanel">
+  <div class="util-panel">
+    <div class="util-panel-header">
+      <h3>我的私藏</h3>
+      <div style="display:flex; gap:4px; align-items:center;">
+        <button class="chat-header-icon" id="btnVaultLock" type="button" title="锁定私藏" hidden>锁定</button>
+        <button class="util-panel-close" onclick="closeUtilPanel('privateVault')">✕</button>
+      </div>
+    </div>
+    <div class="private-vault-body" id="privateVaultBody"></div>
+  </div>
+</div>
+
 <!-- AI Chat Panel -->
 <div class="util-overlay" id="chatPanel">
   <div class="util-panel" style="max-width:520px;">
@@ -3762,8 +3999,11 @@ const quotes = [
 
 // ============ IndexedDB Wrapper ============
 const DB_NAME = 'qinche-db';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 const STORE_NAME = 'user_photos';
+const VAULT_SETTINGS_STORE = 'private_vault_settings';
+const VAULT_MEDIA_STORE = 'private_vault_media';
+const VAULT_CHUNK_STORE = 'private_vault_chunks';
 
 function openDB() {
   return new Promise(function(resolve, reject) {
@@ -3776,6 +4016,17 @@ function openDB() {
       if (!db.objectStoreNames.contains(STORE_NAME)) {
         var store = db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
         store.createIndex('createdAt', 'createdAt', { unique: false });
+      }
+      if (!db.objectStoreNames.contains(VAULT_SETTINGS_STORE)) {
+        db.createObjectStore(VAULT_SETTINGS_STORE, { keyPath: 'id' });
+      }
+      if (!db.objectStoreNames.contains(VAULT_MEDIA_STORE)) {
+        var mediaStore = db.createObjectStore(VAULT_MEDIA_STORE, { keyPath: 'id' });
+        mediaStore.createIndex('createdAt', 'createdAt', { unique: false });
+      }
+      if (!db.objectStoreNames.contains(VAULT_CHUNK_STORE)) {
+        var chunkStore = db.createObjectStore(VAULT_CHUNK_STORE, { keyPath: ['mediaId', 'index'] });
+        chunkStore.createIndex('mediaId', 'mediaId', { unique: false });
       }
     };
   });
@@ -4931,12 +5182,14 @@ function openUtilPanel(name) {
   document.body.style.overflow = 'hidden';
   if (name === 'pomodoro') resetPomodoro();
   if (name === 'period') renderPeriodCalendar();
+  if (name === 'privateVault') initPrivateVault();
 }
 
 function closeUtilPanel(name) {
   var panelId = name + 'Panel';
   document.getElementById(panelId).classList.remove('active');
   document.body.style.overflow = '';
+  if (name === 'privateVault') lockPrivateVault();
 }
 
 // Close panel on overlay click
@@ -4945,6 +5198,7 @@ document.querySelectorAll('.util-overlay').forEach(function(overlay) {
     if (e.target === overlay) {
       overlay.classList.remove('active');
       document.body.style.overflow = '';
+      if (overlay.id === 'privateVaultPanel') lockPrivateVault();
     }
   });
 });
@@ -4954,6 +5208,7 @@ document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') {
     document.querySelectorAll('.util-overlay.active').forEach(function(o) {
       o.classList.remove('active');
+      if (o.id === 'privateVaultPanel') lockPrivateVault();
     });
     document.body.style.overflow = '';
   }
@@ -7314,6 +7569,743 @@ function compressChatImage(file) {
     };
     image.src = objectUrl;
   });
+}
+
+// ============ Encrypted Private Vault ============
+const VAULT_CHUNK_BYTES = 4 * 1024 * 1024;
+const VAULT_FILE_LIMIT = 200 * 1024 * 1024;
+const VAULT_SOFT_LIMIT = 1024 * 1024 * 1024;
+const VAULT_VERIFIER = 'qinche-private-vault-v1';
+var vaultCryptoKey = null;
+var vaultSettings = null;
+var vaultObjectUrls = [];
+
+function vaultRequest(storeName, mode, action) {
+  return openDB().then(function(db) {
+    return new Promise(function(resolve, reject) {
+      var tx = db.transaction(storeName, mode);
+      var request = action(tx.objectStore(storeName));
+      var result;
+      if (request) request.onsuccess = function() { result = request.result; };
+      if (request) request.onerror = function() { reject(request.error); };
+      tx.oncomplete = function() { db.close(); resolve(result); };
+      tx.onerror = function() { db.close(); reject(tx.error || new Error('私藏数据保存失败')); };
+      tx.onabort = function() { db.close(); reject(tx.error || new Error('私藏数据保存已取消')); };
+    });
+  });
+}
+
+function vaultGetSettings() {
+  return vaultRequest(VAULT_SETTINGS_STORE, 'readonly', function(store) { return store.get('settings'); });
+}
+
+function vaultPutSettings(settings) {
+  return vaultRequest(VAULT_SETTINGS_STORE, 'readwrite', function(store) { return store.put(settings); });
+}
+
+function vaultGetMediaRecords() {
+  return vaultRequest(VAULT_MEDIA_STORE, 'readonly', function(store) { return store.getAll(); });
+}
+
+function vaultPutMediaRecord(record) {
+  return vaultRequest(VAULT_MEDIA_STORE, 'readwrite', function(store) { return store.put(record); });
+}
+
+function vaultPutChunk(chunk) {
+  return vaultRequest(VAULT_CHUNK_STORE, 'readwrite', function(store) { return store.put(chunk); });
+}
+
+function vaultGetChunks(mediaId) {
+  return openDB().then(function(db) {
+    return new Promise(function(resolve, reject) {
+      var tx = db.transaction(VAULT_CHUNK_STORE, 'readonly');
+      var index = tx.objectStore(VAULT_CHUNK_STORE).index('mediaId');
+      var request = index.getAll(mediaId);
+      request.onsuccess = function() {
+        var chunks = request.result || [];
+        chunks.sort(function(a, b) { return a.index - b.index; });
+        resolve(chunks);
+      };
+      request.onerror = function() { reject(request.error); };
+      tx.oncomplete = function() { db.close(); };
+    });
+  });
+}
+
+function vaultDeleteMedia(mediaId) {
+  return openDB().then(function(db) {
+    return new Promise(function(resolve, reject) {
+      var tx = db.transaction([VAULT_MEDIA_STORE, VAULT_CHUNK_STORE], 'readwrite');
+      tx.objectStore(VAULT_MEDIA_STORE).delete(mediaId);
+      var chunks = tx.objectStore(VAULT_CHUNK_STORE).index('mediaId');
+      var cursorRequest = chunks.openKeyCursor(IDBKeyRange.only(mediaId));
+      cursorRequest.onsuccess = function(event) {
+        var cursor = event.target.result;
+        if (!cursor) return;
+        tx.objectStore(VAULT_CHUNK_STORE).delete(cursor.primaryKey);
+        cursor.continue();
+      };
+      cursorRequest.onerror = function() { reject(cursorRequest.error); };
+      tx.oncomplete = function() { db.close(); resolve(); };
+      tx.onerror = function() { db.close(); reject(tx.error || new Error('删除失败')); };
+    });
+  });
+}
+
+function vaultClearAll() {
+  return openDB().then(function(db) {
+    return new Promise(function(resolve, reject) {
+      var tx = db.transaction([VAULT_SETTINGS_STORE, VAULT_MEDIA_STORE, VAULT_CHUNK_STORE], 'readwrite');
+      tx.objectStore(VAULT_SETTINGS_STORE).clear();
+      tx.objectStore(VAULT_MEDIA_STORE).clear();
+      tx.objectStore(VAULT_CHUNK_STORE).clear();
+      tx.oncomplete = function() { db.close(); resolve(); };
+      tx.onerror = function() { db.close(); reject(tx.error || new Error('清空失败')); };
+    });
+  });
+}
+
+function vaultEncode(text) { return new TextEncoder().encode(text); }
+function vaultDecode(bytes) { return new TextDecoder().decode(bytes); }
+
+function vaultNewId() {
+  if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+  return 'vault_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 10);
+}
+
+async function vaultDeriveKey(password, salt) {
+  if (!window.crypto || !crypto.subtle) throw new Error('当前浏览器不支持本地加密');
+  var material = await crypto.subtle.importKey('raw', vaultEncode(password), 'PBKDF2', false, ['deriveKey']);
+  return crypto.subtle.deriveKey({
+    name: 'PBKDF2',
+    salt: salt,
+    iterations: 210000,
+    hash: 'SHA-256'
+  }, material, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+}
+
+async function vaultEncrypt(key, data) {
+  var iv = crypto.getRandomValues(new Uint8Array(12));
+  var source = data instanceof ArrayBuffer ? data : data.buffer.slice(data.byteOffset || 0, (data.byteOffset || 0) + data.byteLength);
+  var cipher = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: iv }, key, source);
+  return { iv: iv.buffer, cipher: cipher };
+}
+
+async function vaultDecrypt(key, payload) {
+  return crypto.subtle.decrypt({ name: 'AES-GCM', iv: payload.iv }, key, payload.cipher);
+}
+
+function vaultFormatBytes(bytes) {
+  if (!bytes) return '0 B';
+  if (bytes < 1024 * 1024) return Math.max(1, Math.round(bytes / 1024)) + ' KB';
+  return (bytes / 1024 / 1024).toFixed(bytes < 1024 * 1024 * 1024 ? 1 : 2) + ' MB';
+}
+
+function vaultRevokeObjectUrls() {
+  vaultObjectUrls.forEach(function(url) { URL.revokeObjectURL(url); });
+  vaultObjectUrls = [];
+}
+
+async function vaultRequestPersistentStorage() {
+  try {
+    if (navigator.storage && navigator.storage.persist) await navigator.storage.persist();
+  } catch (error) {}
+}
+
+async function vaultGetUsage() {
+  var records = await vaultGetMediaRecords();
+  return records.reduce(function(total, record) { return total + (record.byteSize || 0); }, 0);
+}
+
+async function vaultEnsureCapacity(fileSize) {
+  var currentUsage = await vaultGetUsage();
+  if (currentUsage + fileSize > VAULT_SOFT_LIMIT) {
+    throw new Error('私藏空间最多保存约 1 GB 内容，请先删除部分视频');
+  }
+  if (navigator.storage && navigator.storage.estimate) {
+    var estimate = null;
+    try {
+      estimate = await navigator.storage.estimate();
+    } catch (_) {
+      // Quota estimates are optional; uploading can continue when a browser omits them.
+    }
+    if (estimate && estimate.quota && estimate.usage + fileSize * 1.02 > estimate.quota * 0.85) {
+      throw new Error('设备可用空间不足，请删除内容或换用空间更大的设备');
+    }
+  }
+}
+
+function vaultSetStatus(message) {
+  var status = document.getElementById('vaultUploadStatus');
+  if (status) status.textContent = message || '';
+}
+
+async function createVaultPassword(password) {
+  if (password.length < 6) throw new Error('密码至少需要 6 位');
+  var salt = crypto.getRandomValues(new Uint8Array(16));
+  var key = await vaultDeriveKey(password, salt);
+  var verifier = await vaultEncrypt(key, vaultEncode(VAULT_VERIFIER));
+  var settings = { id: 'settings', salt: salt.buffer, verifier: verifier, createdAt: Date.now() };
+  await vaultPutSettings(settings);
+  vaultCryptoKey = key;
+  vaultSettings = settings;
+  await vaultRequestPersistentStorage();
+}
+
+async function unlockVault(password) {
+  var settings = vaultSettings || await vaultGetSettings();
+  if (!settings) throw new Error('私藏空间尚未创建');
+  var key = await vaultDeriveKey(password, settings.salt);
+  var verifier = vaultDecode(await vaultDecrypt(key, settings.verifier));
+  if (verifier !== VAULT_VERIFIER) throw new Error('密码不正确');
+  vaultCryptoKey = key;
+  vaultSettings = settings;
+  await vaultRequestPersistentStorage();
+}
+
+function lockPrivateVault() {
+  vaultCryptoKey = null;
+  vaultRevokeObjectUrls();
+  var lockButton = document.getElementById('btnVaultLock');
+  if (lockButton) lockButton.hidden = true;
+}
+
+document.getElementById('btnVaultLock').addEventListener('click', function() {
+  lockPrivateVault();
+  renderVaultGate(true);
+});
+
+function renderVaultGate(hasVault) {
+  var body = document.getElementById('privateVaultBody');
+  if (!body) return;
+  body.innerHTML = '';
+  var gate = document.createElement('div');
+  gate.className = 'vault-gate';
+
+  var title = document.createElement('h4');
+  title.textContent = hasVault ? '输入密码以解锁' : '创建你的私藏空间';
+  gate.appendChild(title);
+
+  var hint = document.createElement('p');
+  hint.textContent = hasVault ? '内容只保存在当前浏览器，解锁后才会读取。' : '视频会在本机加密保存，密码遗失后无法恢复内容。';
+  gate.appendChild(hint);
+
+  var password = document.createElement('input');
+  password.type = 'password';
+  password.className = 'vault-password-input';
+  password.placeholder = '输入密码';
+  password.autocomplete = hasVault ? 'current-password' : 'new-password';
+  gate.appendChild(password);
+
+  var confirmPassword = null;
+  if (!hasVault) {
+    confirmPassword = document.createElement('input');
+    confirmPassword.type = 'password';
+    confirmPassword.className = 'vault-password-input';
+    confirmPassword.placeholder = '再次输入密码';
+    confirmPassword.autocomplete = 'new-password';
+    gate.appendChild(confirmPassword);
+  }
+
+  var action = document.createElement('button');
+  action.type = 'button';
+  action.className = 'vault-primary-btn';
+  action.textContent = hasVault ? '解锁' : '创建并解锁';
+  gate.appendChild(action);
+
+  var feedback = document.createElement('p');
+  feedback.style.minHeight = '20px';
+  feedback.style.marginTop = '12px';
+  gate.appendChild(feedback);
+  body.appendChild(gate);
+
+  async function submit() {
+    var value = password.value;
+    if (!value) { feedback.textContent = '请输入密码'; return; }
+    if (confirmPassword && value !== confirmPassword.value) { feedback.textContent = '两次输入的密码不一致'; return; }
+    action.disabled = true;
+    feedback.textContent = hasVault ? '正在解锁...' : '正在创建...';
+    try {
+      if (hasVault) await unlockVault(value);
+      else await createVaultPassword(value);
+      renderPrivateVault();
+    } catch (error) {
+      feedback.textContent = error.message || '操作失败，请重试';
+      action.disabled = false;
+    }
+  }
+
+  action.addEventListener('click', submit);
+  password.addEventListener('keydown', function(event) {
+    if (event.key === 'Enter' && hasVault) submit();
+  });
+  if (confirmPassword) confirmPassword.addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') submit();
+  });
+  password.focus();
+}
+
+async function initPrivateVault() {
+  try {
+    vaultSettings = await vaultGetSettings();
+    if (vaultCryptoKey) renderPrivateVault();
+    else renderVaultGate(!!vaultSettings);
+  } catch (error) {
+    var body = document.getElementById('privateVaultBody');
+    if (body) body.textContent = '私藏空间暂不可用：' + error.message;
+  }
+}
+
+async function vaultGetMediaViews() {
+  var records = await vaultGetMediaRecords();
+  records.sort(function(a, b) { return b.createdAt - a.createdAt; });
+  var views = [];
+  for (var i = 0; i < records.length; i++) {
+    var record = records[i];
+    try {
+      var metadata = JSON.parse(vaultDecode(await vaultDecrypt(vaultCryptoKey, record.metadata)));
+      var thumbnailUrl = '';
+      if (record.thumbnail) {
+        var thumbnailBuffer = await vaultDecrypt(vaultCryptoKey, record.thumbnail);
+        thumbnailUrl = URL.createObjectURL(new Blob([thumbnailBuffer], { type: record.thumbnailType || 'image/jpeg' }));
+        vaultObjectUrls.push(thumbnailUrl);
+      }
+      views.push({ record: record, metadata: metadata, thumbnailUrl: thumbnailUrl });
+    } catch (error) {
+      // A corrupt item stays out of the list rather than breaking the rest of the vault.
+    }
+  }
+  return views;
+}
+
+function vaultCreateMediaItem(view) {
+  var item = document.createElement('article');
+  item.className = 'vault-media-item';
+
+  var thumbnail = document.createElement('div');
+  thumbnail.className = 'vault-media-thumb';
+  if (view.thumbnailUrl) {
+    var image = document.createElement('img');
+    image.src = view.thumbnailUrl;
+    image.alt = '';
+    thumbnail.appendChild(image);
+  } else {
+    var placeholder = document.createElement('div');
+    placeholder.className = 'vault-media-placeholder';
+    placeholder.textContent = '视频';
+    thumbnail.appendChild(placeholder);
+  }
+  thumbnail.title = '播放视频';
+  thumbnail.addEventListener('click', function() { playVaultMedia(view.record.id, view.metadata); });
+  item.appendChild(thumbnail);
+
+  var details = document.createElement('div');
+  details.className = 'vault-media-details';
+  var name = document.createElement('div');
+  name.className = 'vault-media-name';
+  name.textContent = view.metadata.name || '未命名视频';
+  name.title = name.textContent;
+  details.appendChild(name);
+
+  var meta = document.createElement('div');
+  meta.className = 'vault-media-meta';
+  meta.textContent = vaultFormatBytes(view.record.byteSize || 0) + ' · ' + new Date(view.metadata.createdAt).toLocaleDateString();
+  details.appendChild(meta);
+
+  var actions = document.createElement('div');
+  actions.className = 'vault-media-actions';
+  var playButton = document.createElement('button');
+  playButton.type = 'button';
+  playButton.textContent = '播放';
+  playButton.addEventListener('click', function() { playVaultMedia(view.record.id, view.metadata); });
+  actions.appendChild(playButton);
+  var deleteButton = document.createElement('button');
+  deleteButton.type = 'button';
+  deleteButton.textContent = '删除';
+  deleteButton.addEventListener('click', async function() {
+    if (!window.confirm('确定删除这个私藏视频吗？')) return;
+    await vaultDeleteMedia(view.record.id);
+    renderPrivateVault();
+  });
+  actions.appendChild(deleteButton);
+  details.appendChild(actions);
+  item.appendChild(details);
+  return item;
+}
+
+async function renderVaultMedia() {
+  var grid = document.getElementById('vaultMediaGrid');
+  if (!grid || !vaultCryptoKey) return;
+  vaultRevokeObjectUrls();
+  grid.innerHTML = '';
+  try {
+    var views = await vaultGetMediaViews();
+    if (!views.length) {
+      var empty = document.createElement('div');
+      empty.className = 'vault-empty';
+      empty.textContent = '这里还没有私藏视频';
+      grid.appendChild(empty);
+      return;
+    }
+    views.forEach(function(view) { grid.appendChild(vaultCreateMediaItem(view)); });
+  } catch (error) {
+    var failed = document.createElement('div');
+    failed.className = 'vault-empty';
+    failed.textContent = '读取私藏内容失败';
+    grid.appendChild(failed);
+  }
+}
+
+async function updateVaultUsage() {
+  var usage = document.getElementById('vaultUsage');
+  if (!usage) return;
+  try {
+    var used = await vaultGetUsage();
+    usage.textContent = '已使用 ' + vaultFormatBytes(used) + ' / 1 GB';
+  } catch (error) {
+    usage.textContent = '无法读取存储空间';
+  }
+}
+
+function createVaultVideoThumbnail(file) {
+  return new Promise(function(resolve) {
+    var url = URL.createObjectURL(file);
+    var video = document.createElement('video');
+    video.muted = true;
+    video.playsInline = true;
+    video.preload = 'metadata';
+    var settled = false;
+
+    function finish(value) {
+      if (settled) return;
+      settled = true;
+      URL.revokeObjectURL(url);
+      resolve(value || null);
+    }
+
+    video.onloadeddata = function() {
+      var targetTime = Math.min(1, Math.max(0, (video.duration || 0) / 2));
+      if (targetTime === 0) capture();
+      else video.currentTime = targetTime;
+    };
+    video.onseeked = capture;
+    video.onerror = function() { finish(null); };
+
+    function capture() {
+      try {
+        var width = Math.min(640, video.videoWidth || 640);
+        var height = Math.max(1, Math.round(width * (video.videoHeight || 360) / (video.videoWidth || 640)));
+        var canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext('2d').drawImage(video, 0, 0, width, height);
+        canvas.toBlob(function(blob) { finish(blob); }, 'image/jpeg', 0.78);
+      } catch (error) {
+        finish(null);
+      }
+    }
+
+    video.src = url;
+  });
+}
+
+async function saveVaultVideo(file) {
+  if (!vaultCryptoKey) throw new Error('请先解锁私藏空间');
+  if (!file || !file.type || file.type.indexOf('video/') !== 0) throw new Error('请选择视频文件');
+  if (file.size > VAULT_FILE_LIMIT) throw new Error('单个视频不能超过 200 MB');
+  await vaultEnsureCapacity(file.size);
+
+  var mediaId = vaultNewId();
+  var totalChunks = Math.ceil(file.size / VAULT_CHUNK_BYTES);
+  var thumbnail = await createVaultVideoThumbnail(file);
+  var metadata = await vaultEncrypt(vaultCryptoKey, vaultEncode(JSON.stringify({
+    name: file.name,
+    type: file.type,
+    createdAt: Date.now()
+  })));
+  var encryptedThumbnail = null;
+  if (thumbnail) encryptedThumbnail = await vaultEncrypt(vaultCryptoKey, await thumbnail.arrayBuffer());
+
+  try {
+    for (var index = 0; index < totalChunks; index++) {
+      var start = index * VAULT_CHUNK_BYTES;
+      var buffer = await file.slice(start, Math.min(file.size, start + VAULT_CHUNK_BYTES)).arrayBuffer();
+      var encryptedChunk = await vaultEncrypt(vaultCryptoKey, buffer);
+      await vaultPutChunk({ mediaId: mediaId, index: index, payload: encryptedChunk });
+      vaultSetStatus('正在加密保存 ' + (index + 1) + ' / ' + totalChunks);
+    }
+    await vaultPutMediaRecord({
+      id: mediaId,
+      createdAt: Date.now(),
+      byteSize: file.size,
+      chunkCount: totalChunks,
+      metadata: metadata,
+      thumbnail: encryptedThumbnail,
+      thumbnailType: thumbnail ? 'image/jpeg' : ''
+    });
+  } catch (error) {
+    await vaultDeleteMedia(mediaId).catch(function() {});
+    throw error;
+  }
+}
+
+async function handleVaultVideoFiles(files) {
+  var file = files && files[0];
+  if (!file) return;
+  var input = document.getElementById('vaultVideoInput');
+  var uploadButton = document.getElementById('btnVaultUpload');
+  if (uploadButton) uploadButton.disabled = true;
+  try {
+    vaultSetStatus('正在检查可用空间...');
+    await saveVaultVideo(file);
+    vaultSetStatus('已加密保存');
+    await updateVaultUsage();
+    await renderVaultMedia();
+  } catch (error) {
+    vaultSetStatus('保存失败：' + (error.message || '请重试'));
+  } finally {
+    if (input) input.value = '';
+    if (uploadButton) uploadButton.disabled = false;
+  }
+}
+
+async function playVaultMedia(mediaId, metadata) {
+  if (!vaultCryptoKey) return;
+  var panel = document.querySelector('#privateVaultPanel .util-panel');
+  if (!panel) return;
+  vaultSetStatus('正在读取视频...');
+  try {
+    var chunks = await vaultGetChunks(mediaId);
+    if (!chunks.length) throw new Error('找不到视频数据');
+    var buffers = [];
+    for (var i = 0; i < chunks.length; i++) {
+      buffers.push(await vaultDecrypt(vaultCryptoKey, chunks[i].payload));
+    }
+    var url = URL.createObjectURL(new Blob(buffers, { type: metadata.type || 'video/mp4' }));
+    vaultObjectUrls.push(url);
+    var overlay = document.createElement('div');
+    overlay.className = 'vault-player-overlay';
+    var video = document.createElement('video');
+    video.className = 'vault-player';
+    video.controls = true;
+    video.autoplay = true;
+    video.playsInline = true;
+    video.src = url;
+    overlay.appendChild(video);
+    var close = document.createElement('button');
+    close.type = 'button';
+    close.className = 'util-panel-close';
+    close.style.cssText = 'position:absolute; top:10px; right:10px; background:rgba(0,0,0,0.45);';
+    close.textContent = '✕';
+    close.title = '关闭视频';
+    close.addEventListener('click', function() {
+      video.pause();
+      URL.revokeObjectURL(url);
+      vaultObjectUrls = vaultObjectUrls.filter(function(item) { return item !== url; });
+      overlay.remove();
+    });
+    overlay.appendChild(close);
+    panel.appendChild(overlay);
+    vaultSetStatus('');
+  } catch (error) {
+    vaultSetStatus('视频读取失败：' + (error.message || '请重试'));
+  }
+}
+
+function renderPrivateVault() {
+  var body = document.getElementById('privateVaultBody');
+  if (!body || !vaultCryptoKey) return;
+  body.innerHTML =
+    '<div class="vault-toolbar">' +
+      '<div class="vault-usage" id="vaultUsage"></div>' +
+      '<button class="vault-secondary-btn" type="button" id="btnVaultExport">导出备份</button>' +
+      '<button class="vault-secondary-btn" type="button" id="btnVaultImport">恢复备份</button>' +
+      '<button class="vault-danger-btn" type="button" id="btnVaultClear">清空私藏</button>' +
+    '</div>' +
+    '<div class="vault-upload-zone" id="vaultUploadZone">' +
+      '<div class="vault-upload-title">保存一段只属于你的影像</div>' +
+      '<div class="vault-upload-status" id="vaultUploadStatus"></div>' +
+      '<input type="file" id="vaultVideoInput" accept="video/*" hidden>' +
+      '<button class="vault-primary-btn" type="button" id="btnVaultUpload">上传视频</button>' +
+    '</div>' +
+    '<div class="vault-media-grid" id="vaultMediaGrid"></div>';
+
+  var lockButton = document.getElementById('btnVaultLock');
+  if (lockButton) lockButton.hidden = false;
+  var input = document.getElementById('vaultVideoInput');
+  var uploadButton = document.getElementById('btnVaultUpload');
+  var uploadZone = document.getElementById('vaultUploadZone');
+  uploadButton.addEventListener('click', function() { input.click(); });
+  input.addEventListener('change', function() { handleVaultVideoFiles(this.files); });
+  uploadZone.addEventListener('dragover', function(event) {
+    event.preventDefault();
+    uploadZone.classList.add('drag-over');
+  });
+  uploadZone.addEventListener('dragleave', function() { uploadZone.classList.remove('drag-over'); });
+  uploadZone.addEventListener('drop', function(event) {
+    event.preventDefault();
+    uploadZone.classList.remove('drag-over');
+    handleVaultVideoFiles(event.dataTransfer.files);
+  });
+
+  document.getElementById('btnVaultExport').addEventListener('click', exportPrivateVaultBackup);
+  document.getElementById('btnVaultImport').addEventListener('click', importPrivateVaultBackup);
+  document.getElementById('btnVaultClear').addEventListener('click', async function() {
+    if (!window.confirm('将永久删除全部私藏内容和密码，是否继续？')) return;
+    await vaultClearAll();
+    lockPrivateVault();
+    vaultSettings = null;
+    renderVaultGate(false);
+  });
+  updateVaultUsage();
+  renderVaultMedia();
+}
+
+function vaultBufferToBase64(buffer) {
+  var bytes = new Uint8Array(buffer);
+  var chunkSize = 0x8000;
+  var binary = '';
+  for (var i = 0; i < bytes.length; i += chunkSize) {
+    binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunkSize));
+  }
+  return btoa(binary);
+}
+
+function vaultBase64ToBuffer(value) {
+  var binary = atob(value);
+  var bytes = new Uint8Array(binary.length);
+  for (var i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return bytes.buffer;
+}
+
+function vaultSerializePayload(payload) {
+  if (!payload) return null;
+  return { iv: vaultBufferToBase64(payload.iv), cipher: vaultBufferToBase64(payload.cipher) };
+}
+
+function vaultDeserializePayload(payload) {
+  if (!payload || !payload.iv || !payload.cipher) return null;
+  return { iv: vaultBase64ToBuffer(payload.iv), cipher: vaultBase64ToBuffer(payload.cipher) };
+}
+
+async function vaultWriteBackupFile(directory, name, data) {
+  var handle = await directory.getFileHandle(name, { create: true });
+  var writable = await handle.createWritable();
+  await writable.write(data);
+  await writable.close();
+}
+
+async function exportPrivateVaultBackup() {
+  if (!window.showDirectoryPicker) {
+    vaultSetStatus('当前浏览器不支持完整备份，请使用 Chrome 或 Edge');
+    return;
+  }
+  try {
+    var directory = await window.showDirectoryPicker({ mode: 'readwrite' });
+    var settings = await vaultGetSettings();
+    var records = await vaultGetMediaRecords();
+    var chunksDirectory = await directory.getDirectoryHandle('private-vault-chunks', { create: true });
+    var manifest = {
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      settings: {
+        salt: vaultBufferToBase64(settings.salt),
+        verifier: vaultSerializePayload(settings.verifier),
+        createdAt: settings.createdAt
+      },
+      media: []
+    };
+    var completed = 0;
+    for (var i = 0; i < records.length; i++) {
+      var record = records[i];
+      var chunks = await vaultGetChunks(record.id);
+      var serializedChunks = [];
+      for (var j = 0; j < chunks.length; j++) {
+        var chunk = chunks[j];
+        var chunkFile = record.id + '-' + chunk.index + '.bin';
+        await vaultWriteBackupFile(chunksDirectory, chunkFile, chunk.payload.cipher);
+        serializedChunks.push({ index: chunk.index, file: chunkFile, iv: vaultBufferToBase64(chunk.payload.iv) });
+        completed++;
+        vaultSetStatus('正在导出备份 ' + completed + ' 个数据块');
+      }
+      manifest.media.push({
+        id: record.id,
+        createdAt: record.createdAt,
+        byteSize: record.byteSize,
+        chunkCount: record.chunkCount,
+        metadata: vaultSerializePayload(record.metadata),
+        thumbnail: vaultSerializePayload(record.thumbnail),
+        thumbnailType: record.thumbnailType || '',
+        chunks: serializedChunks
+      });
+    }
+    await vaultWriteBackupFile(directory, 'private-vault-backup.json', JSON.stringify(manifest, null, 2));
+    vaultSetStatus('备份已导出到所选文件夹');
+  } catch (error) {
+    if (error && error.name !== 'AbortError') vaultSetStatus('备份失败：' + (error.message || '请重试'));
+  }
+}
+
+async function importPrivateVaultBackup() {
+  if (!window.showDirectoryPicker) {
+    vaultSetStatus('当前浏览器不支持完整恢复，请使用 Chrome 或 Edge');
+    return;
+  }
+  try {
+    var directory = await window.showDirectoryPicker({ mode: 'read' });
+    var manifestHandle = await directory.getFileHandle('private-vault-backup.json');
+    var manifest = JSON.parse(await (await manifestHandle.getFile()).text());
+    if (!manifest || manifest.version !== 1 || !manifest.settings || !Array.isArray(manifest.media)) {
+      throw new Error('未找到有效的私藏备份');
+    }
+    var chunksDirectory = await directory.getDirectoryHandle('private-vault-chunks');
+    for (var i = 0; i < manifest.media.length; i++) {
+      var item = manifest.media[i];
+      if (!item.id || !Array.isArray(item.chunks) || !item.metadata) throw new Error('备份文件不完整');
+      for (var j = 0; j < item.chunks.length; j++) {
+        await chunksDirectory.getFileHandle(item.chunks[j].file);
+      }
+    }
+    if (!window.confirm('恢复备份会替换当前全部私藏内容，是否继续？')) return;
+
+    await vaultClearAll();
+    var settings = {
+      id: 'settings',
+      salt: vaultBase64ToBuffer(manifest.settings.salt),
+      verifier: vaultDeserializePayload(manifest.settings.verifier),
+      createdAt: manifest.settings.createdAt || Date.now()
+    };
+    await vaultPutSettings(settings);
+    var processed = 0;
+    for (var mediaIndex = 0; mediaIndex < manifest.media.length; mediaIndex++) {
+      var source = manifest.media[mediaIndex];
+      for (var chunkIndex = 0; chunkIndex < source.chunks.length; chunkIndex++) {
+        var descriptor = source.chunks[chunkIndex];
+        var file = await (await chunksDirectory.getFileHandle(descriptor.file)).getFile();
+        await vaultPutChunk({
+          mediaId: source.id,
+          index: descriptor.index,
+          payload: { iv: vaultBase64ToBuffer(descriptor.iv), cipher: await file.arrayBuffer() }
+        });
+        processed++;
+        vaultSetStatus('正在恢复备份 ' + processed + ' 个数据块');
+      }
+      await vaultPutMediaRecord({
+        id: source.id,
+        createdAt: source.createdAt,
+        byteSize: source.byteSize,
+        chunkCount: source.chunkCount,
+        metadata: vaultDeserializePayload(source.metadata),
+        thumbnail: vaultDeserializePayload(source.thumbnail),
+        thumbnailType: source.thumbnailType || ''
+      });
+    }
+    lockPrivateVault();
+    vaultSettings = settings;
+    renderVaultGate(true);
+  } catch (error) {
+    if (error && error.name !== 'AbortError') vaultSetStatus('恢复失败：' + (error.message || '请重试'));
+  }
 }
 
 function clearChatImage() {
