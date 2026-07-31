@@ -501,6 +501,45 @@ nav .links a:hover::after { width: 100%; }
   box-shadow: 0 0 0 2px rgba(196,30,58,0.14);
 }
 
+.gallery-item.gallery-selection-mode {
+  cursor: pointer;
+}
+
+.gallery-item.gallery-selection-mode::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 2px solid transparent;
+  pointer-events: none;
+  transition: border-color 0.2s ease;
+}
+
+.gallery-item.gallery-selection-mode.gallery-featured::after {
+  border-color: var(--red);
+}
+
+.gallery-feature-toggle {
+  position: absolute;
+  top: 7px;
+  left: 7px;
+  z-index: 11;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid rgba(255,255,255,0.5);
+  border-radius: 50%;
+  background: rgba(0,0,0,0.55);
+  color: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.gallery-item.gallery-selection-mode.gallery-featured .gallery-feature-toggle {
+  border-color: var(--red);
+  background: var(--red);
+  color: #fff;
+}
+
 .gallery-item {
   position: relative;
   aspect-ratio: 3/4;
@@ -3542,12 +3581,14 @@ footer .heart {
     <div class="section-header-actions">
       <input type="file" id="photoFileInput" accept="image/*" multiple hidden>
       <button class="section-action-btn" id="btnUploadPhoto" title="上传照片">＋ 上传照片</button>
+      <button class="section-action-btn" id="btnEditGalleryFeatured" title="选择照片墙展示内容">设置展示</button>
+      <button class="section-action-btn" id="btnCancelGalleryFeatured" title="取消本次选择" hidden>取消</button>
     </div>
   </div>
   <div class="gallery-filter-bar" id="galleryFilterBar" hidden>
     <p class="gallery-view-summary" id="galleryViewSummary"></p>
     <select class="gallery-date-select" id="galleryDateFilter" aria-label="按日期筛选照片">
-      <option value="recent">最近 40 张</option>
+      <option value="featured">展示的照片</option>
     </select>
   </div>
   <div class="gallery" id="galleryGrid"></div>
@@ -4351,11 +4392,33 @@ function showUploadToast(msg) {
 var galleryItems = [];
 var galleryVisibleItems = [];
 var currentGalleryIndex = 0;
-var galleryFilterValue = 'recent';
+var galleryFilterValue = 'featured';
 var GALLERY_RECENT_LIMIT = 40;
+var gallerySelectionMode = false;
+var gallerySelectionKeys = [];
 
 // ============ Gallery Order Persistence ============
 function getGalleryOrderKey() { return 'qinche_gallery_order_' + getCurrentTheme(); }
+function getGalleryFeaturedKey() { return 'qinche_gallery_featured_' + getCurrentTheme(); }
+
+function loadGalleryFeaturedKeys() {
+  try {
+    var value = localStorage.getItem(getGalleryFeaturedKey());
+    if (value === null) return null;
+    var saved = JSON.parse(value);
+    return Array.isArray(saved) ? saved : null;
+  } catch (error) {
+    return null;
+  }
+}
+
+function saveGalleryFeaturedKeys(keys) {
+  try {
+    localStorage.setItem(getGalleryFeaturedKey(), JSON.stringify(keys));
+  } catch (error) {
+    showUploadToast('展示照片保存失败，请稍后重试');
+  }
+}
 
 // ============ Deleted Default Items Blacklist ============
 var DELETED_PHOTOS_KEY = 'qinche_deleted_photos';
@@ -4495,7 +4558,67 @@ function getRecentGalleryItems() {
   return userItems.concat(galleryItems.filter(function(item) { return item.type === 'default'; })).slice(0, GALLERY_RECENT_LIMIT);
 }
 
+function getFeaturedGalleryItems() {
+  var savedKeys = loadGalleryFeaturedKeys();
+  if (savedKeys === null) return getRecentGalleryItems();
+  var itemMap = {};
+  galleryItems.forEach(function(item) { itemMap[getGalleryItemKey(item)] = item; });
+  return savedKeys.map(function(key) { return itemMap[key]; }).filter(function(item) { return !!item; }).slice(0, GALLERY_RECENT_LIMIT);
+}
+
+function getGallerySelectionKeys() {
+  if (gallerySelectionMode) return gallerySelectionKeys.slice();
+  return getFeaturedGalleryItems().map(function(item) { return getGalleryItemKey(item); });
+}
+
+function updateGalleryFeaturedControls() {
+  var editButton = document.getElementById('btnEditGalleryFeatured');
+  var cancelButton = document.getElementById('btnCancelGalleryFeatured');
+  editButton.textContent = gallerySelectionMode ? '保存展示' : '设置展示';
+  cancelButton.hidden = !gallerySelectionMode;
+}
+
+function beginGalleryFeaturedSelection() {
+  gallerySelectionKeys = getFeaturedGalleryItems().map(function(item) { return getGalleryItemKey(item); });
+  gallerySelectionMode = true;
+  galleryFilterValue = 'all';
+  updateGalleryDateFilter();
+  updateGalleryFeaturedControls();
+  renderGalleryGrid();
+}
+
+function endGalleryFeaturedSelection(saveSelection) {
+  if (saveSelection) {
+    var validKeys = {};
+    galleryItems.forEach(function(item) { validKeys[getGalleryItemKey(item)] = true; });
+    saveGalleryFeaturedKeys(gallerySelectionKeys.filter(function(key) { return validKeys[key]; }).slice(0, GALLERY_RECENT_LIMIT));
+    showUploadToast('展示照片已保存');
+  }
+  gallerySelectionMode = false;
+  gallerySelectionKeys = [];
+  galleryFilterValue = 'featured';
+  updateGalleryDateFilter();
+  updateGalleryFeaturedControls();
+  renderGalleryGrid();
+}
+
+function toggleGalleryFeaturedItem(item) {
+  var key = getGalleryItemKey(item);
+  var selectedIndex = gallerySelectionKeys.indexOf(key);
+  if (selectedIndex !== -1) {
+    gallerySelectionKeys.splice(selectedIndex, 1);
+  } else {
+    if (gallerySelectionKeys.length >= GALLERY_RECENT_LIMIT) {
+      showUploadToast('最多选择 ' + GALLERY_RECENT_LIMIT + ' 张展示照片');
+      return;
+    }
+    gallerySelectionKeys.push(key);
+  }
+  renderGalleryGrid();
+}
+
 function getFilteredGalleryItems() {
+  if (galleryFilterValue === 'featured') return getFeaturedGalleryItems();
   if (galleryFilterValue === 'recent') return getRecentGalleryItems();
   if (galleryFilterValue === 'all') return galleryItems.slice();
   if (galleryFilterValue === 'defaults') return galleryItems.filter(function(item) { return item.type === 'default'; });
@@ -4509,19 +4632,19 @@ function updateGalleryDateFilter() {
   var select = document.getElementById('galleryDateFilter');
   var userItems = galleryItems.filter(function(item) { return item.type === 'user'; });
   var dateBuckets = getGalleryDateBuckets();
-  var showFilter = userItems.length > 0 || galleryItems.length > GALLERY_RECENT_LIMIT;
+  var showFilter = gallerySelectionMode || userItems.length > 0 || galleryItems.length > GALLERY_RECENT_LIMIT;
   bar.hidden = !showFilter;
   if (!showFilter) {
-    galleryFilterValue = 'recent';
+    galleryFilterValue = 'featured';
     return;
   }
 
-  var allowedValues = ['recent', 'all', 'defaults'].concat(dateBuckets.map(function(bucket) { return bucket.dateKey; }));
-  if (allowedValues.indexOf(galleryFilterValue) === -1) galleryFilterValue = 'recent';
+  var allowedValues = ['featured', 'all', 'defaults'].concat(dateBuckets.map(function(bucket) { return bucket.dateKey; }));
+  if (allowedValues.indexOf(galleryFilterValue) === -1) galleryFilterValue = 'featured';
   select.innerHTML = '';
 
   [
-    { value: 'recent', text: '最近 ' + GALLERY_RECENT_LIMIT + ' 张' },
+    { value: 'featured', text: '展示的照片' },
     { value: 'all', text: '全部照片' },
     { value: 'defaults', text: '默认照片' }
   ].forEach(function(option) {
@@ -4542,8 +4665,12 @@ function updateGalleryDateFilter() {
 function updateGalleryViewSummary() {
   var summary = document.getElementById('galleryViewSummary');
   var visibleCount = galleryVisibleItems.length;
-  if (galleryFilterValue === 'recent' && galleryItems.length > GALLERY_RECENT_LIMIT) {
-    summary.textContent = '最近 ' + visibleCount + ' 张，另有 ' + (galleryItems.length - visibleCount) + ' 张已按日期收纳';
+  if (gallerySelectionMode) {
+    summary.textContent = '已选择 ' + gallerySelectionKeys.length + ' / ' + GALLERY_RECENT_LIMIT + ' 张用于展示';
+    return;
+  }
+  if (galleryFilterValue === 'featured') {
+    summary.textContent = '已展示 ' + visibleCount + ' 张精选照片';
     return;
   }
   summary.textContent = '已展示 ' + visibleCount + ' 张照片';
@@ -4552,9 +4679,15 @@ function updateGalleryViewSummary() {
 // Single gallery item element builder
 function createGalleryItemElement(item, idx) {
   var d = document.createElement('div');
-  d.className = 'gallery-item' + (item.type === 'user' ? ' user-photo' : '');
+  var isFeatured = getGallerySelectionKeys().indexOf(getGalleryItemKey(item)) !== -1;
+  d.className = 'gallery-item' + (item.type === 'user' ? ' user-photo' : '')
+    + (gallerySelectionMode ? ' gallery-selection-mode' : '')
+    + (gallerySelectionMode && isFeatured ? ' gallery-featured' : '');
   d.innerHTML = '<img src="' + item.src + '" alt="秦彻" loading="lazy" onerror="this.src=\'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 300 400%22><rect fill=%22%231a1a1a%22 width=%22300%22 height=%22400%22/><text fill=%22%23666%22 x=%22150%22 y=%22200%22 text-anchor=%22middle%22 font-size=%2214%22>暂无图片</text></svg>\'">'
     + '<div class="overlay"><span>' + (item.type === 'user' ? '我的 #' : '#') + String(idx+1).padStart(2,'0') + '</span></div>';
+  if (gallerySelectionMode) {
+    d.innerHTML += '<button class="gallery-feature-toggle" type="button" aria-pressed="' + isFeatured + '" title="' + (isFeatured ? '取消展示' : '设为展示照片') + '">✓</button>';
+  }
   d.innerHTML += '<button class="photo-delete-btn" data-dbid="' + (item.dbId || '') + '" data-filename="' + (item.filename || '') + '" data-type="' + item.type + '" title="删除照片">✕</button>';
   // Click
   d.addEventListener('click', function(e) {
@@ -4568,10 +4701,15 @@ function createGalleryItemElement(item, idx) {
       }
       return;
     }
+    if (gallerySelectionMode) {
+      e.stopPropagation();
+      toggleGalleryFeaturedItem(item);
+      return;
+    }
     openLightbox(idx);
   });
   // Drag
-  d.draggable = galleryFilterValue === 'all' || galleryFilterValue === 'defaults';
+  d.draggable = !gallerySelectionMode && (galleryFilterValue === 'all' || galleryFilterValue === 'defaults');
   d.dataset.galleryKey = getGalleryItemKey(item);
   d.addEventListener('dragstart', function(e) {
     e.dataTransfer.effectAllowed = 'move';
@@ -4612,6 +4750,7 @@ function renderGalleryGrid() {
 function renderGallery(userPhotos) {
   buildGalleryItems(userPhotos);
   updateGalleryDateFilter();
+  updateGalleryFeaturedControls();
   renderGalleryGrid();
 }
 
@@ -6273,6 +6412,21 @@ var btnUploadPhoto = document.getElementById('btnUploadPhoto');
 
 btnUploadPhoto.addEventListener('click', function() {
   photoFileInput.click();
+});
+
+var btnEditGalleryFeatured = document.getElementById('btnEditGalleryFeatured');
+var btnCancelGalleryFeatured = document.getElementById('btnCancelGalleryFeatured');
+
+btnEditGalleryFeatured.addEventListener('click', function() {
+  if (gallerySelectionMode) {
+    endGalleryFeaturedSelection(true);
+  } else {
+    beginGalleryFeaturedSelection();
+  }
+});
+
+btnCancelGalleryFeatured.addEventListener('click', function() {
+  endGalleryFeaturedSelection(false);
 });
 
 photoFileInput.addEventListener('change', function() {
