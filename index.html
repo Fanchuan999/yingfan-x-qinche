@@ -352,20 +352,13 @@ nav .links a:hover::after { width: 100%; }
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  filter: blur(24px) saturate(0.82);
+  filter: blur(34px) saturate(0.82);
   opacity: 0.14;
   transform: scale(1.08);
 }
 
 .hero-memory-loop::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  background:
-    linear-gradient(90deg, var(--bg) 0%, transparent 12%, transparent 88%, var(--bg) 100%),
-    linear-gradient(0deg, var(--bg) 0%, transparent 14%, transparent 86%, var(--bg) 100%);
-  pointer-events: none;
+  display: none;
 }
 
 .hero-memory-loop[hidden] {
@@ -380,6 +373,10 @@ nav .links a:hover::after { width: 100%; }
   z-index: 1;
   object-fit: cover;
   object-position: center;
+  filter: blur(8px) saturate(0.84);
+  transform: scale(1.04);
+  -webkit-mask-image: radial-gradient(ellipse 94% 90% at center, #000 44%, rgba(0,0,0,0.86) 64%, transparent 94%);
+  mask-image: radial-gradient(ellipse 94% 90% at center, #000 44%, rgba(0,0,0,0.86) 64%, transparent 94%);
   opacity: 0;
   transition: opacity 1.1s ease;
 }
@@ -389,7 +386,7 @@ nav .links a:hover::after { width: 100%; }
 }
 
 @media (max-width: 768px) {
-  .hero-memory-loop::before { filter: blur(14px) saturate(0.82); }
+  .hero-memory-loop::before { filter: blur(22px) saturate(0.82); }
 }
 
 @media (prefers-reduced-motion: reduce) {
