@@ -784,24 +784,45 @@ nav .links a:hover::after { width: 100%; }
 
 .quote-dots {
   display: flex;
-  gap: 10px;
+  flex-wrap: wrap;
+  gap: 6px;
   justify-content: center;
-  margin-top: 20px;
+  margin: 20px auto 0;
+  max-width: 360px;
 }
 
 .quote-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--red-dim);
+  appearance: none;
+  background: transparent;
+  border: 0;
   cursor: pointer;
-  transition: all 0.3s ease;
+  height: 26px;
+  padding: 0;
+  position: relative;
+  touch-action: manipulation;
+  width: 26px;
 }
 
-.quote-dot.active {
+.quote-dot::before {
+  background: var(--red-dim);
+  border-radius: 50%;
+  content: '';
+  height: 8px;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.3s ease;
+  width: 8px;
+}
+
+.quote-dot:hover::before { background: var(--red); }
+.quote-dot:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+
+.quote-dot.active::before {
   background: var(--red);
   box-shadow: 0 0 10px var(--red-glow);
-  width: 24px;
+  width: 20px;
   border-radius: 4px;
 }
 
@@ -3907,7 +3928,7 @@ footer .heart {
 .hero-state-copy { color: var(--text-muted); font-size: 0.74rem; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 #roomPanel .util-panel { max-width: 720px; }
-#timelinePanel .util-panel, #lettersPanel .util-panel { max-width: 640px; }
+#lettersPanel .util-panel { max-width: 640px; }
 
 .room-scene {
   border-bottom: 1px solid var(--border);
@@ -4046,6 +4067,126 @@ footer .heart {
 .timeline-empty,
 .letter-empty { color: var(--text-muted); font-size: 0.78rem; letter-spacing: 1px; padding: 8px 0; text-align: center; }
 
+.memory-timeline-section {
+  overflow: hidden;
+  padding: 28px 0 92px;
+  position: relative;
+  transition: padding 0.35s ease;
+  z-index: 2;
+}
+
+.memory-timeline-shell { margin: 0 auto; max-width: 1400px; padding: 0 20px; }
+.home-timeline-intro { color: var(--text-muted); font-size: 0.78rem; line-height: 1.8; margin: 0 auto 12px; max-width: 680px; text-align: center; }
+
+.home-memory-timeline-viewport {
+  cursor: grab;
+  margin: 0 -20px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  padding: 30px max(24px, calc((100vw - 1320px) / 2)) 48px;
+  scrollbar-color: var(--red-dark) transparent;
+  scrollbar-width: thin;
+  scroll-behavior: smooth;
+  scroll-snap-type: x proximity;
+  touch-action: pan-y;
+}
+
+.home-memory-timeline-viewport.is-dragging { cursor: grabbing; scroll-behavior: auto; user-select: none; }
+.home-memory-timeline-viewport::-webkit-scrollbar { height: 5px; }
+.home-memory-timeline-viewport::-webkit-scrollbar-thumb { background: var(--red-dark); }
+
+.home-memory-timeline-track {
+  align-items: stretch;
+  display: flex;
+  gap: 16px;
+  min-width: max-content;
+  padding-top: 42px;
+  position: relative;
+}
+
+.home-memory-timeline-track::before {
+  background: linear-gradient(90deg, transparent, var(--red-dark) 4%, var(--red-dark) 96%, transparent);
+  content: '';
+  height: 1px;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 18px;
+}
+
+.home-timeline-card {
+  appearance: none;
+  background: rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--border);
+  color: inherit;
+  cursor: pointer;
+  flex: 0 0 clamp(210px, 22vw, 290px);
+  min-height: 166px;
+  padding: 40px 20px 20px;
+  position: relative;
+  scroll-snap-align: center;
+  text-align: left;
+  transform-origin: center center;
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, min-height 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+}
+
+.home-timeline-card::before {
+  background: var(--red);
+  border: 3px solid var(--bg);
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px var(--red-dark);
+  content: '';
+  height: 10px;
+  left: 19px;
+  position: absolute;
+  top: -29px;
+  transition: all 0.3s ease;
+  width: 10px;
+}
+
+.home-timeline-card.timeline-entry-photos::before { background: var(--gold); box-shadow: 0 0 0 1px var(--gold); }
+.home-timeline-card.timeline-entry-custom::before { background: var(--text-light); }
+.home-timeline-card:hover { border-color: var(--red-dark); transform: translateY(-4px); }
+.home-timeline-card:focus-visible { outline: 2px solid var(--red); outline-offset: 4px; }
+
+.home-timeline-card.is-active {
+  background: rgba(196, 30, 58, 0.09);
+  border-color: var(--red);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.16);
+  min-height: 278px;
+  transform: translateY(-12px) scale(1.035);
+  z-index: 1;
+}
+
+.home-timeline-card.is-active::before { box-shadow: 0 0 0 1px var(--red), 0 0 16px var(--red-glow); transform: scale(1.2); }
+.home-timeline-era { color: var(--red); display: block; font-size: 0.65rem; letter-spacing: 2px; line-height: 1.5; }
+.home-timeline-date { color: var(--text-muted); display: block; font-size: 0.67rem; letter-spacing: 1px; margin-top: 9px; }
+.home-timeline-title { color: var(--text-light); font-size: 1rem; font-weight: 500; letter-spacing: 1px; line-height: 1.5; margin: 6px 0 0; }
+.home-timeline-copy { color: var(--text); font-size: 0.76rem; line-height: 1.85; margin: 0; max-height: 0; opacity: 0; overflow: hidden; transition: max-height 0.35s ease, margin 0.35s ease, opacity 0.25s ease; white-space: pre-wrap; }
+.home-timeline-card.is-active .home-timeline-copy { margin-top: 12px; max-height: 150px; opacity: 1; }
+.home-timeline-delete { background: none; border: 0; color: var(--text-muted); cursor: pointer; font: inherit; font-size: 0.66rem; letter-spacing: 1px; margin-top: 12px; padding: 0; }
+.home-timeline-delete:hover { color: var(--red); }
+
+.timeline-composer { margin: 4px auto 0; max-width: 680px; text-align: center; }
+.memory-inline-form { border-bottom: 0; border-top: 1px solid var(--border); display: none; margin: 16px 0 0; padding: 18px 0 0; text-align: left; }
+.memory-inline-form.is-open { display: grid; }
+
+.memory-timeline-section.is-focus-mode { padding-bottom: 126px; padding-top: 72px; }
+.memory-timeline-section.is-focus-mode .home-memory-timeline-viewport { align-items: center; display: flex; min-height: 390px; }
+.memory-timeline-section.is-focus-mode .home-timeline-card { opacity: 0.58; }
+.memory-timeline-section.is-focus-mode .home-timeline-card.is-active { opacity: 1; transform: translateY(-14px) scale(1.07); }
+
+@media (max-width: 768px) {
+  .memory-timeline-section { padding-bottom: 70px; }
+  .home-memory-timeline-viewport { padding: 30px 20px 40px; }
+  .home-memory-timeline-track { gap: 12px; }
+  .home-timeline-card { flex-basis: min(76vw, 280px); min-height: 158px; padding: 38px 17px 18px; }
+  .home-timeline-card.is-active { min-height: 270px; transform: translateY(-10px) scale(1.025); }
+  .memory-timeline-section.is-focus-mode { padding-bottom: 86px; padding-top: 52px; }
+  .memory-timeline-section.is-focus-mode .home-memory-timeline-viewport { min-height: 342px; }
+  .memory-timeline-section.is-focus-mode .home-timeline-card.is-active { transform: translateY(-12px) scale(1.04); }
+}
+
 .letter-tools { align-items: center; display: flex; gap: 8px; grid-column: 1 / -1; }
 .letter-tools .companion-action-btn { flex: 0 0 auto; }
 .letter-form-status { color: var(--text-muted); font-size: 0.7rem; min-height: 1.2em; }
@@ -4103,7 +4244,7 @@ footer .heart {
     </button>
     <div class="nav-dropdown" id="navDropdown">
       <div class="dropdown-item" data-panel="room">我们的小屋</div>
-      <div class="dropdown-item" data-panel="timeline">回忆时间轴</div>
+      <div class="dropdown-item" data-scroll-target="timeline">回忆时间轴</div>
       <div class="dropdown-item" data-panel="letters">未来信件</div>
       <div class="dropdown-item" data-panel="pomodoro">番茄钟</div>
       <div class="dropdown-item" data-panel="period">经期记录</div>
@@ -4187,10 +4328,37 @@ footer .heart {
     </button>
   </div>
 
-  <div class="scroll-indicator" onclick="document.getElementById('gallery').scrollIntoView()">
+  <div class="scroll-indicator" onclick="document.getElementById('timeline').scrollIntoView()">
     <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5">
       <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
+  </div>
+</section>
+
+<!-- Memory Timeline -->
+<section class="memory-timeline-section" id="timeline" tabindex="-1">
+  <div class="section-header">
+    <div class="icon-row">
+      <svg viewBox="0 0 24 24" style="fill:var(--red);opacity:0.6;width:24px;height:24px;"><path d="M3 12h18M7 7v10M12 5v14M17 7v10"/></svg>
+      <h2>回忆时间轴</h2>
+      <svg viewBox="0 0 24 24" style="fill:var(--red);opacity:0.6;width:24px;height:24px;"><path d="M3 12h18M7 7v10M12 5v14M17 7v10"/></svg>
+    </div>
+    <p class="sub">MEMORY TIMELINE</p>
+  </div>
+  <div class="memory-timeline-shell">
+    <p class="home-timeline-intro">从最初的相遇，到还在继续的现在。每一段回忆，都留在这里。</p>
+    <div class="home-memory-timeline-viewport" id="homeMemoryTimelineViewport" aria-label="回忆时间轴">
+      <div class="home-memory-timeline-track" id="memoryTimeline"></div>
+    </div>
+    <div class="timeline-composer">
+      <button class="section-action-btn" id="btnToggleMemoryForm" type="button" aria-expanded="false">＋ 记录瞬间</button>
+      <form class="memory-form memory-inline-form" id="memoryForm">
+        <input class="memory-form-input" id="memoryDateInput" type="date" aria-label="回忆日期" required>
+        <input class="memory-form-input" id="memoryTitleInput" type="text" maxlength="40" placeholder="这一刻，叫什么" aria-label="回忆标题" required>
+        <textarea class="memory-form-input memory-form-textarea" id="memoryNoteInput" maxlength="300" placeholder="把这一段记下来。" aria-label="回忆内容"></textarea>
+        <button class="companion-action-btn primary" type="submit">收进回忆</button>
+      </form>
+    </div>
   </div>
 </section>
 
@@ -4636,24 +4804,6 @@ footer .heart {
       <button class="companion-action-btn primary" id="btnRoomTimeline" type="button">查看回忆时间轴</button>
       <button class="companion-action-btn" id="btnRoomLetters" type="button">留一封未来信件</button>
     </div>
-  </div>
-</div>
-
-<!-- Memory Timeline Panel -->
-<div class="util-overlay" id="timelinePanel">
-  <div class="util-panel">
-    <div class="util-panel-header">
-      <h3>回忆时间轴</h3>
-      <button class="util-panel-close" onclick="closeUtilPanel('timeline')">✕</button>
-    </div>
-    <p class="timeline-intro">故事从来不是一条直线。这里收着你们共同走过的路，也留给你写下新的瞬间。</p>
-    <form class="memory-form" id="memoryForm">
-      <input class="memory-form-input" id="memoryDateInput" type="date" aria-label="回忆日期" required>
-      <input class="memory-form-input" id="memoryTitleInput" type="text" maxlength="40" placeholder="这一刻，叫什么" aria-label="回忆标题" required>
-      <textarea class="memory-form-input memory-form-textarea" id="memoryNoteInput" maxlength="300" placeholder="把这一段记下来。" aria-label="回忆内容"></textarea>
-      <button class="companion-action-btn primary" type="submit">收进回忆</button>
-    </form>
-    <div class="memory-timeline" id="memoryTimeline"></div>
   </div>
 </div>
 
@@ -5674,15 +5824,24 @@ const quoteText = document.getElementById('quoteText');
 const quoteDots = document.getElementById('quoteDots');
 var quoteIndex = 0;
 var quoteIntervalId = null;
+var quoteTransitionTimer = null;
 
 function renderQuoteDots() {
   var allQuotes = getAllQuotes();
   quoteDots.innerHTML = '';
   allQuotes.forEach(function(_, i) {
-    var dot = document.createElement('div');
-    dot.className = 'quote-dot' + (i === 0 ? ' active' : '');
+    var dot = document.createElement('button');
+    dot.type = 'button';
+    dot.className = 'quote-dot' + (i === quoteIndex ? ' active' : '');
+    dot.setAttribute('aria-label', '切换到第 ' + (i + 1) + ' 条语录');
+    dot.setAttribute('aria-pressed', i === quoteIndex ? 'true' : 'false');
     if (i >= quotes.length) { dot.classList.add('quote-custom-dot'); }
-    dot.addEventListener('click', function() { showQuote(i); });
+    dot.addEventListener('click', function(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      showQuote(i);
+      resetQuoteRotation();
+    });
     quoteDots.appendChild(dot);
   });
 }
@@ -5691,23 +5850,26 @@ function showQuote(index) {
   var allQuotes = getAllQuotes();
   if (allQuotes.length === 0) { quoteText.textContent = ''; return; }
   if (index >= allQuotes.length) { index = 0; }
+  if (index < 0) { index = allQuotes.length - 1; }
   quoteIndex = index;
+  if (quoteTransitionTimer) clearTimeout(quoteTransitionTimer);
   quoteText.style.opacity = '0';
   quoteText.style.transform = 'translateY(10px)';
-  setTimeout(function() {
+  quoteTransitionTimer = setTimeout(function() {
     quoteText.textContent = allQuotes[index];
     quoteText.style.opacity = '1';
     quoteText.style.transform = 'translateY(0)';
   }, 300);
 
   var dots = document.querySelectorAll('.quote-dot');
-  dots.forEach(function(d, i) { d.classList.toggle('active', i === index); });
+  dots.forEach(function(d, i) {
+    var isActive = i === index;
+    d.classList.toggle('active', isActive);
+    d.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+  });
 }
 
-function refreshQuotes() {
-  renderQuoteDots();
-  quoteIndex = 0;
-  showQuote(0);
+function resetQuoteRotation() {
   if (quoteIntervalId) clearInterval(quoteIntervalId);
   quoteIntervalId = setInterval(function() {
     var allQuotes = getAllQuotes();
@@ -5717,17 +5879,19 @@ function refreshQuotes() {
   }, 5000);
 }
 
+function refreshQuotes() {
+  renderQuoteDots();
+  quoteIndex = 0;
+  showQuote(0);
+  resetQuoteRotation();
+}
+
 // Init
 renderQuoteDots();
 quoteText.textContent = getAllQuotes()[0] || '';
 quoteText.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
 
-quoteIntervalId = setInterval(function() {
-  var allQuotes = getAllQuotes();
-  if (allQuotes.length === 0) return;
-  quoteIndex = (quoteIndex + 1) % allQuotes.length;
-  showQuote(quoteIndex);
-}, 5000);
+resetQuoteRotation();
 
 // ============ Quote Touch Swipe ============
 (function() {
@@ -5754,14 +5918,7 @@ quoteIntervalId = setInterval(function() {
         quoteIndex = (quoteIndex - 1 + allQuotes.length) % allQuotes.length;
       }
       showQuote(quoteIndex);
-      // Reset auto-rotation timer
-      if (quoteIntervalId) clearInterval(quoteIntervalId);
-      quoteIntervalId = setInterval(function() {
-        var qs = getAllQuotes();
-        if (qs.length === 0) return;
-        quoteIndex = (quoteIndex + 1) % qs.length;
-        showQuote(quoteIndex);
-      }, 5000);
+      resetQuoteRotation();
     }
   });
 })();
@@ -6347,6 +6504,12 @@ document.addEventListener('click', function(e) {
 // Open panels from dropdown
 document.querySelectorAll('.dropdown-item').forEach(function(item) {
   item.addEventListener('click', function() {
+    var scrollTarget = this.dataset.scrollTarget;
+    if (scrollTarget) {
+      navDropdown.classList.remove('open');
+      scrollToMemoryTimeline();
+      return;
+    }
     var panel = this.dataset.panel;
     navDropdown.classList.remove('open');
     openUtilPanel(panel);
@@ -6367,7 +6530,6 @@ function openUtilPanel(name) {
   if (name === 'backup') initBackupPanel();
   if (name === 'privateVault') initPrivateVault();
   if (name === 'room') initRoomPanel();
-  if (name === 'timeline') initTimelinePanel();
   if (name === 'letters') initLettersPanel();
 }
 
@@ -10399,6 +10561,44 @@ function getTimelineEntries() {
   });
 }
 
+var homeTimelineSelectedId = 'default-dragon-tomb';
+var homeTimelineInteractionsBound = false;
+var homeTimelineDragState = { active: false, didDrag: false, pointerId: null, startX: 0, startScroll: 0 };
+var timelineFocusRestoreY = null;
+
+function getTimelineSelection(entries) {
+  var hasSelected = entries.some(function(entry) { return entry.id === homeTimelineSelectedId; });
+  if (hasSelected) return homeTimelineSelectedId;
+  var currentEntry = entries.filter(function(entry) { return entry.id === 'default-dragon-tomb'; })[0];
+  homeTimelineSelectedId = currentEntry ? currentEntry.id : (entries.length ? entries[entries.length - 1].id : '');
+  return homeTimelineSelectedId;
+}
+
+function updateHomeTimelineSelection(id) {
+  document.querySelectorAll('.home-timeline-card').forEach(function(card) {
+    var isActive = card.dataset.entryId === id;
+    card.classList.toggle('is-active', isActive);
+    card.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+  });
+}
+
+function centerHomeTimelineEntry(id, smooth) {
+  var viewport = document.getElementById('homeMemoryTimelineViewport');
+  if (!viewport || !id) return;
+  var cards = viewport.querySelectorAll('.home-timeline-card');
+  var card = Array.prototype.find.call(cards, function(item) { return item.dataset.entryId === id; });
+  if (!card) return;
+  var left = Math.max(0, card.offsetLeft - (viewport.clientWidth - card.offsetWidth) / 2);
+  viewport.scrollTo({ left: left, behavior: smooth === false ? 'auto' : 'smooth' });
+}
+
+function selectHomeTimelineEntry(id, shouldCenter) {
+  if (!id) return;
+  homeTimelineSelectedId = id;
+  updateHomeTimelineSelection(id);
+  if (shouldCenter) centerHomeTimelineEntry(id, true);
+}
+
 function renderMemoryTimeline() {
   var container = document.getElementById('memoryTimeline');
   if (!container) return;
@@ -10408,66 +10608,173 @@ function renderMemoryTimeline() {
     container.innerHTML = '<p class="timeline-empty">还没有新的回忆。</p>';
     return;
   }
+
+  var selectedId = getTimelineSelection(entries);
   entries.forEach(function(entry) {
     var article = document.createElement('article');
-    article.className = 'memory-entry memory-entry-' + entry.type;
+    article.className = 'home-timeline-card timeline-entry-' + entry.type;
+    article.dataset.entryId = entry.id;
+    article.tabIndex = 0;
+    article.setAttribute('role', 'button');
+    article.setAttribute('aria-label', '查看回忆：' + entry.title);
+    article.setAttribute('aria-pressed', entry.id === selectedId ? 'true' : 'false');
+    if (entry.id === selectedId) article.classList.add('is-active');
 
     var era = document.createElement('span');
-    era.className = 'timeline-era';
+    era.className = 'home-timeline-era';
     era.textContent = entry.era || '回忆';
 
-    var head = document.createElement('div');
-    head.className = 'memory-entry-head';
-    var title = document.createElement('h4');
-    title.className = 'memory-entry-title';
-    title.textContent = entry.title;
     var date = document.createElement('time');
-    date.className = 'memory-entry-date';
+    date.className = 'home-timeline-date';
     date.dateTime = entry.date;
     date.textContent = formatCompanionDate(entry.date);
-    head.appendChild(title);
-    head.appendChild(date);
+
+    var title = document.createElement('h3');
+    title.className = 'home-timeline-title';
+    title.textContent = entry.title;
+
     article.appendChild(era);
-    article.appendChild(head);
+    article.appendChild(date);
+    article.appendChild(title);
 
     if (entry.content) {
       var copy = document.createElement('p');
-      copy.className = 'memory-entry-copy';
+      copy.className = 'home-timeline-copy';
       copy.textContent = entry.content;
       article.appendChild(copy);
     }
 
     if (entry.type === 'custom') {
-      var actions = document.createElement('div');
-      actions.className = 'memory-entry-actions';
       var remove = document.createElement('button');
-      remove.className = 'memory-entry-delete';
+      remove.className = 'home-timeline-delete';
       remove.type = 'button';
       remove.textContent = '删除这段回忆';
-      remove.addEventListener('click', function() { deleteMemoryEntry(entry.id); });
-      actions.appendChild(remove);
-      article.appendChild(actions);
+      remove.addEventListener('click', function(event) {
+        event.stopPropagation();
+        deleteMemoryEntry(entry.id);
+      });
+      article.appendChild(remove);
     }
+
+    article.addEventListener('click', function() {
+      if (homeTimelineDragState.didDrag) return;
+      selectHomeTimelineEntry(entry.id, true);
+    });
+    article.addEventListener('keydown', function(event) {
+      if (event.key !== 'Enter') return;
+      event.preventDefault();
+      selectHomeTimelineEntry(entry.id, true);
+    });
     container.appendChild(article);
   });
 }
 
-function initTimelinePanel() {
+function scrollToMemoryTimeline() {
+  var section = document.getElementById('timeline');
+  if (!section) return;
+  section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  window.setTimeout(function() { centerHomeTimelineEntry(homeTimelineSelectedId, true); }, 260);
+}
+
+function toggleTimelineFocus() {
+  var section = document.getElementById('timeline');
+  if (!section) return;
+  var isFocused = section.classList.contains('is-focus-mode');
+  if (isFocused) {
+    section.classList.remove('is-focus-mode');
+    if (timelineFocusRestoreY !== null) window.scrollTo({ top: timelineFocusRestoreY, behavior: 'smooth' });
+    timelineFocusRestoreY = null;
+    return;
+  }
+  timelineFocusRestoreY = window.scrollY;
+  section.classList.add('is-focus-mode');
+  section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  window.setTimeout(function() { centerHomeTimelineEntry(homeTimelineSelectedId, true); }, 300);
+}
+
+function isTimelineShortcutTarget(target) {
+  return target && target.closest('input, textarea, select, button, a, [contenteditable="true"], .util-overlay.active');
+}
+
+function initMemoryTimeline() {
   var date = document.getElementById('memoryDateInput');
   if (date && !date.value) date.value = getTodayKey();
   renderMemoryTimeline();
+  if (homeTimelineInteractionsBound) return;
+  homeTimelineInteractionsBound = true;
+
+  var viewport = document.getElementById('homeMemoryTimelineViewport');
+  var section = document.getElementById('timeline');
+  if (!viewport || !section) return;
+
+  viewport.addEventListener('pointerdown', function(event) {
+    if (event.pointerType === 'mouse' && event.button !== 0) return;
+    if (event.target.closest('.home-timeline-delete')) return;
+    homeTimelineDragState.active = true;
+    homeTimelineDragState.didDrag = false;
+    homeTimelineDragState.pointerId = event.pointerId;
+    homeTimelineDragState.startX = event.clientX;
+    homeTimelineDragState.startScroll = viewport.scrollLeft;
+    viewport.setPointerCapture(event.pointerId);
+    viewport.classList.add('is-dragging');
+  });
+
+  viewport.addEventListener('pointermove', function(event) {
+    if (!homeTimelineDragState.active || homeTimelineDragState.pointerId !== event.pointerId) return;
+    var distance = event.clientX - homeTimelineDragState.startX;
+    if (Math.abs(distance) > 4) homeTimelineDragState.didDrag = true;
+    if (!homeTimelineDragState.didDrag) return;
+    viewport.scrollLeft = homeTimelineDragState.startScroll - distance;
+    event.preventDefault();
+  });
+
+  function endTimelineDrag(event) {
+    if (!homeTimelineDragState.active || homeTimelineDragState.pointerId !== event.pointerId) return;
+    if (viewport.hasPointerCapture(event.pointerId)) viewport.releasePointerCapture(event.pointerId);
+    homeTimelineDragState.active = false;
+    homeTimelineDragState.pointerId = null;
+    viewport.classList.remove('is-dragging');
+    window.setTimeout(function() { homeTimelineDragState.didDrag = false; }, 0);
+  }
+
+  viewport.addEventListener('pointerup', endTimelineDrag);
+  viewport.addEventListener('pointercancel', endTimelineDrag);
+
+  var lastTimelineTouch = 0;
+  section.addEventListener('touchend', function(event) {
+    if (isTimelineShortcutTarget(event.target)) return;
+    var now = Date.now();
+    if (now - lastTimelineTouch < 320) {
+      lastTimelineTouch = 0;
+      event.preventDefault();
+      toggleTimelineFocus();
+      return;
+    }
+    lastTimelineTouch = now;
+  }, { passive: false });
+
+  document.addEventListener('keydown', function(event) {
+    if (event.code !== 'Space' || event.repeat || document.querySelector('.util-overlay.active') || isTimelineShortcutTarget(event.target)) return;
+    event.preventDefault();
+    toggleTimelineFocus();
+  });
 }
 
 function addMemoryEntry(date, title, content) {
   var entries = loadMemoryEntries();
-  entries.push({
+  var entry = {
     id: 'memory_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8),
     date: date,
     title: title,
     content: content,
     createdAt: Date.now()
-  });
-  if (saveCompanionList(MEMORY_TIMELINE_KEY, entries)) renderMemoryTimeline();
+  };
+  entries.push(entry);
+  if (saveCompanionList(MEMORY_TIMELINE_KEY, entries)) {
+    homeTimelineSelectedId = entry.id;
+    renderMemoryTimeline();
+    window.setTimeout(function() { centerHomeTimelineEntry(entry.id, true); }, 30);
+  }
 }
 
 function deleteMemoryEntry(id) {
@@ -10876,12 +11183,21 @@ document.getElementById('roomStatePicker').addEventListener('change', function(e
 });
 document.getElementById('btnRoomTimeline').addEventListener('click', function() {
   closeUtilPanel('room');
-  openUtilPanel('timeline');
+  scrollToMemoryTimeline();
 });
 document.getElementById('btnRoomLetters').addEventListener('click', function() {
   closeUtilPanel('room');
   openUtilPanel('letters');
 });
+
+document.getElementById('btnToggleMemoryForm').addEventListener('click', function() {
+  var form = document.getElementById('memoryForm');
+  var isOpen = form.classList.toggle('is-open');
+  this.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  if (isOpen) document.getElementById('memoryTitleInput').focus();
+});
+
+initMemoryTimeline();
 
 document.getElementById('memoryForm').addEventListener('submit', function(event) {
   event.preventDefault();
@@ -10893,6 +11209,8 @@ document.getElementById('memoryForm').addEventListener('submit', function(event)
   addMemoryEntry(date.value, titleValue, note.value.trim());
   title.value = '';
   note.value = '';
+  this.classList.remove('is-open');
+  document.getElementById('btnToggleMemoryForm').setAttribute('aria-expanded', 'false');
   showUploadToast('这一段已经收进回忆。');
 });
 
