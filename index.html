@@ -4165,8 +4165,52 @@ footer .heart {
 .home-timeline-title { color: var(--text-light); font-size: 1rem; font-weight: 500; letter-spacing: 1px; line-height: 1.5; margin: 6px 0 0; }
 .home-timeline-copy { color: var(--text); font-size: 0.76rem; line-height: 1.85; margin: 0; max-height: 0; opacity: 0; overflow: hidden; transition: max-height 0.35s ease, margin 0.35s ease, opacity 0.25s ease; white-space: pre-wrap; }
 .home-timeline-card.is-active .home-timeline-copy { margin-top: 12px; max-height: 150px; opacity: 1; }
-.home-timeline-delete { background: none; border: 0; color: var(--text-muted); cursor: pointer; font: inherit; font-size: 0.66rem; letter-spacing: 1px; margin-top: 12px; padding: 0; }
-.home-timeline-delete:hover { color: var(--red); }
+.home-timeline-delete {
+  align-items: center;
+  background: rgba(0, 0, 0, 0.12);
+  border: 1px solid transparent;
+  border-radius: 50%;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  font: inherit;
+  font-size: 1rem;
+  height: 25px;
+  justify-content: center;
+  line-height: 1;
+  padding: 0;
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  transition: all 0.2s ease;
+  width: 25px;
+  z-index: 2;
+}
+
+.home-timeline-delete:hover,
+.home-timeline-delete:focus-visible { border-color: var(--red-dark); color: var(--red); outline: none; }
+
+.timeline-delete-confirm {
+  align-items: center;
+  background: rgba(2, 2, 2, 0.56);
+  display: none;
+  inset: 0;
+  justify-content: center;
+  padding: 20px;
+  position: fixed;
+  z-index: 700;
+}
+
+.timeline-delete-confirm.active { display: flex; }
+.timeline-delete-confirm-box { background: var(--bg-card); border: 1px solid var(--red-dark); border-radius: 6px; box-shadow: 0 18px 44px rgba(0, 0, 0, 0.28); max-width: 320px; padding: 24px; text-align: center; width: 100%; }
+.timeline-delete-confirm-title { color: var(--text-light); font-size: 0.96rem; letter-spacing: 1px; margin: 0; }
+.timeline-delete-confirm-copy { color: var(--text-muted); font-size: 0.76rem; letter-spacing: 1px; line-height: 1.7; margin: 10px 0 20px; }
+.timeline-delete-confirm-actions { display: flex; gap: 10px; justify-content: center; }
+.timeline-delete-confirm-actions button { font: inherit; font-size: 0.74rem; letter-spacing: 1px; min-width: 82px; padding: 9px 13px; }
+.timeline-delete-cancel { background: transparent; border: 1px solid var(--border); color: var(--text-muted); }
+.timeline-delete-confirm-btn { background: var(--red-dark); border: 1px solid var(--red-dark); color: #fff; }
+.timeline-delete-cancel:hover { border-color: var(--red-dark); color: var(--text-light); }
+.timeline-delete-confirm-btn:hover { background: var(--red); border-color: var(--red); }
 
 .timeline-composer { margin: 4px auto 0; max-width: 680px; text-align: center; }
 .memory-inline-form { border-bottom: 0; border-top: 1px solid var(--border); display: none; margin: 16px 0 0; padding: 18px 0 0; text-align: left; }
@@ -4467,6 +4511,18 @@ footer .heart {
 
 <!-- Upload Toast -->
 <div class="upload-toast" id="uploadToast"></div>
+
+<!-- Timeline Delete Confirmation -->
+<div class="timeline-delete-confirm" id="timelineDeleteConfirm" role="dialog" aria-modal="true" aria-labelledby="timelineDeleteConfirmTitle" aria-hidden="true">
+  <div class="timeline-delete-confirm-box">
+    <p class="timeline-delete-confirm-title" id="timelineDeleteConfirmTitle">是否删除？</p>
+    <p class="timeline-delete-confirm-copy">删除后无法复原</p>
+    <div class="timeline-delete-confirm-actions">
+      <button class="timeline-delete-cancel" id="btnTimelineDeleteCancel" type="button">取消</button>
+      <button class="timeline-delete-confirm-btn" id="btnTimelineDeleteConfirm" type="button">确认</button>
+    </div>
+  </div>
+</div>
 
 <!-- Footer -->
 <footer>
@@ -10566,6 +10622,7 @@ var homeTimelineSelectedId = 'default-dragon-tomb';
 var homeTimelineInteractionsBound = false;
 var homeTimelineDragState = { active: false, didDrag: false, ignoreClickUntil: 0, pointerId: null, source: '', startX: 0, startScroll: 0 };
 var timelineFocusRestoreY = null;
+var pendingMemoryDeletionId = '';
 
 function getTimelineSelection(entries) {
   var hasSelected = entries.some(function(entry) { return entry.id === homeTimelineSelectedId; });
@@ -10649,12 +10706,14 @@ function renderMemoryTimeline() {
       var remove = document.createElement('button');
       remove.className = 'home-timeline-delete';
       remove.type = 'button';
-      remove.textContent = '删除这段回忆';
+      remove.textContent = '×';
+      remove.setAttribute('aria-label', '删除这段回忆');
+      remove.title = '删除这段回忆';
       remove.addEventListener('click', function(event) {
         event.stopPropagation();
-        deleteMemoryEntry(entry.id);
+        openMemoryDeleteConfirm(entry.id);
       });
-    article.appendChild(remove);
+      article.appendChild(remove);
     }
 
     article.addEventListener('click', function() {
@@ -10792,7 +10851,7 @@ function initMemoryTimeline() {
   }, { passive: false });
 
   document.addEventListener('keydown', function(event) {
-    if (event.code !== 'Space' || event.repeat || document.querySelector('.util-overlay.active') || isTimelineShortcutTarget(event.target)) return;
+    if (event.code !== 'Space' || event.repeat || document.querySelector('.util-overlay.active') || document.getElementById('timelineDeleteConfirm').classList.contains('active') || isTimelineShortcutTarget(event.target)) return;
     event.preventDefault();
     toggleTimelineFocus();
   });
@@ -10818,6 +10877,22 @@ function addMemoryEntry(date, title, content) {
 function deleteMemoryEntry(id) {
   var entries = loadMemoryEntries().filter(function(entry) { return entry.id !== id; });
   if (saveCompanionList(MEMORY_TIMELINE_KEY, entries)) renderMemoryTimeline();
+}
+
+function openMemoryDeleteConfirm(id) {
+  if (!id) return;
+  pendingMemoryDeletionId = id;
+  var dialog = document.getElementById('timelineDeleteConfirm');
+  dialog.classList.add('active');
+  dialog.setAttribute('aria-hidden', 'false');
+  document.getElementById('btnTimelineDeleteCancel').focus();
+}
+
+function closeMemoryDeleteConfirm() {
+  pendingMemoryDeletionId = '';
+  var dialog = document.getElementById('timelineDeleteConfirm');
+  dialog.classList.remove('active');
+  dialog.setAttribute('aria-hidden', 'true');
 }
 
 function loadFutureLetters() {
@@ -11233,6 +11308,21 @@ document.getElementById('btnToggleMemoryForm').addEventListener('click', functio
   var isOpen = form.classList.toggle('is-open');
   this.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
   if (isOpen) document.getElementById('memoryTitleInput').focus();
+});
+
+document.getElementById('btnTimelineDeleteCancel').addEventListener('click', closeMemoryDeleteConfirm);
+document.getElementById('btnTimelineDeleteConfirm').addEventListener('click', function() {
+  var id = pendingMemoryDeletionId;
+  closeMemoryDeleteConfirm();
+  if (id) deleteMemoryEntry(id);
+});
+document.getElementById('timelineDeleteConfirm').addEventListener('click', function(event) {
+  if (event.target === this) closeMemoryDeleteConfirm();
+});
+document.addEventListener('keydown', function(event) {
+  if (event.key === 'Escape' && document.getElementById('timelineDeleteConfirm').classList.contains('active')) {
+    closeMemoryDeleteConfirm();
+  }
 });
 
 initMemoryTimeline();
