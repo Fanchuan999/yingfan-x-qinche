@@ -5983,10 +5983,6 @@ console.log('%c秦彻·你 %c已就绪',
   'color: #8a7e72;');
 console.log('%c"总会有人欣赏你本来的样子，比如我"', 'color: #c9a96e; font-style: italic;');
 
-// 应用个性化设置
-applyNickname();
-applyFont();
-
 // ============ Music Player ============
 const musicFiles = [
   "恋与深空 - 不设防禁区.mp3",
@@ -7928,7 +7924,13 @@ function applyNickname() {
   // 更新 footer
   var footerP = document.querySelector('footer p');
   if (footerP) {
-    footerP.innerHTML = displayName + ' <span class="heart">♥</span> · 2026';
+    footerP.textContent = '';
+    footerP.appendChild(document.createTextNode(displayName + ' '));
+    var heart = document.createElement('span');
+    heart.className = 'heart';
+    heart.textContent = '♥';
+    footerP.appendChild(heart);
+    footerP.appendChild(document.createTextNode(' · 2026'));
   }
 
   // 更新 index.html 导航栏 logo（如果在 iframe 中或单独用）
@@ -7950,16 +7952,24 @@ function applyFont() {
   document.body.style.fontFamily = fontMap[font] || '';
 }
 
+// Apply saved settings only after their local-storage keys are available.
+applyNickname();
+applyFont();
+
+var personalizeControlsBound = false;
+
 function initPersonalizePanel() {
   var input = document.getElementById('inputNickname');
   var currentName = loadNickname();
   if (input) {
     input.value = currentName;
-    input.addEventListener('input', function() {
-      var val = this.value.trim();
-      saveNickname(val);
-      applyNickname();
-    });
+    if (!personalizeControlsBound) {
+      input.addEventListener('input', function() {
+        var val = this.value.trim();
+        saveNickname(val);
+        applyNickname();
+      });
+    }
   }
 
   // 字体选择
@@ -7971,13 +7981,16 @@ function initPersonalizePanel() {
     } else {
       btn.classList.remove('active');
     }
-    btn.addEventListener('click', function() {
-      fontBtns.forEach(function(b) { b.classList.remove('active'); });
-      this.classList.add('active');
-      saveFont(this.dataset.font);
-      applyFont();
-    });
+    if (!personalizeControlsBound) {
+      btn.addEventListener('click', function() {
+        fontBtns.forEach(function(b) { b.classList.remove('active'); });
+        this.classList.add('active');
+        saveFont(this.dataset.font);
+        applyFont();
+      });
+    }
   });
+  personalizeControlsBound = true;
 }
 
 function initManagePanel() {
