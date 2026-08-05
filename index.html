@@ -4091,7 +4091,8 @@ footer .heart {
   touch-action: pan-y;
 }
 
-.home-memory-timeline-viewport.is-dragging { cursor: grabbing; scroll-behavior: auto; user-select: none; }
+.home-memory-timeline-viewport.is-dragging,
+.home-memory-timeline-viewport.is-dragging * { cursor: grabbing; scroll-behavior: auto; user-select: none; }
 .home-memory-timeline-viewport::-webkit-scrollbar { height: 5px; }
 .home-memory-timeline-viewport::-webkit-scrollbar-thumb { background: var(--red-dark); }
 
@@ -10563,7 +10564,7 @@ function getTimelineEntries() {
 
 var homeTimelineSelectedId = 'default-dragon-tomb';
 var homeTimelineInteractionsBound = false;
-var homeTimelineDragState = { active: false, didDrag: false, pointerId: null, startX: 0, startScroll: 0 };
+var homeTimelineDragState = { active: false, didDrag: false, ignoreClickUntil: 0, pointerId: null, source: '', startX: 0, startScroll: 0 };
 var timelineFocusRestoreY = null;
 
 function getTimelineSelection(entries) {
@@ -10653,11 +10654,11 @@ function renderMemoryTimeline() {
         event.stopPropagation();
         deleteMemoryEntry(entry.id);
       });
-      article.appendChild(remove);
+    article.appendChild(remove);
     }
 
     article.addEventListener('click', function() {
-      if (homeTimelineDragState.didDrag) return;
+      if (Date.now() < homeTimelineDragState.ignoreClickUntil) return;
       selectHomeTimelineEntry(entry.id, true);
     });
     article.addEventListener('keydown', function(event) {
@@ -10707,38 +10708,75 @@ function initMemoryTimeline() {
   var section = document.getElementById('timeline');
   if (!viewport || !section) return;
 
-  viewport.addEventListener('pointerdown', function(event) {
-    if (event.pointerType === 'mouse' && event.button !== 0) return;
-    if (event.target.closest('.home-timeline-delete')) return;
+  function isTimelineDeleteTarget(target) {
+    return target && target.closest && target.closest('.home-timeline-delete');
+  }
+
+  function startTimelineDrag(clientX, source, pointerId) {
     homeTimelineDragState.active = true;
     homeTimelineDragState.didDrag = false;
-    homeTimelineDragState.pointerId = event.pointerId;
-    homeTimelineDragState.startX = event.clientX;
+    homeTimelineDragState.pointerId = pointerId;
+    homeTimelineDragState.source = source;
+    homeTimelineDragState.startX = clientX;
     homeTimelineDragState.startScroll = viewport.scrollLeft;
-    viewport.setPointerCapture(event.pointerId);
     viewport.classList.add('is-dragging');
-  });
+  }
 
-  viewport.addEventListener('pointermove', function(event) {
-    if (!homeTimelineDragState.active || homeTimelineDragState.pointerId !== event.pointerId) return;
-    var distance = event.clientX - homeTimelineDragState.startX;
+  function moveTimelineDrag(clientX) {
+    if (!homeTimelineDragState.active) return;
+    var distance = clientX - homeTimelineDragState.startX;
     if (Math.abs(distance) > 4) homeTimelineDragState.didDrag = true;
     if (!homeTimelineDragState.didDrag) return;
     viewport.scrollLeft = homeTimelineDragState.startScroll - distance;
+  }
+
+  function finishTimelineDrag() {
+    if (!homeTimelineDragState.active) return;
+    if (homeTimelineDragState.didDrag) homeTimelineDragState.ignoreClickUntil = Date.now() + 140;
+    homeTimelineDragState.active = false;
+    homeTimelineDragState.didDrag = false;
+    homeTimelineDragState.pointerId = null;
+    homeTimelineDragState.source = '';
+    viewport.classList.remove('is-dragging');
+  }
+
+  viewport.addEventListener('pointerdown', function(event) {
+    if (event.pointerType === 'mouse' || isTimelineDeleteTarget(event.target)) return;
+    startTimelineDrag(event.clientX, 'pointer', event.pointerId);
+    viewport.setPointerCapture(event.pointerId);
+  });
+
+  viewport.addEventListener('pointermove', function(event) {
+    if (!homeTimelineDragState.active || homeTimelineDragState.source !== 'pointer' || homeTimelineDragState.pointerId !== event.pointerId) return;
+    moveTimelineDrag(event.clientX);
+    if (!homeTimelineDragState.didDrag) return;
     event.preventDefault();
   });
 
-  function endTimelineDrag(event) {
-    if (!homeTimelineDragState.active || homeTimelineDragState.pointerId !== event.pointerId) return;
+  function endPointerTimelineDrag(event) {
+    if (!homeTimelineDragState.active || homeTimelineDragState.source !== 'pointer' || homeTimelineDragState.pointerId !== event.pointerId) return;
     if (viewport.hasPointerCapture(event.pointerId)) viewport.releasePointerCapture(event.pointerId);
-    homeTimelineDragState.active = false;
-    homeTimelineDragState.pointerId = null;
-    viewport.classList.remove('is-dragging');
-    window.setTimeout(function() { homeTimelineDragState.didDrag = false; }, 0);
+    finishTimelineDrag();
   }
 
-  viewport.addEventListener('pointerup', endTimelineDrag);
-  viewport.addEventListener('pointercancel', endTimelineDrag);
+  viewport.addEventListener('pointerup', endPointerTimelineDrag);
+  viewport.addEventListener('pointercancel', endPointerTimelineDrag);
+
+  viewport.addEventListener('mousedown', function(event) {
+    if (event.button !== 0 || isTimelineDeleteTarget(event.target)) return;
+    event.preventDefault();
+    startTimelineDrag(event.clientX, 'mouse', null);
+  });
+
+  document.addEventListener('mousemove', function(event) {
+    if (!homeTimelineDragState.active || homeTimelineDragState.source !== 'mouse') return;
+    moveTimelineDrag(event.clientX);
+    if (homeTimelineDragState.didDrag) event.preventDefault();
+  });
+
+  document.addEventListener('mouseup', function() {
+    if (homeTimelineDragState.active && homeTimelineDragState.source === 'mouse') finishTimelineDrag();
+  });
 
   var lastTimelineTouch = 0;
   section.addEventListener('touchend', function(event) {
