@@ -178,8 +178,14 @@ nav {
 }
 
 nav .logo {
+  appearance: none;
+  background: transparent;
+  border: 0;
   font-size: 1.4rem;
+  font-family: inherit;
   font-weight: 700;
+  line-height: 1;
+  padding: 0;
   color: var(--red);
   letter-spacing: 4px;
   text-shadow: 0 0 20px rgba(196,30,58,0.5);
@@ -4252,6 +4258,41 @@ footer .heart {
   .memory-timeline-section.is-focus-mode .home-timeline-card.is-active { transform: translateY(-12px) scale(1.04); }
 }
 
+/* ============ Memory Drawer ============ */
+.memory-drawer { inset: 0; pointer-events: none; position: fixed; visibility: hidden; z-index: 650; }
+.memory-drawer.is-open { pointer-events: auto; visibility: visible; }
+.memory-drawer-backdrop { background: rgba(8, 4, 6, 0.48); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); inset: 0; opacity: 0; position: absolute; transition: opacity 0.3s ease; }
+.memory-drawer.is-open .memory-drawer-backdrop { opacity: 1; }
+.memory-drawer-panel { background: var(--bg); border-right: 1px solid rgba(196, 30, 58, 0.32); box-shadow: 20px 0 52px rgba(0, 0, 0, 0.35); box-sizing: border-box; height: 100%; overflow-y: auto; overscroll-behavior: contain; position: relative; transform: translateX(-100%); transition: transform 0.34s ease; width: min(42vw, 680px); }
+.memory-drawer.is-open .memory-drawer-panel { transform: translateX(0); }
+body.memory-drawer-open { overflow: hidden; }
+.memory-drawer-close { align-items: center; appearance: none; background: rgba(196, 30, 58, 0.08); border: 1px solid var(--border); border-radius: 50%; color: var(--text-muted); cursor: pointer; display: flex; font: inherit; font-size: 1.2rem; height: 34px; justify-content: center; line-height: 1; padding: 0; position: absolute; right: 22px; top: 21px; transition: all 0.2s ease; width: 34px; z-index: 6; }
+.memory-drawer-close:hover, .memory-drawer-close:focus-visible { border-color: var(--red-dark); color: var(--red); outline: none; }
+.memory-drawer-panel .section-header { background: linear-gradient(180deg, rgba(196, 30, 58, 0.08), transparent); border-bottom: 1px solid var(--border); margin: 0; padding: 28px 76px 22px 28px; position: sticky; top: 0; z-index: 5; }
+.memory-drawer-panel .section-header .icon-row { justify-content: flex-start; }
+.memory-drawer-panel .section-header .sub { text-align: left; }
+.memory-drawer-panel .memory-timeline-shell { box-sizing: border-box; max-width: none; padding: 0 28px 34px; }
+.memory-drawer-panel .home-timeline-intro { margin: 22px 0 12px; max-width: none; text-align: left; }
+.memory-drawer-panel .home-memory-timeline-viewport { cursor: default; margin: 0; overflow: visible; padding: 20px 0 12px; scroll-snap-type: none; }
+.memory-drawer-panel .home-memory-timeline-track { display: grid; gap: 12px; min-width: 0; padding: 0 0 0 44px; }
+.memory-drawer-panel .home-memory-timeline-track::before { background: linear-gradient(180deg, transparent, var(--red-dark) 4%, var(--red-dark) 96%, transparent); bottom: 0; height: auto; left: 15px; right: auto; top: 0; width: 1px; }
+.memory-drawer-panel .home-timeline-card { box-sizing: border-box; flex: none; margin: 0; min-height: 148px; padding: 28px 20px 20px; scroll-snap-align: none; transform: none; width: 100%; }
+.memory-drawer-panel .home-timeline-card::before { left: -34px; top: 27px; }
+.memory-drawer-panel .home-timeline-card:hover { transform: translateX(3px); }
+.memory-drawer-panel .home-timeline-card.is-active { min-height: 246px; transform: none; }
+.memory-drawer-panel .home-timeline-card.is-active:hover { transform: translateX(3px); }
+.memory-drawer-panel .timeline-composer { margin: 16px 0 0; max-width: none; }
+.memory-drawer-panel .memory-inline-form { margin-top: 14px; }
+
+@media (max-width: 768px) {
+  .memory-drawer-panel { width: 100%; }
+  .memory-drawer-panel .section-header { padding: 24px 68px 20px 22px; }
+  .memory-drawer-close { right: 20px; top: 18px; }
+  .memory-drawer-panel .memory-timeline-shell { padding: 0 20px 28px; }
+  .memory-drawer-panel .home-timeline-card { min-height: 146px; padding: 27px 17px 18px; }
+  .memory-drawer-panel .home-timeline-card.is-active { min-height: 242px; }
+}
+
 .letter-tools { align-items: center; display: flex; gap: 8px; grid-column: 1 / -1; }
 .letter-tools .companion-action-btn { flex: 0 0 auto; }
 .letter-form-status { color: var(--text-muted); font-size: 0.7rem; min-height: 1.2em; }
@@ -4289,7 +4330,7 @@ footer .heart {
 
 <!-- Navigation -->
 <nav>
-  <div class="logo">秦彻·你</div>
+  <button class="logo" id="btnMemoryDrawer" type="button" aria-controls="memoryDrawer" aria-expanded="false">秦彻·你</button>
   <ul class="links">
     <li><a href="#home">首页</a></li>
     <li class="nav-room-nav-item"><button class="nav-room-link" id="btnRoom" type="button">小屋</button></li>
@@ -4393,19 +4434,22 @@ footer .heart {
     </button>
   </div>
 
-  <div class="scroll-indicator" onclick="document.getElementById('timeline').scrollIntoView()">
+  <div class="scroll-indicator" onclick="document.getElementById('gallery').scrollIntoView({ behavior: 'smooth' })">
     <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5">
       <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
   </div>
 </section>
 
-<!-- Memory Timeline -->
-<section class="memory-timeline-section" id="timeline" tabindex="-1">
+<!-- Memory Timeline Drawer -->
+<div class="memory-drawer" id="memoryDrawer" aria-hidden="true">
+  <div class="memory-drawer-backdrop" id="memoryDrawerBackdrop"></div>
+  <aside class="memory-drawer-panel" role="dialog" aria-modal="true" aria-labelledby="memoryDrawerTitle" tabindex="-1">
+  <button class="memory-drawer-close" id="btnMemoryDrawerClose" type="button" aria-label="关闭回忆时间轴">×</button>
   <div class="section-header">
     <div class="icon-row">
       <svg viewBox="0 0 24 24" style="fill:var(--red);opacity:0.6;width:24px;height:24px;"><path d="M3 12h18M7 7v10M12 5v14M17 7v10"/></svg>
-      <h2>回忆时间轴</h2>
+      <h2 id="memoryDrawerTitle">回忆时间轴</h2>
       <svg viewBox="0 0 24 24" style="fill:var(--red);opacity:0.6;width:24px;height:24px;"><path d="M3 12h18M7 7v10M12 5v14M17 7v10"/></svg>
     </div>
     <p class="sub">MEMORY TIMELINE</p>
@@ -4425,7 +4469,8 @@ footer .heart {
       </form>
     </div>
   </div>
-</section>
+  </aside>
+</div>
 
 <!-- Gallery Section -->
 <section class="gallery-section" id="gallery">
@@ -5016,6 +5061,7 @@ footer .heart {
 </div>
 
 <script src="timeline-helpers.js"></script>
+<script src="memory-drawer.js"></script>
 <script>
 // ============ Theme Management ============
 var THEME_KEY = 'qinche_theme';
@@ -11317,7 +11363,7 @@ document.getElementById('roomStatePicker').addEventListener('change', function(e
 });
 document.getElementById('btnRoomTimeline').addEventListener('click', function() {
   closeUtilPanel('room');
-  scrollToMemoryTimeline();
+  if (memoryDrawerController) memoryDrawerController.open();
 });
 document.getElementById('btnRoomLetters').addEventListener('click', function() {
   closeUtilPanel('room');
@@ -11347,6 +11393,29 @@ document.addEventListener('keydown', function(event) {
 });
 
 initMemoryTimeline();
+
+var memoryDrawerController = null;
+function initMemoryDrawer() {
+  var drawer = document.getElementById('memoryDrawer');
+  var trigger = document.getElementById('btnMemoryDrawer');
+  var closeButton = document.getElementById('btnMemoryDrawerClose');
+  var backdrop = document.getElementById('memoryDrawerBackdrop');
+  var panel = drawer && drawer.querySelector('.memory-drawer-panel');
+  if (!drawer || !trigger || !closeButton || !backdrop || !panel || !window.QincheMemoryDrawer) return;
+  memoryDrawerController = window.QincheMemoryDrawer.createMemoryDrawerController({
+    drawer: drawer,
+    trigger: trigger,
+    closeButton: closeButton,
+    backdrop: backdrop,
+    documentRef: document,
+    body: document.body,
+    focusTarget: panel,
+    onOpen: renderMemoryTimeline
+  });
+  memoryDrawerController.bind();
+}
+
+initMemoryDrawer();
 
 document.getElementById('memoryForm').addEventListener('submit', function(event) {
   event.preventDefault();
