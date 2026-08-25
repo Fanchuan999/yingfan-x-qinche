@@ -4273,9 +4273,21 @@ footer .heart {
 body.memory-drawer-open { overflow: hidden; }
 .memory-drawer-close { align-items: center; appearance: none; background: rgba(196, 30, 58, 0.08); border: 1px solid var(--border); border-radius: 50%; color: var(--text-muted); cursor: pointer; display: flex; font: inherit; font-size: 1.2rem; height: 34px; justify-content: center; line-height: 1; padding: 0; position: absolute; right: 22px; top: 21px; transition: all 0.2s ease; width: 34px; z-index: 6; }
 .memory-drawer-close:hover, .memory-drawer-close:focus-visible { border-color: var(--red-dark); color: var(--red); outline: none; }
-.memory-drawer-panel .section-header { background: linear-gradient(180deg, rgba(196, 30, 58, 0.08), transparent); border-bottom: 1px solid var(--border); margin: 0; padding: 28px 76px 22px 28px; position: sticky; top: 0; z-index: 5; }
-.memory-drawer-panel .section-header .icon-row { justify-content: flex-start; }
-.memory-drawer-panel .section-header .sub { text-align: left; }
+.memory-drawer-panel .section-header {
+  background: linear-gradient(180deg, rgba(18, 6, 9, 0.94), rgba(18, 6, 9, 0.8));
+  backdrop-filter: blur(18px) saturate(115%);
+  -webkit-backdrop-filter: blur(18px) saturate(115%);
+  border-bottom: 1px solid rgba(196, 30, 58, 0.24);
+  margin: 0;
+  padding: 28px 76px 22px 28px;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+.memory-drawer-panel .section-header .icon-row { align-items: center; gap: 12px; justify-content: flex-start; }
+.memory-drawer-heading { min-width: 0; }
+.memory-drawer-heading h2 { margin: 0; }
+.memory-drawer-panel .memory-drawer-heading .sub { margin: 4px 0 0; text-align: left; }
 .memory-drawer-panel .memory-timeline-shell { box-sizing: border-box; max-width: none; padding: 0 28px 34px; }
 .memory-drawer-panel .home-timeline-intro { margin: 22px 0 12px; max-width: none; text-align: left; }
 .memory-drawer-panel .home-memory-timeline-viewport { cursor: default; margin: 0; overflow: visible; padding: 20px 0 12px; scroll-snap-type: none; }
@@ -4322,6 +4334,7 @@ body.memory-drawer-open { overflow: hidden; }
 .memory-drawer-entry .home-timeline-delete { background: rgba(24, 8, 11, 0.42); border-color: rgba(255, 235, 229, 0.2); color: #f5e7df; right: 10px; top: 10px; z-index: 4; }
 .memory-drawer-entry .home-timeline-delete:hover, .memory-drawer-entry .home-timeline-delete:focus-visible { border-color: var(--red); color: #fff; }
 [data-theme="light"] .memory-drawer-panel { background: #f7e8eb; border-right-color: rgba(158, 78, 97, 0.35); }
+[data-theme="light"] .memory-drawer-panel .section-header { background: linear-gradient(180deg, rgba(247, 232, 235, 0.95), rgba(247, 232, 235, 0.82)); border-bottom-color: rgba(158, 78, 97, 0.26); }
 [data-theme="light"] .memory-drawer-entry::after { background: linear-gradient(90deg, rgba(86, 28, 42, 0.8), rgba(132, 55, 71, 0.5) 62%, rgba(81, 25, 38, 0.2)); }
 [data-theme="light"] .memory-drawer-entry.has-no-image { background: linear-gradient(135deg, #6c2438, #b46576); }
 
@@ -4373,7 +4386,7 @@ body.memory-drawer-open { overflow: hidden; }
   <button class="logo" id="btnMemoryDrawer" type="button" aria-controls="memoryDrawer" aria-expanded="false">秦彻·你</button>
   <ul class="links">
     <li><a href="#home">首页</a></li>
-    <li class="nav-room-nav-item"><button class="nav-room-link" id="btnRoom" type="button">小屋</button></li>
+    <li class="nav-room-nav-item"><button class="nav-room-link" id="btnRoom" type="button">暗点</button></li>
     <li><a href="#gallery">照片墙</a></li>
     <li><a href="#quotes">语录</a></li>
   </ul>
@@ -4389,7 +4402,7 @@ body.memory-drawer-open { overflow: hidden; }
       <img src="icon/else.png" alt="" class="nav-icon-img">
     </button>
     <div class="nav-dropdown" id="navDropdown">
-      <div class="dropdown-item" data-panel="room">我们的小屋</div>
+      <div class="dropdown-item" data-panel="room">暗点</div>
       <div class="dropdown-item" data-scroll-target="timeline">回忆时间轴</div>
       <div class="dropdown-item" data-panel="letters">未来信件</div>
       <div class="dropdown-item" data-panel="pomodoro">番茄钟</div>
@@ -4465,7 +4478,7 @@ body.memory-drawer-open { overflow: hidden; }
     <div class="hero-divider"></div>
     <p class="subtitle">QIN CHE</p>
     <p class="tagline" style="margin-top:8px;">"总会有人欣赏你本来的样子，比如我"</p>
-    <button class="hero-state-card" id="heroStateCard" type="button" title="打开小屋">
+    <button class="hero-state-card" id="heroStateCard" type="button" title="打开暗点">
       <span class="hero-state-kicker">N109 · 现在</span>
       <span class="hero-state-line">
         <strong class="hero-state-name" id="heroStateName">秦彻在这里</strong>
@@ -4489,10 +4502,12 @@ body.memory-drawer-open { overflow: hidden; }
   <div class="section-header">
     <div class="icon-row">
       <svg viewBox="0 0 24 24" style="fill:var(--red);opacity:0.6;width:24px;height:24px;"><path d="M3 12h18M7 7v10M12 5v14M17 7v10"/></svg>
-      <h2 id="memoryDrawerTitle">回忆时间轴</h2>
+      <div class="memory-drawer-heading">
+        <h2 id="memoryDrawerTitle">回忆时间轴</h2>
+        <p class="sub">MEMORY TIMELINE</p>
+      </div>
       <svg viewBox="0 0 24 24" style="fill:var(--red);opacity:0.6;width:24px;height:24px;"><path d="M3 12h18M7 7v10M12 5v14M17 7v10"/></svg>
     </div>
-    <p class="sub">MEMORY TIMELINE</p>
   </div>
   <div class="memory-timeline-shell">
     <p class="home-timeline-intro">从最初的相遇，到还在继续的现在。每一段回忆，都留在这里。</p>
@@ -4912,7 +4927,7 @@ body.memory-drawer-open { overflow: hidden; }
         重置将清除所有个人数据，包括：<br>
         · 上传的照片<br>
         · 添加的语录<br>
-        · 小屋状态、回忆与未来信件<br>
+        · 暗点状态、回忆与未来信件<br>
         · 恢复为默认状态<br><br>
         ⚠️ 此操作不可撤销
       </div>
@@ -4939,10 +4954,10 @@ body.memory-drawer-open { overflow: hidden; }
 <div class="util-overlay" id="roomPanel">
   <div class="util-panel">
     <div class="util-panel-header">
-      <h3>我们的小屋</h3>
+      <h3>暗点</h3>
       <button class="util-panel-close" onclick="closeUtilPanel('room')">✕</button>
     </div>
-    <section class="room-scene" aria-label="小屋状态">
+    <section class="room-scene" aria-label="暗点状态">
       <span class="room-overline">N109 · companion space</span>
       <h4 class="room-scene-title">留一盏灯，等你回来。</h4>
       <p class="room-scene-copy">黑胶还在缓慢地转。窗外的雨不急，今晚的时间也不急。</p>
@@ -4957,7 +4972,7 @@ body.memory-drawer-open { overflow: hidden; }
         <label class="room-state-choice"><input type="radio" name="roomState" value="night"><span>夜行</span></label>
       </fieldset>
     </section>
-    <div class="room-objects" aria-label="小屋里的物件">
+    <div class="room-objects" aria-label="暗点里的物件">
       <div class="room-object"><span class="room-object-label">唱片机</span><p class="room-object-value">古典乐 · 慢慢放</p></div>
       <div class="room-object"><span class="room-object-label">窗边</span><p class="room-object-value">N109 的月色</p></div>
       <div class="room-object"><span class="room-object-label">书桌</span><p class="room-object-value">你的下一段回忆</p></div>
