@@ -788,53 +788,92 @@ nav .links a:hover::after { width: 100%; }
   opacity: 0.5;
 }
 
-.quote-dots {
-  display: flex;
-  flex-wrap: nowrap;
-  gap: 6px;
-  justify-content: flex-start;
-  margin: 26px auto 0;
-  max-width: calc(100vw - 64px);
-  overflow-x: auto;
-  padding: 0 8px 12px;
-  scrollbar-width: thin;
-  width: min(720px, 100%);
+.quote-starfield {
+  height: 124px;
+  margin: 28px auto 0;
+  max-width: calc(100vw - 48px);
+  position: relative;
+  width: min(620px, 100%);
 }
 
-.quote-dot {
+.quote-starfield-random {
   appearance: none;
   background: transparent;
   border: 0;
   cursor: pointer;
-  height: 26px;
+  inset: 0;
   padding: 0;
-  position: relative;
+  position: absolute;
   touch-action: manipulation;
-  flex: 0 0 26px;
-  width: 26px;
+  z-index: 1;
 }
 
-.quote-dot::before {
+.quote-starfield-random:focus-visible { outline: 1px solid var(--red); outline-offset: 4px; }
+
+.quote-star {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  height: 28px;
+  left: var(--star-x);
+  padding: 0;
+  position: absolute;
+  top: var(--star-y);
+  transform: translate(-50%, -50%);
+  transition: left 0.7s cubic-bezier(0.2, 0.85, 0.25, 1), top 0.7s cubic-bezier(0.2, 0.85, 0.25, 1), z-index 0s linear 0.7s;
+  width: 28px;
+  z-index: 2;
+}
+
+.quote-star::before {
   background: var(--red-dim);
   border-radius: 50%;
   content: '';
-  height: 8px;
+  height: var(--star-size);
   left: 50%;
   position: absolute;
   top: 50%;
   transform: translate(-50%, -50%);
-  transition: all 0.3s ease;
-  width: 8px;
+  width: var(--star-size);
+  animation: quoteStarTwinkle var(--star-duration) ease-in-out var(--star-delay) infinite alternate, quoteStarDrift 8s ease-in-out var(--star-delay) infinite alternate;
 }
 
-.quote-dot:hover::before { background: var(--red); }
-.quote-dot:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+.quote-star:hover::before { background: var(--red); }
+.quote-star:focus-visible { outline: 1px solid var(--red); outline-offset: 2px; }
 
-.quote-dot.active::before {
+.quote-star.active {
+  left: 50%;
+  top: 52%;
+  transition-delay: 0s;
+  z-index: 4;
+}
+
+.quote-star.active::before {
   background: var(--red);
-  box-shadow: 0 0 10px var(--red-glow);
-  width: 20px;
-  border-radius: 4px;
+  box-shadow: 0 0 12px var(--red-glow), 0 0 30px rgba(196, 30, 58, 0.45);
+  height: calc(var(--star-size) * 2.4);
+  width: calc(var(--star-size) * 2.4);
+  animation: quoteStarArrive 0.7s cubic-bezier(0.2, 0.85, 0.25, 1), quoteStarTwinkle var(--star-duration) ease-in-out 0.7s infinite alternate;
+}
+
+.quote-star.custom::before { background: var(--gold); }
+.quote-star.custom.active::before { background: #ffd36b; }
+
+@keyframes quoteStarTwinkle {
+  from { opacity: 0.28; transform: translate(-50%, -50%) scale(0.72); }
+  to { opacity: 0.94; transform: translate(-50%, -50%) scale(1.12); }
+}
+
+@keyframes quoteStarDrift {
+  from { margin: -2px 1px 0 -1px; }
+  to { margin: 2px -1px 0 2px; }
+}
+
+@keyframes quoteStarArrive {
+  from { opacity: 0.12; transform: translate(-50%, -50%) scale(0.2); }
+  72% { opacity: 1; transform: translate(-50%, -50%) scale(1.25); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 }
 
 /* ============ Footer ============ */
@@ -4886,7 +4925,7 @@ body.memory-drawer-open { overflow: hidden; }
     <div class="quote-mark">"</div>
     <p class="quote-text" id="quoteText"></p>
     <div class="quote-divider"></div>
-    <div class="quote-dots" id="quoteDots"></div>
+    <div class="quote-starfield" id="quoteStars" role="group" aria-label="语录星点区"></div>
   </div>
 </section>
 
@@ -5428,6 +5467,7 @@ body.memory-drawer-open { overflow: hidden; }
 
 <script src="timeline-helpers.js"></script>
 <script src="vault-link-parser.js?v=20260825-1"></script>
+<script src="quote-starfield.js?v=20260825-1"></script>
 <script src="memory-drawer.js?v=20260825-2"></script>
 <script>
 // ============ Theme Management ============
@@ -6312,28 +6352,46 @@ lightbox.addEventListener('click', (e) => {
 
 // ============ Quotes Rotation ============
 const quoteText = document.getElementById('quoteText');
-const quoteDots = document.getElementById('quoteDots');
+const quoteStars = document.getElementById('quoteStars');
 var quoteIndex = 0;
 var quoteIntervalId = null;
 var quoteTransitionTimer = null;
 
 function renderQuoteDots() {
   var allQuotes = getAllQuotes();
-  quoteDots.innerHTML = '';
+  var starLayout = window.QincheQuoteStarfield.createStarLayout(allQuotes.length);
+  quoteStars.innerHTML = '';
+  var randomTrigger = document.createElement('button');
+  randomTrigger.type = 'button';
+  randomTrigger.className = 'quote-starfield-random';
+  randomTrigger.setAttribute('aria-label', '随机点亮一颗语录星星');
+  randomTrigger.addEventListener('click', function() {
+    var nextIndex = window.QincheQuoteStarfield.pickNextQuoteIndex(allQuotes.length, quoteIndex, Math.random);
+    if (nextIndex < 0) return;
+    showQuote(nextIndex);
+    resetQuoteRotation();
+  });
+  quoteStars.appendChild(randomTrigger);
   allQuotes.forEach(function(_, i) {
-    var dot = document.createElement('button');
-    dot.type = 'button';
-    dot.className = 'quote-dot' + (i === quoteIndex ? ' active' : '');
-    dot.setAttribute('aria-label', '切换到第 ' + (i + 1) + ' 条语录');
-    dot.setAttribute('aria-pressed', i === quoteIndex ? 'true' : 'false');
-    if (i >= quotes.length) { dot.classList.add('quote-custom-dot'); }
-    dot.addEventListener('click', function(event) {
+    var star = document.createElement('button');
+    var layout = starLayout[i];
+    star.type = 'button';
+    star.className = 'quote-star' + (i === quoteIndex ? ' active' : '');
+    if (i >= quotes.length) star.classList.add('custom');
+    star.style.setProperty('--star-x', layout.x + '%');
+    star.style.setProperty('--star-y', layout.y + '%');
+    star.style.setProperty('--star-size', layout.size + 'px');
+    star.style.setProperty('--star-delay', layout.delay + 's');
+    star.style.setProperty('--star-duration', layout.duration + 's');
+    star.setAttribute('aria-label', '切换到第 ' + (i + 1) + ' 条语录');
+    star.setAttribute('aria-pressed', i === quoteIndex ? 'true' : 'false');
+    star.addEventListener('click', function(event) {
       event.preventDefault();
       event.stopPropagation();
       showQuote(i);
       resetQuoteRotation();
     });
-    quoteDots.appendChild(dot);
+    quoteStars.appendChild(star);
   });
 }
 
@@ -6352,11 +6410,11 @@ function showQuote(index) {
     quoteText.style.transform = 'translateY(0)';
   }, 300);
 
-  var dots = document.querySelectorAll('.quote-dot');
-  dots.forEach(function(d, i) {
+  var stars = document.querySelectorAll('.quote-star');
+  stars.forEach(function(star, i) {
     var isActive = i === index;
-    d.classList.toggle('active', isActive);
-    d.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+    star.classList.toggle('active', isActive);
+    star.setAttribute('aria-pressed', isActive ? 'true' : 'false');
   });
 }
 
@@ -6365,8 +6423,7 @@ function resetQuoteRotation() {
   quoteIntervalId = setInterval(function() {
     var allQuotes = getAllQuotes();
     if (allQuotes.length === 0) return;
-    quoteIndex = (quoteIndex + 1) % allQuotes.length;
-    showQuote(quoteIndex);
+    showQuote(window.QincheQuoteStarfield.pickNextQuoteIndex(allQuotes.length, quoteIndex, Math.random));
   }, 5000);
 }
 
