@@ -11,5 +11,8 @@ Thumbs.db
 .vscode/
 .idea/
 
+# 本地视觉方案预览
+.superpowers/
+
 # 备份
 photos_backup/

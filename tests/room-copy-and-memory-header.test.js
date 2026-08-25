@@ -7,8 +7,8 @@ const page = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
 
 test('visible companion room entry points use the 暗点 name', () => {
   assert.match(page, /<button class="nav-room-link" id="btnRoom" type="button">暗点<\/button>/);
-  assert.match(page, /<div class="dropdown-item" data-panel="room">暗点<\/div>/);
   assert.match(page, /<h3>暗点<\/h3>/);
+  assert.match(page, /<div class="dropdown-item" data-panel="backup">数据备份<\/div>/);
   assert.doesNotMatch(page, /我们的小屋|>小屋<|打开小屋|小屋状态/);
 });
 

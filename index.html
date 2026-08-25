@@ -4026,6 +4026,302 @@ footer .heart {
 .companion-action-btn.primary { background: var(--red-dark); border-color: var(--red-dark); color: #fff; }
 .companion-action-btn.primary:hover { background: var(--red); border-color: var(--red); }
 
+/* ============ Dark Point: Image-led Companion Space ============ */
+.sr-only {
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+#roomPanel .room-panel-shell {
+  display: flex;
+  flex-direction: column;
+  height: min(90vh, 700px);
+  max-height: 90vh;
+  max-width: min(1040px, 94vw);
+  overflow: hidden;
+  padding: 0;
+}
+
+#roomPanel .room-panel-header {
+  align-items: center;
+  background: var(--bg-card);
+  margin: 0;
+  padding: 20px 28px 15px;
+}
+
+#roomPanel .room-panel-header h3 { margin-top: 3px; }
+
+.room-space {
+  background: #19080d;
+  flex: 1 1 auto;
+  isolation: isolate;
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.room-space::before {
+  border: 1px solid rgba(224, 133, 147, 0.15);
+  content: '';
+  inset: 18px;
+  pointer-events: none;
+  position: absolute;
+  z-index: 1;
+}
+
+.room-space-foliage,
+.room-space-silhouette,
+.room-space-hero,
+.room-space-feather,
+.room-space-signature { pointer-events: none; position: absolute; }
+
+.room-space-foliage {
+  opacity: 0.68;
+  right: -7%;
+  top: -8%;
+  transform: rotate(15deg);
+  width: min(350px, 36vw);
+  z-index: 1;
+}
+
+.room-space-silhouette-watch {
+  bottom: -14%;
+  filter: drop-shadow(0 0 22px rgba(129, 20, 37, 0.5));
+  opacity: 0.25;
+  right: -4%;
+  width: min(570px, 55vw);
+  z-index: 1;
+}
+
+.room-space-silhouette-crow {
+  bottom: -15%;
+  left: 23%;
+  opacity: 0.18;
+  width: min(320px, 34vw);
+  z-index: 1;
+}
+
+.room-space-hero {
+  bottom: -10%;
+  filter: drop-shadow(-18px 16px 28px rgba(0, 0, 0, 0.45));
+  height: min(620px, 92%);
+  object-fit: contain;
+  right: 4%;
+  z-index: 2;
+}
+
+.room-space-feather {
+  left: 47%;
+  opacity: 0.85;
+  top: 37%;
+  transform: rotate(-22deg);
+  width: 48px;
+  z-index: 4;
+}
+
+.room-space-signature {
+  bottom: 24px;
+  opacity: 0.78;
+  right: 34px;
+  width: min(245px, 27vw);
+  z-index: 5;
+}
+
+.room-space-copy {
+  left: clamp(28px, 6vw, 68px);
+  position: absolute;
+  top: 58px;
+  width: min(350px, 43vw);
+  z-index: 6;
+}
+
+#roomPanel .room-scene-title {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(1.7rem, 3.2vw, 2.75rem);
+  font-weight: 400;
+  letter-spacing: 5px;
+  line-height: 1.2;
+  margin: 0;
+}
+
+#roomPanel .room-scene-copy {
+  color: #d5b0b6;
+  margin: 14px 0 0;
+  max-width: 280px;
+}
+
+.room-scene-quote {
+  color: #f1dadd;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1rem;
+  letter-spacing: 1px;
+  line-height: 1.8;
+  margin: 26px 0 0;
+}
+
+#roomPanel .room-state-current {
+  align-items: flex-start;
+  background: rgba(25, 6, 12, 0.62);
+  border: 1px solid rgba(224, 133, 147, 0.33);
+  border-left: 2px solid var(--red);
+  flex-direction: column;
+  gap: 2px;
+  left: auto;
+  margin: 0;
+  max-width: 220px;
+  padding: 7px 10px;
+  position: absolute;
+  right: clamp(22px, 5vw, 52px);
+  top: 26px;
+  z-index: 7;
+}
+
+#roomPanel .room-state-current strong { font-size: 0.72rem; }
+#roomPanel .room-state-current span { font-size: 0.62rem; line-height: 1.4; }
+
+#roomPanel .room-state-picker {
+  gap: 5px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  left: auto;
+  max-width: 220px;
+  position: absolute;
+  right: clamp(22px, 5vw, 52px);
+  top: 90px;
+  width: 220px;
+  z-index: 7;
+}
+
+#roomPanel .room-state-choice span { background: rgba(25, 6, 12, 0.42); font-size: 0.62rem; padding: 5px 4px; }
+
+.room-hotspot {
+  appearance: none;
+  background: rgba(45, 10, 19, 0.86);
+  border: 1px solid rgba(240, 177, 188, 0.48);
+  color: #f4e2e4;
+  cursor: pointer;
+  min-height: 66px;
+  padding: 10px 12px;
+  position: absolute;
+  text-align: left;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  width: 164px;
+  z-index: 8;
+}
+
+.room-hotspot::before {
+  background: #dc8c99;
+  content: '';
+  height: 1px;
+  left: -10px;
+  position: absolute;
+  top: 26px;
+  width: 18px;
+}
+
+.room-hotspot span {
+  color: #d7b1b7;
+  display: block;
+  font-size: 0.65rem;
+  letter-spacing: 0.5px;
+  line-height: 1.45;
+  margin-top: 5px;
+}
+
+.room-hotspot:hover,
+.room-hotspot[aria-pressed="true"] { background: rgba(99, 21, 36, 0.9); border-color: var(--red); transform: translateY(-2px); }
+.room-hotspot:focus-visible { outline: 2px solid #fff0f1; outline-offset: 3px; }
+.room-hotspot-window { bottom: 114px; left: clamp(28px, 6vw, 68px); }
+.room-hotspot-desk { bottom: 44px; left: clamp(210px, 29vw, 320px); }
+.room-hotspot-cabinet { right: 31%; top: 156px; }
+.room-hotspot-mail { right: 10%; top: 210px; }
+.room-hotspot-game { bottom: 92px; right: 15%; }
+
+.room-space-status {
+  align-items: center;
+  border-top: 1px solid rgba(236, 165, 175, 0.23);
+  bottom: 0;
+  color: #c7a2a8;
+  display: flex;
+  font-size: 0.68rem;
+  gap: 14px;
+  left: 26px;
+  letter-spacing: 1px;
+  padding: 12px 0;
+  position: absolute;
+  right: 26px;
+  z-index: 7;
+}
+
+.room-space-status b { color: #f2d7da; font-weight: 500; }
+
+.room-zone-actions {
+  background: var(--bg-card);
+  border-top: 1px solid var(--border);
+  flex: 0 0 auto;
+  min-height: 94px;
+  padding: 16px 28px 19px;
+}
+
+.room-zone-overline { color: var(--red); display: block; font-size: 0.62rem; letter-spacing: 2px; }
+.room-zone-title { color: var(--text-light); font-size: 0.92rem; letter-spacing: 1px; margin: 3px 0 0; }
+.room-zone-copy { color: var(--text-muted); font-size: 0.72rem; margin: 4px 0 0; }
+.room-zone-content { align-items: flex-end; display: flex; gap: 18px; justify-content: space-between; }
+.room-zone-buttons { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+.room-zone-action { background: transparent; border: 1px solid var(--red-dark); color: var(--text); cursor: pointer; font: inherit; font-size: 0.72rem; letter-spacing: 1px; padding: 9px 11px; }
+.room-zone-action:hover, .room-zone-action:focus-visible { background: rgba(196, 30, 58, 0.1); border-color: var(--red); color: var(--text-light); outline: none; }
+
+[data-theme="light"] .room-space { background: #edd9df; }
+[data-theme="light"] .room-space::before { border-color: rgba(146, 67, 86, 0.3); }
+[data-theme="light"] #roomPanel .room-state-current { background: rgba(255, 245, 247, 0.8); }
+[data-theme="light"] #roomPanel .room-state-current strong { color: #3d1e28; }
+[data-theme="light"] #roomPanel .room-state-current span { color: #78515d; }
+[data-theme="light"] #roomPanel .room-scene-copy { color: #754d57; }
+[data-theme="light"] .room-scene-quote { color: #4a2933; }
+[data-theme="light"] #roomPanel .room-state-choice span { background: rgba(255, 248, 250, 0.72); border-color: #b86f81; color: #51313b; }
+[data-theme="light"] #roomPanel .room-state-choice input:checked + span { background: #efd0d8; border-color: #a94e66; color: #3d1e28; }
+[data-theme="light"] .room-hotspot { background: rgba(255, 246, 248, 0.88); border-color: #bd7586; color: #472a33; }
+[data-theme="light"] .room-hotspot span { color: #7c5661; }
+[data-theme="light"] .room-hotspot:hover,
+[data-theme="light"] .room-hotspot[aria-pressed="true"] { background: #f6dbe1; border-color: #a94e66; }
+[data-theme="light"] .room-space-status { border-color: rgba(154, 70, 91, 0.32); color: #79535d; }
+[data-theme="light"] .room-space-status b { color: #4a2933; }
+[data-theme="light"] .room-zone-actions { background: rgba(252, 238, 242, 0.97); }
+
+@media (max-width: 768px) {
+  #roomPanel .room-panel-shell { height: 94vh; max-height: 94vh; max-width: 96%; }
+  #roomPanel .room-panel-header { padding: 16px 18px 12px; }
+  .room-space { min-height: 0; overflow-x: hidden; overflow-y: auto; scrollbar-color: rgba(196, 30, 58, 0.6) transparent; scrollbar-width: thin; }
+  .room-space-copy { left: 22px; top: 28px; width: 62%; }
+  #roomPanel .room-scene-title { font-size: 2.2rem; letter-spacing: 4px; }
+  #roomPanel .room-scene-copy { font-size: 0.72rem; max-width: 200px; }
+  .room-scene-quote { display: none; }
+  #roomPanel .room-state-current { left: 22px; max-width: calc(100% - 44px); right: 22px; top: 220px; }
+  #roomPanel .room-state-picker { left: 22px; max-width: none; right: 22px; top: 272px; width: calc(100% - 44px); }
+  .room-space-hero { bottom: 12px; height: 390px; opacity: 0.88; right: -25%; }
+  .room-space-foliage { right: -28%; top: 88px; width: 260px; }
+  .room-space-silhouette-watch { bottom: 16px; right: -42%; width: 410px; }
+  .room-space-silhouette-crow { bottom: 4px; left: 8%; width: 240px; }
+  .room-space-feather { left: 40%; top: 220px; width: 32px; }
+  .room-hotspot { min-height: 50px; padding: 7px 9px; width: min(39vw, 148px); }
+  .room-hotspot span { font-size: 0.58rem; }
+  .room-hotspot-window { bottom: auto; left: 22px; top: 355px; }
+  .room-hotspot-desk { bottom: auto; left: 22px; top: 420px; }
+  .room-hotspot-cabinet { right: 20px; top: 355px; }
+  .room-hotspot-mail { right: 20px; top: 420px; }
+  .room-hotspot-game { bottom: auto; right: 20px; top: 485px; }
+  .room-space-signature { bottom: 42px; right: 16px; width: 154px; }
+  .room-space-status { display: none; }
+  .room-zone-actions { min-height: 132px; padding: 14px 18px 16px; }
+  .room-zone-content { align-items: flex-start; flex-direction: column; gap: 11px; }
+  .room-zone-buttons { justify-content: flex-start; }
+}
+
 .timeline-intro,
 .letter-intro {
   color: var(--text-muted);
@@ -4402,15 +4698,6 @@ body.memory-drawer-open { overflow: hidden; }
       <img src="icon/else.png" alt="" class="nav-icon-img">
     </button>
     <div class="nav-dropdown" id="navDropdown">
-      <div class="dropdown-item" data-panel="room">暗点</div>
-      <div class="dropdown-item" data-scroll-target="timeline">回忆时间轴</div>
-      <div class="dropdown-item" data-panel="letters">未来信件</div>
-      <div class="dropdown-item" data-panel="pomodoro">番茄钟</div>
-      <div class="dropdown-item" data-panel="period">经期记录</div>
-      <div class="dropdown-item" data-panel="anniversary">纪念日</div>
-      <div class="dropdown-item" data-panel="todo">待办清单</div>
-      <div class="dropdown-item" data-panel="snake">贪吃鸦</div>
-      <div class="dropdown-item" data-panel="privateVault">我的私藏</div>
       <div class="dropdown-item" data-panel="backup">数据备份</div>
       <div class="dropdown-item" data-panel="manage">内容管理</div>
     </div>
@@ -4952,35 +5239,45 @@ body.memory-drawer-open { overflow: hidden; }
 
 <!-- Companion Room Panel -->
 <div class="util-overlay" id="roomPanel">
-  <div class="util-panel">
-    <div class="util-panel-header">
-      <h3>暗点</h3>
-      <button class="util-panel-close" onclick="closeUtilPanel('room')">✕</button>
+  <div class="util-panel room-panel-shell">
+    <div class="util-panel-header room-panel-header">
+      <div>
+        <span class="room-overline">N109 · companion space</span>
+        <h3>暗点</h3>
+      </div>
+      <button class="util-panel-close" onclick="closeUtilPanel('room')" aria-label="关闭暗点">✕</button>
     </div>
-    <section class="room-scene" aria-label="暗点状态">
-      <span class="room-overline">N109 · companion space</span>
-      <h4 class="room-scene-title">留一盏灯，等你回来。</h4>
-      <p class="room-scene-copy">黑胶还在缓慢地转。窗外的雨不急，今晚的时间也不急。</p>
+    <section class="room-space" aria-label="暗点陪伴空间">
+      <img class="room-space-foliage" src="assets/dark-point/red-foliage.png" alt="" aria-hidden="true">
+      <img class="room-space-silhouette room-space-silhouette-watch" src="assets/dark-point/silhouette-watch.png" alt="" aria-hidden="true">
+      <img class="room-space-silhouette room-space-silhouette-crow" src="assets/dark-point/silhouette-crow.png" alt="" aria-hidden="true">
+      <img class="room-space-hero" src="assets/dark-point/qinche-seated.png" alt="" aria-hidden="true">
+      <img class="room-space-feather" src="assets/dark-point/feather.png" alt="" aria-hidden="true">
+      <div class="room-space-copy">
+        <h4 class="room-scene-title">留一盏灯，等你回来。</h4>
+        <p class="room-scene-copy">黑胶还在缓慢地转。窗外的雨不急，今晚的时间也不急。</p>
+        <p class="room-scene-quote">“累了就歇会，剩下的交给我。”</p>
+      </div>
       <div class="room-state-current">
         <strong id="roomStateName">秦彻在这里</strong>
         <span id="roomStateCopy">不用急，先把你自己的事做好。</span>
       </div>
       <fieldset class="room-state-picker" id="roomStatePicker">
+        <legend class="sr-only">选择暗点状态</legend>
         <label class="room-state-choice"><input type="radio" name="roomState" value="auto"><span>随时间</span></label>
         <label class="room-state-choice"><input type="radio" name="roomState" value="watch"><span>守着你</span></label>
         <label class="room-state-choice"><input type="radio" name="roomState" value="focus"><span>主场</span></label>
         <label class="room-state-choice"><input type="radio" name="roomState" value="night"><span>夜行</span></label>
       </fieldset>
+      <button class="room-hotspot room-hotspot-window" id="roomWindow" type="button" data-zone="window" aria-pressed="false">窗边<span>经期记录 · 纪念日</span></button>
+      <button class="room-hotspot room-hotspot-desk" id="roomDesk" type="button" data-zone="desk" aria-pressed="false">书桌<span>待办清单 · 番茄钟</span></button>
+      <button class="room-hotspot room-hotspot-cabinet" id="roomCabinet" type="button" data-zone="cabinet" aria-pressed="false">回忆柜<span>回忆时间轴 · 我的私藏</span></button>
+      <button class="room-hotspot room-hotspot-mail" id="roomMailbox" type="button" data-zone="mail" aria-pressed="false">信箱<span>未来信件</span></button>
+      <button class="room-hotspot room-hotspot-game" id="roomGameTable" type="button" data-zone="game" aria-pressed="false">游戏台<span>贪吃鸦</span></button>
+      <img class="room-space-signature" src="assets/dark-point/qinche-signature.png" alt="秦彻签名">
+      <p class="room-space-status"><b>N109 · 夜行</b><span>唱片机还在慢慢放</span></p>
     </section>
-    <div class="room-objects" aria-label="暗点里的物件">
-      <div class="room-object"><span class="room-object-label">唱片机</span><p class="room-object-value">古典乐 · 慢慢放</p></div>
-      <div class="room-object"><span class="room-object-label">窗边</span><p class="room-object-value">N109 的月色</p></div>
-      <div class="room-object"><span class="room-object-label">书桌</span><p class="room-object-value">你的下一段回忆</p></div>
-    </div>
-    <div class="room-actions">
-      <button class="companion-action-btn primary" id="btnRoomTimeline" type="button">查看回忆时间轴</button>
-      <button class="companion-action-btn" id="btnRoomLetters" type="button">留一封未来信件</button>
-    </div>
+    <section class="room-zone-actions" id="roomZoneActions" aria-live="polite"></section>
   </div>
 </div>
 
@@ -10676,8 +10973,101 @@ function updateRoomStateUI() {
   });
 }
 
+var activeRoomZone = 'window';
+var roomZoneDefinitions = {
+  window: {
+    title: '窗边',
+    copy: '把身体的节奏和重要的日子安静记下来。',
+    actions: [
+      { id: 'btnRoomPeriod', label: '经期记录', destination: 'period' },
+      { id: 'btnRoomAnniversary', label: '纪念日', destination: 'anniversary' }
+    ]
+  },
+  desk: {
+    title: '书桌',
+    copy: '把眼前要做的事一件件放好，剩下的交给时间。',
+    actions: [
+      { id: 'btnRoomTodo', label: '待办清单', destination: 'todo' },
+      { id: 'btnRoomPomodoro', label: '番茄钟', destination: 'pomodoro' }
+    ]
+  },
+  cabinet: {
+    title: '回忆柜',
+    copy: '想回头看的瞬间，都被好好收在这里。',
+    actions: [
+      { id: 'btnRoomTimeline', label: '回忆时间轴', destination: 'timeline' },
+      { id: 'btnRoomVault', label: '我的私藏', destination: 'privateVault' }
+    ]
+  },
+  mail: {
+    title: '信箱',
+    copy: '写给以后，也留给那个会读到它的你。',
+    actions: [
+      { id: 'btnRoomLetters', label: '未来信件', destination: 'letters' }
+    ]
+  },
+  game: {
+    title: '游戏台',
+    copy: '先歇一会。下一局，换你来赢。',
+    actions: [
+      { id: 'btnRoomSnake', label: '贪吃鸦', destination: 'snake' }
+    ]
+  }
+};
+
+function getRoomZoneActionsMarkup(zone) {
+  var definition = roomZoneDefinitions[zone] || roomZoneDefinitions.window;
+  var buttons = definition.actions.map(function(action) {
+    return '<button class="room-zone-action" id="' + action.id + '" type="button" data-room-destination="' + action.destination + '">' + action.label + '</button>';
+  }).join('');
+  return '<div class="room-zone-content"><div><span class="room-zone-overline">暗点 · ' + definition.title + '</span><h4 class="room-zone-title">' + definition.title + '</h4><p class="room-zone-copy">' + definition.copy + '</p></div><div class="room-zone-buttons">' + buttons + '</div></div>';
+}
+
+function selectRoomZone(zone) {
+  activeRoomZone = roomZoneDefinitions[zone] ? zone : 'window';
+  document.querySelectorAll('.room-hotspot').forEach(function(button) {
+    button.setAttribute('aria-pressed', button.dataset.zone === activeRoomZone ? 'true' : 'false');
+  });
+  var actions = document.getElementById('roomZoneActions');
+  if (actions) actions.innerHTML = getRoomZoneActionsMarkup(activeRoomZone);
+}
+
+function openRoomDestination(destination) {
+  closeUtilPanel('room');
+  if (destination === 'timeline') {
+    if (memoryDrawerController) memoryDrawerController.open();
+    return;
+  }
+  if (destination === 'period') {
+    openUtilPanel('period');
+    return;
+  }
+  if (destination === 'anniversary') {
+    openUtilPanel('anniversary');
+    return;
+  }
+  if (destination === 'todo') {
+    openUtilPanel('todo');
+    return;
+  }
+  if (destination === 'pomodoro') {
+    openUtilPanel('pomodoro');
+    return;
+  }
+  if (destination === 'privateVault') {
+    openUtilPanel('privateVault');
+    return;
+  }
+  if (destination === 'letters') {
+    openUtilPanel('letters');
+    return;
+  }
+  if (destination === 'snake') openUtilPanel('snake');
+}
+
 function initRoomPanel() {
   updateRoomStateUI();
+  selectRoomZone(activeRoomZone);
 }
 
 function saveRoomState(value) {
@@ -11416,13 +11806,14 @@ document.getElementById('heroStateCard').addEventListener('click', function() { 
 document.getElementById('roomStatePicker').addEventListener('change', function(event) {
   if (event.target && event.target.name === 'roomState') saveRoomState(event.target.value);
 });
-document.getElementById('btnRoomTimeline').addEventListener('click', function() {
-  closeUtilPanel('room');
-  if (memoryDrawerController) memoryDrawerController.open();
+document.querySelectorAll('.room-hotspot').forEach(function(button) {
+  button.addEventListener('click', function() {
+    selectRoomZone(button.dataset.zone);
+  });
 });
-document.getElementById('btnRoomLetters').addEventListener('click', function() {
-  closeUtilPanel('room');
-  openUtilPanel('letters');
+document.getElementById('roomZoneActions').addEventListener('click', function(event) {
+  var action = event.target.closest('[data-room-destination]');
+  if (action) openRoomDestination(action.dataset.roomDestination);
 });
 
 document.getElementById('btnToggleMemoryForm').addEventListener('click', function() {
