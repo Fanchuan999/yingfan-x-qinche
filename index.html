@@ -793,12 +793,12 @@ nav .links a:hover::after { width: 100%; }
   flex-wrap: nowrap;
   gap: 6px;
   justify-content: flex-start;
-  margin: 20px auto 0;
-  max-width: calc(100vw - 40px);
+  margin: 26px auto 0;
+  max-width: calc(100vw - 64px);
   overflow-x: auto;
-  padding: 0 8px 4px;
+  padding: 0 8px 12px;
   scrollbar-width: thin;
-  width: min(1050px, 100%);
+  width: min(720px, 100%);
 }
 
 .quote-dot {
@@ -5268,7 +5268,7 @@ body.memory-drawer-open { overflow: hidden; }
       <img class="room-space-hero" src="assets/dark-point/qinche-seated.png" alt="" aria-hidden="true">
       <img class="room-space-feather" src="assets/dark-point/feather.png" alt="" aria-hidden="true">
       <div class="room-space-copy">
-        <h4 class="room-scene-title">留一盏灯，等你回来。</h4>
+        <h4 class="room-scene-title">留一盏灯，<br>等你回来</h4>
         <p class="room-scene-copy">黑胶还在缓慢地转。窗外的雨不急，今晚的时间也不急。</p>
         <p class="room-scene-quote">“累了就歇会，剩下的交给我。”</p>
       </div>
@@ -5427,6 +5427,7 @@ body.memory-drawer-open { overflow: hidden; }
 </div>
 
 <script src="timeline-helpers.js"></script>
+<script src="vault-link-parser.js?v=20260825-1"></script>
 <script src="memory-drawer.js?v=20260825-2"></script>
 <script>
 // ============ Theme Management ============
@@ -10503,19 +10504,7 @@ async function saveVaultVideo(file) {
 }
 
 function vaultNormalizeVideoLink(value) {
-  var source = (value || '').trim();
-  if (!source) throw new Error('请输入视频链接');
-  if (!/^[a-z][a-z0-9+.-]*:/i.test(source)) source = 'https://' + source;
-  var url;
-  try {
-    url = new URL(source);
-  } catch (error) {
-    throw new Error('请输入有效的视频链接');
-  }
-  if (url.protocol !== 'https:' && url.protocol !== 'http:') {
-    throw new Error('仅支持 http 或 https 视频链接');
-  }
-  return url.href;
+  return window.QincheVaultLinks.normalizeSharedWebLink(value);
 }
 
 function vaultLinkTitle(title, url) {
@@ -10660,7 +10649,7 @@ function renderPrivateVault() {
     '</div>' +
     '<form class="vault-link-form" id="vaultLinkForm">' +
       '<input class="vault-link-input" id="vaultLinkTitle" type="text" maxlength="80" placeholder="视频名称（可选）">' +
-      '<input class="vault-link-input" id="vaultLinkUrl" type="url" inputmode="url" placeholder="粘贴视频链接" required>' +
+      '<input class="vault-link-input" id="vaultLinkUrl" type="text" inputmode="url" placeholder="粘贴视频或平台分享内容" required>' +
       '<button class="vault-primary-btn" type="submit" id="btnVaultSaveLink">保存链接</button>' +
     '</form>' +
     '<div class="vault-media-grid" id="vaultMediaGrid"></div>';
