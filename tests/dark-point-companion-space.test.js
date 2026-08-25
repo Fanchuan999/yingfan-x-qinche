@@ -31,10 +31,16 @@ test('dark point exposes all migrated utility routes through room objects', () =
 });
 
 test('dark point uses packaged local visual assets', () => {
-  for (const filename of ['qinche-seated.png', 'silhouette-watch.png', 'silhouette-crow.png', 'red-foliage.png', 'qinche-signature.png', 'feather.png']) {
+  for (const filename of ['qinche-seated.png', 'silhouette-watch.png', 'silhouette-crow.png', 'red-foliage.png', 'qinche-signature.png', 'feather.png', 'room-floor.png']) {
     assert.equal(fs.existsSync(path.join(projectRoot, 'assets', 'dark-point', filename)), true, filename);
     assert.match(page, new RegExp(`assets/dark-point/${filename}`));
   }
+});
+
+test('dark point remembers its parent room before opening a child panel', () => {
+  assert.match(page, /var roomReturnStack = \[\];/);
+  assert.match(page, /function returnToRoomIfNeeded\(name\)/);
+  assert.match(page, /roomReturnStack\.push\(destination\)/);
 });
 
 test('room destination controller reuses existing panels', () => {
@@ -48,4 +54,8 @@ test('room destination controller reuses existing panels', () => {
 
 test('small screens keep the room scene scrollable instead of clipping its hotspots', () => {
   assert.match(page, /@media \(max-width: 768px\) \{[\s\S]*?\.room-space \{[^}]*overflow-y: auto/s);
+});
+
+test('opening dark point resets any prior scene scroll position', () => {
+  assert.match(page, /function initRoomPanel\(\) \{[\s\S]*?roomSpace\.scrollTop = 0;/);
 });

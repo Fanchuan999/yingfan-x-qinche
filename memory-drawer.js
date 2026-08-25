@@ -7,6 +7,7 @@
     var opened = false;
 
     function setOpen(next) {
+      var wasOpen = opened;
       opened = !!next;
       options.drawer.classList.toggle('is-open', opened);
       options.drawer.setAttribute('aria-hidden', opened ? 'false' : 'true');
@@ -14,6 +15,7 @@
       options.body.classList.toggle('memory-drawer-open', opened);
       if (opened && typeof options.onOpen === 'function') options.onOpen();
       if (opened && options.focusTarget && typeof options.focusTarget.focus === 'function') options.focusTarget.focus();
+      if (!opened && wasOpen && typeof options.onClose === 'function') options.onClose();
     }
 
     function handleKeydown(event) {

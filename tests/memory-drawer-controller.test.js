@@ -71,3 +71,20 @@ test('memory drawer Escape closes an open drawer only', () => {
   controller.handleKeydown({ key: 'Escape' });
   assert.equal(controller.isOpen(), false);
 });
+
+test('memory drawer notifies its owner after a visible drawer closes', () => {
+  let closeCount = 0;
+  const controller = drawerModule.createMemoryDrawerController({
+    drawer: createElement(),
+    trigger: createElement(),
+    closeButton: createElement(),
+    documentRef: { addEventListener() {} },
+    body: createElement(),
+    onClose() { closeCount += 1; }
+  });
+
+  controller.open();
+  controller.close();
+
+  assert.equal(closeCount, 1);
+});

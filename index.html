@@ -4077,6 +4077,7 @@ footer .heart {
 
 .room-space-foliage,
 .room-space-silhouette,
+.room-space-floor,
 .room-space-hero,
 .room-space-feather,
 .room-space-signature { pointer-events: none; position: absolute; }
@@ -4088,6 +4089,17 @@ footer .heart {
   transform: rotate(15deg);
   width: min(350px, 36vw);
   z-index: 1;
+}
+
+.room-space-floor {
+  bottom: -1px;
+  height: 178px;
+  left: 0;
+  object-fit: cover;
+  object-position: center 76%;
+  opacity: 0.2;
+  width: 100%;
+  z-index: 0;
 }
 
 .room-space-silhouette-watch {
@@ -4108,11 +4120,11 @@ footer .heart {
 }
 
 .room-space-hero {
-  bottom: -10%;
+  bottom: -12%;
   filter: drop-shadow(-18px 16px 28px rgba(0, 0, 0, 0.45));
-  height: min(620px, 92%);
+  height: min(780px, 124%);
   object-fit: contain;
-  right: 4%;
+  right: 1%;
   z-index: 2;
 }
 
@@ -4303,7 +4315,8 @@ footer .heart {
   .room-scene-quote { display: none; }
   #roomPanel .room-state-current { left: 22px; max-width: calc(100% - 44px); right: 22px; top: 220px; }
   #roomPanel .room-state-picker { left: 22px; max-width: none; right: 22px; top: 272px; width: calc(100% - 44px); }
-  .room-space-hero { bottom: 12px; height: 390px; opacity: 0.88; right: -25%; }
+  .room-space-floor { height: 152px; object-position: center 82%; }
+  .room-space-hero { bottom: 10px; height: 400px; opacity: 0.88; right: -25%; }
   .room-space-foliage { right: -28%; top: 88px; width: 260px; }
   .room-space-silhouette-watch { bottom: 16px; right: -42%; width: 410px; }
   .room-space-silhouette-crow { bottom: 4px; left: 8%; width: 240px; }
@@ -5248,6 +5261,7 @@ body.memory-drawer-open { overflow: hidden; }
       <button class="util-panel-close" onclick="closeUtilPanel('room')" aria-label="关闭暗点">✕</button>
     </div>
     <section class="room-space" aria-label="暗点陪伴空间">
+      <img class="room-space-floor" src="assets/dark-point/room-floor.png" alt="" aria-hidden="true">
       <img class="room-space-foliage" src="assets/dark-point/red-foliage.png" alt="" aria-hidden="true">
       <img class="room-space-silhouette room-space-silhouette-watch" src="assets/dark-point/silhouette-watch.png" alt="" aria-hidden="true">
       <img class="room-space-silhouette room-space-silhouette-crow" src="assets/dark-point/silhouette-crow.png" alt="" aria-hidden="true">
@@ -5413,7 +5427,7 @@ body.memory-drawer-open { overflow: hidden; }
 </div>
 
 <script src="timeline-helpers.js"></script>
-<script src="memory-drawer.js"></script>
+<script src="memory-drawer.js?v=20260825-2"></script>
 <script>
 // ============ Theme Management ============
 var THEME_KEY = 'qinche_theme';
@@ -6993,6 +7007,37 @@ document.querySelectorAll('.dropdown-item').forEach(function(item) {
 });
 
 // Utility panel open/close
+var roomReturnStack = [];
+
+function setRoomReturnLabel(name, isReturning) {
+  if (name === 'room') return;
+  var panel = document.getElementById(name + 'Panel');
+  var closeButton = panel && panel.querySelector('.util-panel-close');
+  if (!closeButton) return;
+  if (!closeButton.dataset.defaultLabel) closeButton.dataset.defaultLabel = closeButton.textContent;
+  closeButton.textContent = isReturning ? '← 暗点' : closeButton.dataset.defaultLabel;
+  closeButton.setAttribute('aria-label', isReturning ? '返回暗点' : '关闭');
+  closeButton.title = isReturning ? '返回暗点' : '关闭';
+}
+
+function setMemoryDrawerReturnLabel(isReturning) {
+  var closeButton = document.getElementById('btnMemoryDrawerClose');
+  if (!closeButton) return;
+  if (!closeButton.dataset.defaultLabel) closeButton.dataset.defaultLabel = closeButton.textContent;
+  closeButton.textContent = isReturning ? '←' : closeButton.dataset.defaultLabel;
+  closeButton.setAttribute('aria-label', isReturning ? '返回暗点' : '关闭回忆时间轴');
+  closeButton.title = isReturning ? '返回暗点' : '关闭回忆时间轴';
+}
+
+function returnToRoomIfNeeded(name) {
+  if (roomReturnStack[roomReturnStack.length - 1] !== name) return false;
+  roomReturnStack.pop();
+  setRoomReturnLabel(name, false);
+  if (name === 'timeline') setMemoryDrawerReturnLabel(false);
+  openUtilPanel('room');
+  return true;
+}
+
 function openUtilPanel(name) {
   var panelId = name + 'Panel';
   document.getElementById(panelId).classList.add('active');
@@ -7012,17 +7057,17 @@ function openUtilPanel(name) {
 function closeUtilPanel(name) {
   var panelId = name + 'Panel';
   document.getElementById(panelId).classList.remove('active');
-  document.body.style.overflow = '';
   if (name === 'privateVault') lockPrivateVault();
+  if (returnToRoomIfNeeded(name)) return;
+  setRoomReturnLabel(name, false);
+  document.body.style.overflow = '';
 }
 
 // Close panel on overlay click
 document.querySelectorAll('.util-overlay').forEach(function(overlay) {
   overlay.addEventListener('click', function(e) {
     if (e.target === overlay) {
-      overlay.classList.remove('active');
-      document.body.style.overflow = '';
-      if (overlay.id === 'privateVaultPanel') lockPrivateVault();
+      closeUtilPanel(overlay.id.replace('Panel', ''));
     }
   });
 });
@@ -7030,11 +7075,8 @@ document.querySelectorAll('.util-overlay').forEach(function(overlay) {
 // ESC to close panels
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') {
-    document.querySelectorAll('.util-overlay.active').forEach(function(o) {
-      o.classList.remove('active');
-      if (o.id === 'privateVaultPanel') lockPrivateVault();
-    });
-    document.body.style.overflow = '';
+    var activeOverlay = document.querySelector('.util-overlay.active');
+    if (activeOverlay) closeUtilPanel(activeOverlay.id.replace('Panel', ''));
   }
 });
 
@@ -11033,11 +11075,18 @@ function selectRoomZone(zone) {
 }
 
 function openRoomDestination(destination) {
+  roomReturnStack.push(destination);
   closeUtilPanel('room');
   if (destination === 'timeline') {
-    if (memoryDrawerController) memoryDrawerController.open();
+    setMemoryDrawerReturnLabel(true);
+    if (memoryDrawerController) {
+      memoryDrawerController.open();
+    } else {
+      returnToRoomIfNeeded(destination);
+    }
     return;
   }
+  setRoomReturnLabel(destination, true);
   if (destination === 'period') {
     openUtilPanel('period');
     return;
@@ -11066,6 +11115,8 @@ function openRoomDestination(destination) {
 }
 
 function initRoomPanel() {
+  var roomSpace = document.querySelector('#roomPanel .room-space');
+  if (roomSpace) roomSpace.scrollTop = 0;
   updateRoomStateUI();
   selectRoomZone(activeRoomZone);
 }
@@ -11973,7 +12024,8 @@ function initMemoryDrawer() {
     documentRef: document,
     body: document.body,
     focusTarget: panel,
-    onOpen: renderMemoryTimeline
+    onOpen: renderMemoryTimeline,
+    onClose: function() { returnToRoomIfNeeded('timeline'); }
   });
   memoryDrawerController.bind();
 }
