@@ -12,12 +12,6 @@ function getCrowDropdown() {
   return page.slice(start, end);
 }
 
-function getRoomStatePicker() {
-  const start = page.indexOf('<fieldset class="room-state-picker" id="roomStatePicker">');
-  const end = page.indexOf('</fieldset>', start);
-  return page.slice(start, end);
-}
-
 test('crow menu retains only administrative entries', () => {
   const dropdown = getCrowDropdown();
 
@@ -62,13 +56,11 @@ test('small screens keep the room scene scrollable instead of clipping its hotsp
   assert.match(page, /@media \(max-width: 768px\) \{[\s\S]*?\.room-space \{[^}]*overflow-y: auto/s);
 });
 
-test('dark point removes the manual night-state choice while keeping automatic selection available', () => {
-  const picker = getRoomStatePicker();
-
-  assert.match(picker, /value="auto"/);
-  assert.match(picker, /value="watch"/);
-  assert.match(picker, /value="focus"/);
-  assert.doesNotMatch(picker, /value="night"|>夜行</);
+test('dark point leaves automatic state display on the homepage only', () => {
+  assert.doesNotMatch(page, /id="roomStatePicker"|class="room-state-current"|id="roomStateName"|id="roomStateCopy"/);
+  assert.doesNotMatch(page, /roomStatePicker\.addEventListener|function saveRoomState\(/);
+  assert.match(page, /function getAutomaticRoomState\(\)/);
+  assert.match(page, /id="heroStateName"/);
 });
 
 test('opening dark point resets any prior scene scroll position', () => {

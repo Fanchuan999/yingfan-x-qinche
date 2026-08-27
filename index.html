@@ -3956,7 +3956,6 @@ footer .heart {
 [data-theme="light"] .hero-state-card { background: rgba(243,247,252,0.5); }
 .hero-state-card:hover { border-color: var(--red); background: rgba(196,30,58,0.08); transform: translateY(-2px); }
 .hero-state-card:focus-visible,
-.room-state-choice input:focus-visible + span,
 .memory-form-input:focus-visible,
 .letter-form-input:focus-visible,
 .letter-form-select:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
@@ -3994,46 +3993,6 @@ footer .heart {
 }
 
 .room-scene-copy { color: var(--text-muted); font-size: 0.82rem; line-height: 1.9; }
-
-.room-state-current {
-  align-items: center;
-  border-left: 2px solid var(--red);
-  display: flex;
-  gap: 12px;
-  margin: 20px 0;
-  padding: 4px 0 4px 12px;
-}
-
-.room-state-current strong { color: var(--text-light); font-size: 0.92rem; letter-spacing: 1px; }
-.room-state-current span { color: var(--text-muted); font-size: 0.78rem; }
-
-.room-state-picker {
-  border: 0;
-  display: grid;
-  gap: 8px;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  margin: 0;
-  padding: 0;
-}
-
-.room-state-choice { cursor: pointer; min-width: 0; }
-.room-state-choice input { position: absolute; opacity: 0; pointer-events: none; }
-.room-state-choice span {
-  border: 1px solid var(--border);
-  color: var(--text-muted);
-  display: block;
-  font-size: 0.72rem;
-  letter-spacing: 1px;
-  overflow: hidden;
-  padding: 9px 6px;
-  text-align: center;
-  text-overflow: ellipsis;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-}
-
-.room-state-choice:hover span { border-color: var(--red-dark); color: var(--text-light); }
-.room-state-choice input:checked + span { background: rgba(196,30,58,0.1); border-color: var(--red); color: var(--text-light); }
 
 .room-objects {
   display: grid;
@@ -4216,40 +4175,6 @@ footer .heart {
   margin: 26px 0 0;
 }
 
-#roomPanel .room-state-current {
-  align-items: flex-start;
-  background: rgba(25, 6, 12, 0.62);
-  border: 1px solid rgba(224, 133, 147, 0.33);
-  border-left: 2px solid var(--red);
-  flex-direction: column;
-  gap: 2px;
-  left: auto;
-  margin: 0;
-  max-width: 220px;
-  padding: 7px 10px;
-  position: absolute;
-  right: clamp(22px, 5vw, 52px);
-  top: 26px;
-  z-index: 7;
-}
-
-#roomPanel .room-state-current strong { font-size: 0.72rem; }
-#roomPanel .room-state-current span { font-size: 0.62rem; line-height: 1.4; }
-
-#roomPanel .room-state-picker {
-  gap: 5px;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  left: auto;
-  max-width: 220px;
-  position: absolute;
-  right: clamp(22px, 5vw, 52px);
-  top: 90px;
-  width: 220px;
-  z-index: 7;
-}
-
-#roomPanel .room-state-choice span { background: rgba(25, 6, 12, 0.42); font-size: 0.62rem; padding: 5px 4px; }
-
 .room-hotspot {
   appearance: none;
   background: rgba(45, 10, 19, 0.86);
@@ -4329,13 +4254,8 @@ footer .heart {
 
 [data-theme="light"] .room-space { background: #edd9df; }
 [data-theme="light"] .room-space::before { border-color: rgba(146, 67, 86, 0.3); }
-[data-theme="light"] #roomPanel .room-state-current { background: rgba(255, 245, 247, 0.8); }
-[data-theme="light"] #roomPanel .room-state-current strong { color: #3d1e28; }
-[data-theme="light"] #roomPanel .room-state-current span { color: #78515d; }
 [data-theme="light"] #roomPanel .room-scene-copy { color: #754d57; }
 [data-theme="light"] .room-scene-quote { color: #4a2933; }
-[data-theme="light"] #roomPanel .room-state-choice span { background: rgba(255, 248, 250, 0.72); border-color: #b86f81; color: #51313b; }
-[data-theme="light"] #roomPanel .room-state-choice input:checked + span { background: #efd0d8; border-color: #a94e66; color: #3d1e28; }
 [data-theme="light"] .room-hotspot { background: rgba(255, 246, 248, 0.88); border-color: #bd7586; color: #472a33; }
 [data-theme="light"] .room-hotspot span { color: #7c5661; }
 [data-theme="light"] .room-hotspot:hover,
@@ -4352,8 +4272,6 @@ footer .heart {
   #roomPanel .room-scene-title { font-size: 2.2rem; letter-spacing: 4px; }
   #roomPanel .room-scene-copy { font-size: 0.72rem; max-width: 200px; }
   .room-scene-quote { display: none; }
-  #roomPanel .room-state-current { left: 22px; max-width: calc(100% - 44px); right: 22px; top: 220px; }
-  #roomPanel .room-state-picker { left: 22px; max-width: none; right: 22px; top: 272px; width: calc(100% - 44px); }
   .room-space-floor { height: 152px; object-position: center 82%; }
   .room-space-hero { bottom: 10px; height: 400px; opacity: 0.88; right: -25%; }
   .room-space-foliage { right: -28%; top: 88px; width: 260px; }
@@ -4713,7 +4631,6 @@ body.memory-drawer-open { overflow: hidden; }
   .nav-room-link { font-size: 0.75rem; letter-spacing: 1px; }
   .hero-state-card { min-width: min(330px, 88vw); }
   .hero-state-copy { font-size: 0.68rem; }
-  .room-state-picker { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .room-objects { grid-template-columns: 1fr; gap: 12px; }
   .room-object, .room-object:first-child, .room-object:last-child { border-right: 0; border-bottom: 1px solid var(--border); padding: 0 0 12px; }
   .room-object:last-child { border-bottom: 0; padding-bottom: 0; }
@@ -5311,16 +5228,6 @@ body.memory-drawer-open { overflow: hidden; }
         <p class="room-scene-copy">黑胶还在缓慢地转。窗外的雨不急，今晚的时间也不急。</p>
         <p class="room-scene-quote">“累了就歇会，剩下的交给我。”</p>
       </div>
-      <div class="room-state-current">
-        <strong id="roomStateName">秦彻在这里</strong>
-        <span id="roomStateCopy">不用急，先把你自己的事做好。</span>
-      </div>
-      <fieldset class="room-state-picker" id="roomStatePicker">
-        <legend class="sr-only">选择暗点状态</legend>
-        <label class="room-state-choice"><input type="radio" name="roomState" value="auto"><span>随时间</span></label>
-        <label class="room-state-choice"><input type="radio" name="roomState" value="watch"><span>守着你</span></label>
-        <label class="room-state-choice"><input type="radio" name="roomState" value="focus"><span>主场</span></label>
-      </fieldset>
       <button class="room-hotspot room-hotspot-window" id="roomWindow" type="button" data-zone="window" aria-pressed="false">窗边<span>经期记录 · 纪念日</span></button>
       <button class="room-hotspot room-hotspot-desk" id="roomDesk" type="button" data-zone="desk" aria-pressed="false">书桌<span>待办清单 · 番茄钟</span></button>
       <button class="room-hotspot room-hotspot-cabinet" id="roomCabinet" type="button" data-zone="cabinet" aria-pressed="false">回忆柜<span>回忆时间轴 · 我的私藏</span></button>
@@ -5469,7 +5376,6 @@ body.memory-drawer-open { overflow: hidden; }
 <script src="vault-link-parser.js?v=20260825-1"></script>
 <script src="quote-starfield.js?v=20260825-1"></script>
 <script src="future-letter-ai.js?v=20260827-1"></script>
-<script src="room-state-helpers.js?v=20260827-1"></script>
 <script src="memory-drawer.js?v=20260825-2"></script>
 <script>
 // ============ Theme Management ============
@@ -10960,7 +10866,6 @@ async function sendChatMessage() {
 }
 
 // ============ Companion Space ============
-var ROOM_STATE_KEY = 'qinche_room_state_v1';
 var MEMORY_TIMELINE_KEY = 'qinche_memory_timeline_v1';
 var FUTURE_LETTERS_KEY = 'qinche_future_letters_v1';
 
@@ -11027,18 +10932,6 @@ function formatCompanionDate(dateKey) {
   return parts[0] + '.' + parts[1] + '.' + parts[2];
 }
 
-function getStoredRoomState() {
-  try {
-    var value = localStorage.getItem(ROOM_STATE_KEY);
-    var helpers = window.QincheRoomStateHelpers;
-    var normalized = helpers ? helpers.normalizeStoredRoomState(value) : (value === 'watch' || value === 'focus' ? value : 'auto');
-    if (value === 'night') localStorage.setItem(ROOM_STATE_KEY, normalized);
-    return normalized;
-  } catch(e) {
-    return 'auto';
-  }
-}
-
 function getAutomaticRoomState() {
   var hour = new Date().getHours();
   if (hour >= 20 || hour < 5) return 'night';
@@ -11047,8 +10940,7 @@ function getAutomaticRoomState() {
 }
 
 function getActiveRoomState() {
-  var selected = getStoredRoomState();
-  var key = selected === 'auto' ? getAutomaticRoomState() : selected;
+  var key = getAutomaticRoomState();
   return roomStates[key] || roomStates.watch;
 }
 
@@ -11056,17 +10948,8 @@ function updateRoomStateUI() {
   var state = getActiveRoomState();
   var heroName = document.getElementById('heroStateName');
   var heroCopy = document.getElementById('heroStateCopy');
-  var roomName = document.getElementById('roomStateName');
-  var roomCopy = document.getElementById('roomStateCopy');
   if (heroName) heroName.textContent = '秦彻 · ' + state.name;
   if (heroCopy) heroCopy.textContent = state.copy;
-  if (roomName) roomName.textContent = '现在是 ' + state.name;
-  if (roomCopy) roomCopy.textContent = state.copy;
-
-  var selected = getStoredRoomState();
-  document.querySelectorAll('input[name="roomState"]').forEach(function(input) {
-    input.checked = input.value === selected;
-  });
 }
 
 var activeRoomZone = 'window';
@@ -11173,13 +11056,6 @@ function initRoomPanel() {
   if (roomSpace) roomSpace.scrollTop = 0;
   updateRoomStateUI();
   selectRoomZone(activeRoomZone);
-}
-
-function saveRoomState(value) {
-  var helpers = window.QincheRoomStateHelpers;
-  var next = helpers ? helpers.normalizeStoredRoomState(value) : (value === 'watch' || value === 'focus' ? value : 'auto');
-  try { localStorage.setItem(ROOM_STATE_KEY, next); } catch(e) {}
-  updateRoomStateUI();
 }
 
 function loadCompanionList(key) {
@@ -11699,7 +11575,6 @@ function deleteFutureLetter(id) {
 
 function clearCompanionSpaceData() {
   try {
-    localStorage.removeItem(ROOM_STATE_KEY);
     localStorage.removeItem(MEMORY_TIMELINE_KEY);
     localStorage.removeItem(FUTURE_LETTERS_KEY);
   } catch(e) {}
@@ -11725,7 +11600,6 @@ var PERSONAL_BACKUP_STORAGE_KEYS = [
   PERIOD_SETTINGS_KEY,
   ANNIVERSARY_KEY,
   TODO_KEY,
-  ROOM_STATE_KEY,
   MEMORY_TIMELINE_KEY,
   FUTURE_LETTERS_KEY,
   CHAT_CONFIG_KEY,
@@ -11971,9 +11845,6 @@ document.getElementById('backupImportInput').addEventListener('change', function
 
 document.getElementById('btnRoom').addEventListener('click', function() { openUtilPanel('room'); });
 document.getElementById('heroStateCard').addEventListener('click', function() { openUtilPanel('room'); });
-document.getElementById('roomStatePicker').addEventListener('change', function(event) {
-  if (event.target && event.target.name === 'roomState') saveRoomState(event.target.value);
-});
 document.querySelectorAll('.room-hotspot').forEach(function(button) {
   button.addEventListener('click', function() {
     selectRoomZone(button.dataset.zone);
