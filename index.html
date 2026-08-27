@@ -1698,6 +1698,16 @@ footer .heart {
 
 .chat-api-clear:hover { border-color: var(--red-dark); color: var(--red); }
 
+.chat-model-status {
+  color: var(--text-muted);
+  font-size: 0.65rem;
+  line-height: 1.5;
+  margin: -2px 0 8px 64px;
+  min-height: 1.5em;
+}
+
+.chat-model-status.is-error { color: var(--red); }
+
 .chat-messages {
   flex: 1;
   overflow-y: auto;
@@ -5298,6 +5308,7 @@ body.memory-drawer-open { overflow: hidden; }
         <select id="chatModelSelect" onchange="onChatModelChange()">
           <option value="deepseek">DeepSeek</option>
           <option value="doubao">豆包</option>
+          <option value="opencodeGo">OpenCode Go</option>
           <option value="custom">兼容接口</option>
         </select>
       </div>
@@ -5313,8 +5324,16 @@ body.memory-drawer-open { overflow: hidden; }
       </div>
       <div class="chat-setting-row">
         <label>API URL</label>
-        <input type="text" id="chatBaseUrl" placeholder="https://api.deepseek.com" onchange="saveChatConfig()">
+        <input type="text" id="chatBaseUrl" placeholder="https://api.deepseek.com" onchange="onChatBaseUrlChange()">
       </div>
+      <div class="chat-setting-row" id="chatAvailableModelRow" hidden>
+        <label>可选模型</label>
+        <select id="chatAvailableModelSelect" onchange="onAvailableChatModelChange()">
+          <option value="">点击读取模型</option>
+        </select>
+        <button class="chat-api-clear" id="btnChatLoadModels" type="button" onclick="loadAvailableChatModels()">读取</button>
+      </div>
+      <p class="chat-model-status" id="chatModelLoadStatus" aria-live="polite" hidden></p>
       <div class="chat-setting-row" id="chatCustomModelRow" hidden>
         <label>模型名</label>
         <input type="text" id="chatCustomModelName" placeholder="qwen2.5:7b" onchange="saveChatConfig()">
@@ -5376,6 +5395,7 @@ body.memory-drawer-open { overflow: hidden; }
 <script src="vault-link-parser.js?v=20260825-1"></script>
 <script src="quote-starfield.js?v=20260825-1"></script>
 <script src="future-letter-ai.js?v=20260827-1"></script>
+<script src="chat-model-catalog.js?v=20260827-1"></script>
 <script src="memory-drawer.js?v=20260825-2"></script>
 <script>
 // ============ Theme Management ============
@@ -8982,6 +9002,9 @@ var chatImageBase64 = null;
 var activeChatController = null;
 var activeChatTimeoutId = null;
 var activeChatAbortReason = '';
+var CHAT_MODEL_LIST_TIMEOUT = 15000;
+var activeChatModelListController = null;
+var activeChatModelListTimeoutId = null;
 
 function loadSessions() {
   try { return JSON.parse(localStorage.getItem(CHAT_SESSIONS_KEY)) || []; } catch(e) { return []; }
@@ -9070,21 +9093,20 @@ function getSavedChatApiKey(cfg) {
 }
 
 function saveChatConfig() {
-  var maxTokens = parseInt(document.getElementById('chatMaxTokens').value, 10);
-  var contextMessages = parseInt(document.getElementById('chatContextMessages').value, 10);
   var apiKey = document.getElementById('chatApiKey').value.trim();
-  var rememberApiKey = document.getElementById('chatRememberApiKey').checked;
-  var cfg = {
+  var catalog = window.QincheChatModelCatalog;
+  var values = {
     model: document.getElementById('chatModelSelect').value,
     baseUrl: document.getElementById('chatBaseUrl').value.trim(),
     customModelName: document.getElementById('chatCustomModelName').value.trim(),
-    rememberApiKey: rememberApiKey,
+    apiKey: apiKey,
+    rememberApiKey: document.getElementById('chatRememberApiKey').checked,
     reasoner: document.getElementById('chatReasoner').checked,
-    maxTokens: maxTokens >= 256 && maxTokens <= 8192 ? maxTokens : 2048,
-    contextMessages: [8, 12, 20].indexOf(contextMessages) !== -1 ? contextMessages : 12,
+    maxTokens: document.getElementById('chatMaxTokens').value,
+    contextMessages: document.getElementById('chatContextMessages').value,
     systemPrompt: document.getElementById('chatSystemPrompt').value
   };
-  if (rememberApiKey && apiKey) cfg.apiKey = apiKey;
+  var cfg = catalog && catalog.buildStoredChatConfig ? catalog.buildStoredChatConfig(values) : values;
   try {
     if (apiKey) sessionStorage.setItem(CHAT_SESSION_API_KEY, apiKey);
     else sessionStorage.removeItem(CHAT_SESSION_API_KEY);
@@ -9106,7 +9128,10 @@ function clearChatApiKey() {
 }
 
 function getDefaultChatBaseUrl(model) {
+  var catalog = window.QincheChatModelCatalog;
+  if (catalog && catalog.resolveChatEndpointConfig) return catalog.resolveChatEndpointConfig({ model: model }).baseUrl;
   if (model === 'doubao') return 'https://ark.cn-beijing.volces.com/api/v3';
+  if (model === 'opencodeGo') return 'https://opencode.ai/zen/go/v1';
   if (model === 'custom') return 'http://127.0.0.1:11434/v1';
   return 'https://api.deepseek.com';
 }
@@ -9120,17 +9145,17 @@ function getChatCompletionsUrl(baseUrl) {
 
 function getChatEndpoint() {
   var cfg = loadChatConfig();
+  var catalog = window.QincheChatModelCatalog;
   var model = cfg.model || 'deepseek';
-  var baseUrl = cfg.baseUrl || getDefaultChatBaseUrl(model);
-  var modelName = model === 'custom'
-    ? (cfg.customModelName || '').trim()
-    : (model === 'doubao' ? 'doubao-1.5-vision-pro-32k' : (cfg.reasoner ? 'deepseek-reasoner' : 'deepseek-chat'));
+  var resolved = catalog && catalog.resolveChatEndpointConfig
+    ? catalog.resolveChatEndpointConfig(cfg)
+    : { baseUrl: cfg.baseUrl || getDefaultChatBaseUrl(model), modelName: cfg.customModelName || '', requiresApiKey: model !== 'custom', configError: '' };
   return {
-    url: getChatCompletionsUrl(baseUrl),
+    url: getChatCompletionsUrl(resolved.baseUrl),
     apiKey: getSavedChatApiKey(cfg),
-    requiresApiKey: model !== 'custom',
-    configError: model === 'custom' && !modelName ? '请填写兼容接口的模型名' : '',
-    modelName: modelName,
+    requiresApiKey: resolved.requiresApiKey,
+    configError: resolved.configError,
+    modelName: resolved.modelName,
     systemPrompt: cfg.systemPrompt || '',
     maxTokens: cfg.maxTokens || 2048,
     contextMessages: [8, 12, 20].indexOf(cfg.contextMessages) !== -1 ? cfg.contextMessages : 12
@@ -9544,13 +9569,14 @@ function chatToast(msg) {
 function initChatPanel() {
   var cfg = loadChatConfig();
   var model = cfg.model || 'deepseek';
-  if (['deepseek', 'doubao', 'custom'].indexOf(model) === -1) model = 'deepseek';
+  if (['deepseek', 'doubao', 'opencodeGo', 'custom'].indexOf(model) === -1) model = 'deepseek';
   document.getElementById('chatModelSelect').value = model;
   document.getElementById('chatApiKey').value = getSavedChatApiKey(cfg);
   document.getElementById('chatRememberApiKey').checked = cfg.rememberApiKey === true;
   var defaultUrl = getDefaultChatBaseUrl(model);
   document.getElementById('chatBaseUrl').value = cfg.baseUrl || defaultUrl;
   document.getElementById('chatCustomModelName').value = cfg.customModelName || '';
+  renderAvailableChatModels([], cfg.customModelName || '');
   updateChatModelUi(model);
   document.getElementById('chatReasoner').checked = cfg.reasoner || false;
   document.getElementById('chatMaxTokens').value = cfg.maxTokens || 2048;
@@ -9580,16 +9606,152 @@ function toggleChatSettings() {
 }
 
 function updateChatModelUi(model) {
-  document.getElementById('chatCustomModelRow').hidden = model !== 'custom';
+  var catalog = window.QincheChatModelCatalog;
+  var profile = catalog && catalog.getProviderProfile ? catalog.getProviderProfile(model) : null;
+  var canDiscoverModels = !!(profile && profile.allowsModelDiscovery);
+  document.getElementById('chatCustomModelRow').hidden = !canDiscoverModels;
+  document.getElementById('chatAvailableModelRow').hidden = !canDiscoverModels;
+  document.getElementById('chatModelLoadStatus').hidden = !canDiscoverModels;
   document.getElementById('chatReasonerRow').hidden = model !== 'deepseek';
   document.getElementById('chatBaseUrl').placeholder = getDefaultChatBaseUrl(model);
+  document.getElementById('chatCustomModelName').placeholder = model === 'opencodeGo' ? 'glm-5.3-flash' : 'qwen2.5:7b';
 }
 
 function onChatModelChange() {
+  cancelAvailableChatModels();
   var model = document.getElementById('chatModelSelect').value;
   var defaultUrl = getDefaultChatBaseUrl(model);
   document.getElementById('chatBaseUrl').value = defaultUrl;
+  document.getElementById('chatCustomModelName').value = '';
+  renderAvailableChatModels([], '');
+  setChatModelLoadStatus('');
   updateChatModelUi(model);
+  saveChatConfig();
+}
+
+function onChatBaseUrlChange() {
+  cancelAvailableChatModels();
+  renderAvailableChatModels([], document.getElementById('chatCustomModelName').value);
+  setChatModelLoadStatus('');
+  saveChatConfig();
+}
+
+function setChatModelLoadStatus(message, isError) {
+  var status = document.getElementById('chatModelLoadStatus');
+  status.textContent = message || '';
+  status.hidden = !message;
+  status.classList.toggle('is-error', !!isError);
+}
+
+function renderAvailableChatModels(modelIds, selectedModel) {
+  var select = document.getElementById('chatAvailableModelSelect');
+  var current = String(selectedModel || '').trim();
+  select.innerHTML = '';
+  var placeholder = document.createElement('option');
+  placeholder.value = '';
+  placeholder.textContent = current && (!Array.isArray(modelIds) || modelIds.indexOf(current) === -1)
+    ? '当前模型：' + current
+    : '点击读取模型';
+  select.appendChild(placeholder);
+  (Array.isArray(modelIds) ? modelIds : []).forEach(function(id) {
+    var option = document.createElement('option');
+    option.value = id;
+    option.textContent = id;
+    select.appendChild(option);
+  });
+  if (current && Array.isArray(modelIds) && modelIds.indexOf(current) !== -1) select.value = current;
+}
+
+function cancelAvailableChatModels() {
+  if (activeChatModelListTimeoutId) window.clearTimeout(activeChatModelListTimeoutId);
+  activeChatModelListTimeoutId = null;
+  if (activeChatModelListController) activeChatModelListController.abort();
+  activeChatModelListController = null;
+  var button = document.getElementById('btnChatLoadModels');
+  if (button) {
+    button.disabled = false;
+    button.textContent = '读取';
+  }
+}
+
+async function loadAvailableChatModels() {
+  var catalog = window.QincheChatModelCatalog;
+  var model = document.getElementById('chatModelSelect').value;
+  var profile = catalog && catalog.getProviderProfile ? catalog.getProviderProfile(model) : null;
+  if (!catalog || !profile || !profile.allowsModelDiscovery) {
+    chatToast('请选择 OpenCode Go 或兼容接口');
+    return;
+  }
+
+  var baseUrl = document.getElementById('chatBaseUrl').value.trim() || getDefaultChatBaseUrl(model);
+  var modelsUrl = catalog.buildModelsUrl(baseUrl);
+  if (!modelsUrl) {
+    setChatModelLoadStatus('请先填写 API URL。', true);
+    return;
+  }
+
+  var button = document.getElementById('btnChatLoadModels');
+  var apiKey = document.getElementById('chatApiKey').value.trim();
+  var selectedModel = document.getElementById('chatCustomModelName').value.trim();
+  if (profile.requiresApiKey && !apiKey) {
+    setChatModelLoadStatus('请先填写 API Key，再读取 OpenCode Go 的模型列表。', true);
+    return;
+  }
+
+  cancelAvailableChatModels();
+  var controller = new AbortController();
+  var request = { provider: model, baseUrl: baseUrl };
+  activeChatModelListController = controller;
+  button.disabled = true;
+  button.textContent = '读取中';
+  setChatModelLoadStatus('正在读取可用模型…');
+  activeChatModelListTimeoutId = window.setTimeout(function() {
+    if (activeChatModelListController === controller) controller.abort();
+  }, CHAT_MODEL_LIST_TIMEOUT);
+
+  try {
+    var headers = {};
+    if (apiKey) headers.Authorization = 'Bearer ' + apiKey;
+    var response = await fetch(modelsUrl, { headers: headers, signal: controller.signal });
+    if (!response.ok) throw new Error('服务返回 ' + response.status);
+    var payload = await response.json();
+    var current = {
+      provider: document.getElementById('chatModelSelect').value,
+      baseUrl: document.getElementById('chatBaseUrl').value.trim() || getDefaultChatBaseUrl(model)
+    };
+    if (activeChatModelListController !== controller || !catalog.shouldApplyModelListResult(request, current)) return;
+    var result = catalog.getSelectableModelCatalog(model, payload);
+    renderAvailableChatModels(result.modelIds, selectedModel);
+    if (!result.modelIds.length) {
+      setChatModelLoadStatus('没有读取到当前聊天可用的模型，可检查 API URL 或手动填写模型名。', true);
+      return;
+    }
+    var message = '已读取 ' + result.modelIds.length + ' 个可用模型。';
+    if (result.unsupportedCount) message += '另有 ' + result.unsupportedCount + ' 个模型需要其他接口，未放入此列表。';
+    setChatModelLoadStatus(message);
+  } catch (error) {
+    if (activeChatModelListController !== controller) return;
+    if (error && error.name === 'AbortError') {
+      setChatModelLoadStatus('模型列表读取超时，请重试。', true);
+    } else {
+      setChatModelLoadStatus('无法读取模型列表：' + (error && error.message ? error.message : '请求失败') + '。请检查 API URL、Key，或确认服务允许浏览器跨域读取（CORS）。', true);
+    }
+  } finally {
+    if (activeChatModelListController === controller) {
+      if (activeChatModelListTimeoutId) window.clearTimeout(activeChatModelListTimeoutId);
+      activeChatModelListTimeoutId = null;
+      activeChatModelListController = null;
+      button.disabled = false;
+      button.textContent = '读取';
+    }
+  }
+}
+
+function onAvailableChatModelChange() {
+  var selected = document.getElementById('chatAvailableModelSelect').value;
+  if (!selected) return;
+  document.getElementById('chatCustomModelName').value = selected;
+  setChatModelLoadStatus('已选择模型：' + selected);
   saveChatConfig();
 }
 
