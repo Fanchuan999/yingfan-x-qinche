@@ -12,6 +12,12 @@ function getCrowDropdown() {
   return page.slice(start, end);
 }
 
+function getRoomStatePicker() {
+  const start = page.indexOf('<fieldset class="room-state-picker" id="roomStatePicker">');
+  const end = page.indexOf('</fieldset>', start);
+  return page.slice(start, end);
+}
+
 test('crow menu retains only administrative entries', () => {
   const dropdown = getCrowDropdown();
 
@@ -54,6 +60,15 @@ test('room destination controller reuses existing panels', () => {
 
 test('small screens keep the room scene scrollable instead of clipping its hotspots', () => {
   assert.match(page, /@media \(max-width: 768px\) \{[\s\S]*?\.room-space \{[^}]*overflow-y: auto/s);
+});
+
+test('dark point removes the manual night-state choice while keeping automatic selection available', () => {
+  const picker = getRoomStatePicker();
+
+  assert.match(picker, /value="auto"/);
+  assert.match(picker, /value="watch"/);
+  assert.match(picker, /value="focus"/);
+  assert.doesNotMatch(picker, /value="night"|>夜行</);
 });
 
 test('opening dark point resets any prior scene scroll position', () => {

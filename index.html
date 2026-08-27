@@ -4238,7 +4238,7 @@ footer .heart {
 
 #roomPanel .room-state-picker {
   gap: 5px;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   left: auto;
   max-width: 220px;
   position: absolute;
@@ -4694,7 +4694,7 @@ body.memory-drawer-open { overflow: hidden; }
   .memory-drawer-entry .home-timeline-date { font-size: 1.05rem; }
 }
 
-.letter-tools { align-items: center; display: flex; gap: 8px; grid-column: 1 / -1; }
+.letter-tools { align-items: center; display: flex; flex-wrap: wrap; gap: 8px; grid-column: 1 / -1; }
 .letter-tools .companion-action-btn { flex: 0 0 auto; }
 .letter-form-status { color: var(--text-muted); font-size: 0.7rem; min-height: 1.2em; }
 .future-letter-list { display: grid; gap: 0; }
@@ -5320,7 +5320,6 @@ body.memory-drawer-open { overflow: hidden; }
         <label class="room-state-choice"><input type="radio" name="roomState" value="auto"><span>随时间</span></label>
         <label class="room-state-choice"><input type="radio" name="roomState" value="watch"><span>守着你</span></label>
         <label class="room-state-choice"><input type="radio" name="roomState" value="focus"><span>主场</span></label>
-        <label class="room-state-choice"><input type="radio" name="roomState" value="night"><span>夜行</span></label>
       </fieldset>
       <button class="room-hotspot room-hotspot-window" id="roomWindow" type="button" data-zone="window" aria-pressed="false">窗边<span>经期记录 · 纪念日</span></button>
       <button class="room-hotspot room-hotspot-desk" id="roomDesk" type="button" data-zone="desk" aria-pressed="false">书桌<span>待办清单 · 番茄钟</span></button>
@@ -5341,7 +5340,7 @@ body.memory-drawer-open { overflow: hidden; }
       <h3>未来信件</h3>
       <button class="util-panel-close" onclick="closeUtilPanel('letters')">✕</button>
     </div>
-    <p class="letter-intro">写给未来的你。日期到了再打开，届时再决定该不该和过去的自己算账。</p>
+    <p class="letter-intro">写给未来的你，日期到了再打开。</p>
     <form class="letter-form" id="letterForm">
       <input class="letter-form-input" id="letterDateInput" type="date" aria-label="打开日期" required>
       <input class="letter-form-input" id="letterTitleInput" type="text" maxlength="40" placeholder="这封信的名字" aria-label="信件标题" required>
@@ -5354,6 +5353,7 @@ body.memory-drawer-open { overflow: hidden; }
       <textarea class="letter-form-input letter-form-textarea" id="letterContentInput" maxlength="1200" placeholder="写下想留给未来的话。"></textarea>
       <div class="letter-tools">
         <button class="companion-action-btn" id="btnLetterDraft" type="button">填入一封</button>
+        <button class="companion-action-btn" id="btnLetterFromHim" type="button">他的来信</button>
         <span class="letter-form-status" id="letterFormStatus"></span>
       </div>
       <button class="companion-action-btn primary" type="submit">封存信件</button>
@@ -5468,6 +5468,8 @@ body.memory-drawer-open { overflow: hidden; }
 <script src="timeline-helpers.js"></script>
 <script src="vault-link-parser.js?v=20260825-1"></script>
 <script src="quote-starfield.js?v=20260825-1"></script>
+<script src="future-letter-ai.js?v=20260827-1"></script>
+<script src="room-state-helpers.js?v=20260827-1"></script>
 <script src="memory-drawer.js?v=20260825-2"></script>
 <script>
 // ============ Theme Management ============
@@ -7384,11 +7386,10 @@ function updatePeriodReminderStatus() {
   }
   button.disabled = false;
   if (Notification.permission === 'denied') {
-    status.textContent = '提醒：已在浏览器中关闭';
-    button.textContent = '浏览器已关闭';
-    button.disabled = true;
+    status.textContent = '提醒：通知权限未允许，请在浏览器的网站设置中允许通知后刷新。';
+    button.textContent = '到浏览器设置开启';
   } else if (periodSettings.remindersEnabled && Notification.permission === 'granted') {
-    status.textContent = '提醒：将在打开网站时检查';
+    status.textContent = '提醒：会在网站打开或回到前台时检查';
     button.textContent = '提醒已开启';
   } else {
     status.textContent = '提醒：未开启';
@@ -7493,6 +7494,10 @@ async function requestPeriodReminder() {
     return;
   }
   var permission = Notification.permission;
+  if (permission === 'denied') {
+    showUploadToast('请点地址栏左侧的网站设置，将通知改为允许后刷新网页');
+    return;
+  }
   if (permission === 'default') permission = await Notification.requestPermission();
   if (permission === 'granted') {
     periodSettings.remindersEnabled = true;
@@ -11025,7 +11030,10 @@ function formatCompanionDate(dateKey) {
 function getStoredRoomState() {
   try {
     var value = localStorage.getItem(ROOM_STATE_KEY);
-    return value === 'watch' || value === 'focus' || value === 'night' ? value : 'auto';
+    var helpers = window.QincheRoomStateHelpers;
+    var normalized = helpers ? helpers.normalizeStoredRoomState(value) : (value === 'watch' || value === 'focus' ? value : 'auto');
+    if (value === 'night') localStorage.setItem(ROOM_STATE_KEY, normalized);
+    return normalized;
   } catch(e) {
     return 'auto';
   }
@@ -11168,7 +11176,8 @@ function initRoomPanel() {
 }
 
 function saveRoomState(value) {
-  var next = value === 'watch' || value === 'focus' || value === 'night' ? value : 'auto';
+  var helpers = window.QincheRoomStateHelpers;
+  var next = helpers ? helpers.normalizeStoredRoomState(value) : (value === 'watch' || value === 'focus' ? value : 'auto');
   try { localStorage.setItem(ROOM_STATE_KEY, next); } catch(e) {}
   updateRoomStateUI();
 }
@@ -11596,6 +11605,68 @@ function initLettersPanel() {
 function updateLetterFormStatus(message) {
   var status = document.getElementById('letterFormStatus');
   if (status) status.textContent = message || '';
+}
+
+async function requestLetterFromHim() {
+  var button = document.getElementById('btnLetterFromHim');
+  var content = document.getElementById('letterContentInput');
+  var endpoint = getChatEndpoint();
+  var prompt = String(endpoint.systemPrompt || '').trim();
+  var helper = window.QincheFutureLetterAI;
+
+  if (endpoint.configError) {
+    updateLetterFormStatus(endpoint.configError);
+    return;
+  }
+  if (endpoint.requiresApiKey && !endpoint.apiKey) {
+    updateLetterFormStatus('请先在 AI 聊天中填写 API Key。');
+    return;
+  }
+  if (!prompt) {
+    updateLetterFormStatus('请先在 AI 聊天中保存 API 和系统提示词。');
+    return;
+  }
+  if (!helper) {
+    updateLetterFormStatus('来信工具未加载，请刷新网页后重试。');
+    return;
+  }
+
+  var nickname = typeof loadNickname === 'function' ? loadNickname() : '';
+  var tone = document.getElementById('letterToneSelect').value;
+  var previousLabel = button.textContent;
+  var controller = new AbortController();
+  var timeoutId = window.setTimeout(function() { controller.abort(); }, CHAT_REQUEST_TIMEOUT);
+  button.disabled = true;
+  button.textContent = '正在写信';
+  updateLetterFormStatus('他正在写这封信。');
+
+  try {
+    var headers = { 'Content-Type': 'application/json' };
+    if (endpoint.apiKey) headers.Authorization = 'Bearer ' + endpoint.apiKey;
+    var response = await fetch(endpoint.url, {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify({
+        model: endpoint.modelName,
+        messages: helper.buildFutureLetterMessages(endpoint, nickname, tone),
+        stream: false,
+        temperature: 0.8,
+        max_tokens: Math.min(Number(endpoint.maxTokens) || 2048, 900)
+      }),
+      signal: controller.signal
+    });
+    if (!response.ok) throw new Error('请求失败（' + response.status + '）');
+    var letter = helper.extractFutureLetterContent(await response.json());
+    if (!letter) throw new Error('没有收到可用的来信');
+    content.value = letter.slice(0, 1200);
+    updateLetterFormStatus('他的来信已写进正文，可修改后再封存。');
+  } catch (error) {
+    updateLetterFormStatus(error && error.name === 'AbortError' ? '生成超时，请稍后重试。' : '生成失败：' + error.message);
+  } finally {
+    window.clearTimeout(timeoutId);
+    button.disabled = false;
+    button.textContent = previousLabel;
+  }
 }
 
 function addFutureLetter(openDate, title, content, tone) {
@@ -12099,6 +12170,8 @@ document.getElementById('btnLetterDraft').addEventListener('click', function() {
   content.value = getLetterDraft(tone);
   updateLetterFormStatus('已经写好开头，剩下的留给你。');
 });
+
+document.getElementById('btnLetterFromHim').addEventListener('click', requestLetterFromHim);
 
 document.getElementById('letterToneSelect').addEventListener('change', function() {
   updateLetterFormStatus('');
